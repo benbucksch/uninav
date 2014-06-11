@@ -1,5 +1,6 @@
-three.js
-three.min.js
 *~
 *.diff
 *.sh
+three.js
+three.min.js
+img/
