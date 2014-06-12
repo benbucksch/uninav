@@ -129,7 +129,11 @@ function highlightTile(tile) {
   highlightN.parent.remove(highlightN);
   tile.parent.add(highlightN);
 
-  hideChildren(oldN);
+  if (oldN) {
+    if ( !isAncestor(oldN, highlightedN)) {
+      hideChildren(oldN);
+    }
+  }
   showChildren(highlightedN);
 }
 
@@ -195,6 +199,24 @@ function changeToChild() {
   }
 }
 
+/**
+ * @param ancestor {Tile}
+ * @param child {Tile}
+ * @returns {boolean} |parent| is an ancestor of |child|
+ */
+function isAncestor(ancestor, child) {
+  for (var cur = child; cur.parentTile; cur = cur.parentTile) {
+    if (cur.parentTile == ancestor) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * @param test {Boolean}
+ * @param errorMsg {String}
+ */
 function assert(test, errorMsg) {
   errorMsg = errorMsg || "assertion failed";
   if ( !test) {
