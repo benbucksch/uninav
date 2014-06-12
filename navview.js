@@ -30,7 +30,10 @@ function createScene() {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(30,
     parentE.clientWidth / parentE.clientHeight, 0.1, 1000);
-  camera.position.z = 5;
+  //camera = new THREE.OrthographicCamera(-6, 6, 2, -2, 0.1, 1000);
+  camera.position.z = 3;
+  camera.position.y = -4;
+  camera.rotation.x = 0.8;
   if (window.WebGLRenderingContext) {
     renderer = new THREE.WebGLRenderer();
   } else {
@@ -64,26 +67,26 @@ function addTile(parentTile, title, imageURL, clickCallback) {
     side : THREE.FrontSide,
   });
   var node = new THREE.Mesh(tile, material);
-  node.rotation.x = -0.9;
+  //node.rotation.x = -0.9;
   scene.add(node);
   return node;
 }
 
 function createHighlightTile() {
-  var cube = new THREE.BoxGeometry(1.2, 1.1, 0.1);
+  var cube = new THREE.PlaneGeometry(1.1, 1.2);
   var material = new THREE.MeshBasicMaterial({
     color : 0xFFFF00, // red
   });
   var node = new THREE.Mesh(cube, material);
-  node.rotation.x = -0.9;
+  //node.rotation.x = -0.9;
   scene.add(node);
   highlightN = node;
 }
 
 function highlightTile(tile) {
   highlightN.position.x = tile.position.x;
-  highlightN.position.y = tile.position.y;
-  highlightN.position.z = tile.position.z - 0.4;
+  highlightN.position.y = tile.position.y + 0.1;
+  highlightN.position.z = tile.position.z - 0.1;
 }
 
 function render() {
