@@ -14,7 +14,7 @@ function onLoad() {
   createScene();
   createHighlightTile();
   var rootN = addTile(null, "Root", "");
-  rootN.position.y = 1.2;
+  rootN.position.y = 1.5;
   addTile(rootN, "Politics", "img/politics.jpg");
   addTile(rootN, "History", "img/history.jpg");
   addTile(rootN, "Business", "img/business.jpg");
@@ -22,7 +22,13 @@ function onLoad() {
   var animalN = addTile(rootN, "Animal", "img/animal.jpg");
   addTile(rootN, "Nature", "img/nature.jpg");
   addTile(rootN, "Family", "img/family.jpg");
-  highlightTile(transportN);
+  addTile(transportN, "Car", "img/car.jpg");
+  addTile(transportN, "Airplane", "img/airplane.jpg");
+  addTile(transportN, "Train", "img/train.jpg");
+  addTile(transportN, "Ship", "img/ship.jpg");
+
+  showChildren(rootN);
+  highlightTile(animalN);
 
   render();
 }
@@ -63,7 +69,7 @@ function createScene() {
  *     It's already added to the scene.
  *     You need this as |parentTile| for child tiles.
  */
-function addTile(parentTile, title, imageURL, clickCallback) {
+function addTile(parentTile, title, imageURL, hoverCallback, clickCallback) {
   var tile = new THREE.PlaneGeometry(1, 1);
   var texture = new THREE.ImageUtils.loadTexture(imageURL);
   var material = new THREE.MeshBasicMaterial({
@@ -72,34 +78,32 @@ function addTile(parentTile, title, imageURL, clickCallback) {
   });
   var node = new THREE.Mesh(tile, material);
 
-  if (parentTile) {
-    var group = parentTile.childGroup || null;
-    if ( !group) {
-      parentTile.childGroup = group = new THREE.Object3D();
-      group.centerAround = parentTile.position.x;
-      group.position.x = parentTile.position.x; // centered below
-      group.position.y = parentTile.position.y - 1.2;
-      group.position.z = 0;
-      scene.add(group);
-    }
-  } else {
-      group = new THREE.Object3D();
-      scene.add(group);
-      // pos 0,0,0
-  }
-  group.add(node);
-
   node.title = title;
   node.imageURL = imageURL;
   node.childTiles = [];
   node.parentTile = parentTile;
+
   if (parentTile) {
+    parentTile.childTiles.push(node);
+
+    var group = parentTile.childGroup || null;
+    if ( !group) {
+      parentTile.childGroup = group = new THREE.Object3D();
+      group.centerAround = 0;
+      group.position.x = 0; // centered below
+      group.position.y = -1.2;
+      group.position.z = 0;
+      // parentTile.add(group); -- done in showChildren()
+    }
     node.position.x = parentTile.childTiles.length * 1.2;
     var groupWidth = node.position.x + 1;
     group.position.x = group.centerAround - groupWidth / 2;
 
-    parentTile.childTiles.push(node);
+    group.add(node);
+  } else {
+    scene.add(node);
   }
+
   return node;
 }
 
@@ -115,6 +119,7 @@ function createHighlightTile() {
 }
 
 function highlightTile(tile) {
+  var oldN = highlightedN;
   highlightedN = tile;
 
   highlightN.position.x = tile.position.x;
@@ -123,6 +128,21 @@ function highlightTile(tile) {
 
   highlightN.parent.remove(highlightN);
   tile.parent.add(highlightN);
+
+  hideChildren(oldN);
+  showChildren(highlightedN);
+}
+
+function showChildren(parentTile) {
+  if (parentTile && parentTile.childGroup) {
+    parentTile.add(parentTile.childGroup);
+  }
+}
+
+function hideChildren(parentTile) {
+  if (parentTile && parentTile.childGroup) {
+    parentTile.remove(parentTile.childGroup);
+  }
 }
 
 function render() {
@@ -172,5 +192,12 @@ function changeToParent() {
 function changeToChild() {
   if (highlightedN && highlightedN.childTiles[0]) {
     highlightTile(highlightedN.childTiles[0]);
+  }
+}
+
+function assert(test, errorMsg) {
+  errorMsg = errorMsg || "assertion failed";
+  if ( !test) {
+    alert(errorMsg);
   }
 }
