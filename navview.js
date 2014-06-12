@@ -6,11 +6,20 @@
 var renderer;
 var camera;
 var scene;
+var highlightN;
 
 function onLoad() {
   createScene();
+  createHighlightTile();
   //addTile(null, "Earth", "img/car.jpg");
-  addTile(null, "Car", "img/car.jpg");
+  var transportN = addTile(null, "Transport", "img/car.jpg");
+  highlightTile(transportN);
+  addTile(null, "Animal", "img/animal.jpg").position.x = 1.2;
+  addTile(null, "Nature", "img/nature.jpg").position.x = 2.4;
+  addTile(null, "Family", "img/family.jpg").position.x = 3.6;
+  addTile(null, "Business", "img/business.jpg").position.x = -1.2;
+  addTile(null, "History", "img/history.jpg").position.x = -2.4;
+  addTile(null, "Politics", "img/politics.jpg").position.x = -3.6;
   render();
 }
 
@@ -57,6 +66,24 @@ function addTile(parentTile, title, imageURL, clickCallback) {
   var node = new THREE.Mesh(tile, material);
   node.rotation.x = -0.9;
   scene.add(node);
+  return node;
+}
+
+function createHighlightTile() {
+  var cube = new THREE.BoxGeometry(1.2, 1.1, 0.1);
+  var material = new THREE.MeshBasicMaterial({
+    color : 0xFFFF00, // red
+  });
+  var node = new THREE.Mesh(cube, material);
+  node.rotation.x = -0.9;
+  scene.add(node);
+  highlightN = node;
+}
+
+function highlightTile(tile) {
+  highlightN.position.x = tile.position.x;
+  highlightN.position.y = tile.position.y;
+  highlightN.position.z = tile.position.z - 0.4;
 }
 
 function render() {
