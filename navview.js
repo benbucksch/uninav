@@ -13,14 +13,15 @@ var highlightN; // the border around the current tile
 function onLoad() {
   createScene();
   createHighlightTile();
-  var rootN = addTile(null, "Root", "img/car.jpg");
-  addTile(rootN, "Politics", "img/politics.jpg").position.x = -3.6;
-  addTile(rootN, "History", "img/history.jpg").position.x = -2.4;
-  addTile(rootN, "Business", "img/business.jpg").position.x = -1.2;
+  var rootN = addTile(null, "Root", "");
+  rootN.position.y = 1.2;
+  addTile(rootN, "Politics", "img/politics.jpg");
+  addTile(rootN, "History", "img/history.jpg");
+  addTile(rootN, "Business", "img/business.jpg");
   var transportN = addTile(rootN, "Transport", "img/car.jpg");
-  var animalN = addTile(rootN, "Animal", "img/animal.jpg").position.x = 1.2;
-  addTile(rootN, "Nature", "img/nature.jpg").position.x = 2.4;
-  addTile(rootN, "Family", "img/family.jpg").position.x = 3.6;
+  var animalN = addTile(rootN, "Animal", "img/animal.jpg");
+  addTile(rootN, "Nature", "img/nature.jpg");
+  addTile(rootN, "Family", "img/family.jpg");
   highlightTile(transportN);
 
   render();
@@ -70,13 +71,33 @@ function addTile(parentTile, title, imageURL, clickCallback) {
     side : THREE.FrontSide,
   });
   var node = new THREE.Mesh(tile, material);
-  scene.add(node);
+
+  if (parentTile) {
+    var group = parentTile.childGroup || null;
+    if ( !group) {
+      parentTile.childGroup = group = new THREE.Object3D();
+      group.centerAround = parentTile.position.x;
+      group.position.x = parentTile.position.x; // centered below
+      group.position.y = parentTile.position.y - 1.2;
+      group.position.z = 0;
+      scene.add(group);
+    }
+  } else {
+      group = new THREE.Object3D();
+      scene.add(group);
+      // pos 0,0,0
+  }
+  group.add(node);
 
   node.title = title;
   node.imageURL = imageURL;
   node.childTiles = [];
   node.parentTile = parentTile;
   if (parentTile) {
+    node.position.x = parentTile.childTiles.length * 1.2;
+    var groupWidth = node.position.x + 1;
+    group.position.x = group.centerAround - groupWidth / 2;
+
     parentTile.childTiles.push(node);
   }
   return node;
@@ -95,9 +116,13 @@ function createHighlightTile() {
 
 function highlightTile(tile) {
   highlightedN = tile;
+
   highlightN.position.x = tile.position.x;
   highlightN.position.y = tile.position.y + 0.1;
   highlightN.position.z = tile.position.z - 0.1;
+
+  highlightN.parent.remove(highlightN);
+  tile.parent.add(highlightN);
 }
 
 function render() {
