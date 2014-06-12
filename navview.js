@@ -13,7 +13,6 @@ var highlightN; // the border around the current tile
 function onLoad() {
   createScene();
   createHighlightTile();
-  //addTile(null, "Earth", "img/car.jpg");
   var rootN = addTile(null, "Root", "img/car.jpg");
   addTile(rootN, "Politics", "img/politics.jpg").position.x = -3.6;
   addTile(rootN, "History", "img/history.jpg").position.x = -2.4;
@@ -71,7 +70,6 @@ function addTile(parentTile, title, imageURL, clickCallback) {
     side : THREE.FrontSide,
   });
   var node = new THREE.Mesh(tile, material);
-  //node.rotation.x = -0.9;
   scene.add(node);
 
   node.title = title;
@@ -87,7 +85,7 @@ function addTile(parentTile, title, imageURL, clickCallback) {
 function createHighlightTile() {
   var cube = new THREE.PlaneGeometry(1.1, 1.2);
   var material = new THREE.MeshBasicMaterial({
-    color : 0xFFFF00, // red
+    color : 0xFFFF00, // yellow
   });
   var node = new THREE.Mesh(cube, material);
   //node.rotation.x = -0.9;
@@ -104,7 +102,6 @@ function highlightTile(tile) {
 
 function render() {
   requestAnimationFrame(render);
-  //cube.rotation.x += 0.1; cube.rotation.y += 0.1;
   renderer.render(scene, camera);
 }
 
