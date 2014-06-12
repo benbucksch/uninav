@@ -137,6 +137,9 @@ function changeToSibling(relPos) {
 
 function changeToParent() {
   if (highlightedN && highlightedN.parentTile) {
+    if ( !highlightedN.parentTile.parentTile) {
+      return; // HACK: fake root note, don't select it
+    }
     highlightTile(highlightedN.parentTile);
   }
 }
