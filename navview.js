@@ -6,20 +6,24 @@
 var renderer;
 var camera;
 var scene;
-var highlightN;
+var highlightedN; // the current tile, which is highlighted
+var highlightN; // the border around the current tile
+
 
 function onLoad() {
   createScene();
   createHighlightTile();
   //addTile(null, "Earth", "img/car.jpg");
-  var transportN = addTile(null, "Transport", "img/car.jpg");
+  var rootN = addTile(null, "Root", "img/car.jpg");
+  addTile(rootN, "Politics", "img/politics.jpg").position.x = -3.6;
+  addTile(rootN, "History", "img/history.jpg").position.x = -2.4;
+  addTile(rootN, "Business", "img/business.jpg").position.x = -1.2;
+  var transportN = addTile(rootN, "Transport", "img/car.jpg");
+  var animalN = addTile(rootN, "Animal", "img/animal.jpg").position.x = 1.2;
+  addTile(rootN, "Nature", "img/nature.jpg").position.x = 2.4;
+  addTile(rootN, "Family", "img/family.jpg").position.x = 3.6;
   highlightTile(transportN);
-  addTile(null, "Animal", "img/animal.jpg").position.x = 1.2;
-  addTile(null, "Nature", "img/nature.jpg").position.x = 2.4;
-  addTile(null, "Family", "img/family.jpg").position.x = 3.6;
-  addTile(null, "Business", "img/business.jpg").position.x = -1.2;
-  addTile(null, "History", "img/history.jpg").position.x = -2.4;
-  addTile(null, "Politics", "img/politics.jpg").position.x = -3.6;
+
   render();
 }
 
@@ -69,6 +73,14 @@ function addTile(parentTile, title, imageURL, clickCallback) {
   var node = new THREE.Mesh(tile, material);
   //node.rotation.x = -0.9;
   scene.add(node);
+
+  node.title = title;
+  node.imageURL = imageURL;
+  node.childTiles = [];
+  node.parentTile = parentTile;
+  if (parentTile) {
+    parentTile.childTiles.push(node);
+  }
   return node;
 }
 
@@ -84,6 +96,7 @@ function createHighlightTile() {
 }
 
 function highlightTile(tile) {
+  highlightedN = tile;
   highlightN.position.x = tile.position.x;
   highlightN.position.y = tile.position.y + 0.1;
   highlightN.position.z = tile.position.z - 0.1;
@@ -93,4 +106,46 @@ function render() {
   requestAnimationFrame(render);
   //cube.rotation.x += 0.1; cube.rotation.y += 0.1;
   renderer.render(scene, camera);
+}
+
+function onKeyboard(event) {
+  var keyCode = event.which;
+
+  if (keyCode == 38) { // Cursor up
+    changeToParent();
+  } else if (keyCode == 40) { // Cursor down
+    changeToChild();
+  } else if (keyCode == 37) { // Cursor left
+    changeToSibling(-1);
+  } else if (keyCode == 39) { // Cursor right
+    changeToSibling(1);
+  }
+}
+window.addEventListener("keydown", onKeyboard, false);
+
+/**
+ * Changes highlighted tile to another in the same hierarchy level
+ * @param relPos {Integer} e.g. 1 for next, -1 for previous etc.
+ */
+function changeToSibling(relPos) {
+  if (highlightedN && highlightedN.parentTile) {
+    var siblings = highlightedN.parentTile.childTiles;
+    var oldIndex = siblings.indexOf(highlightedN);
+    var newIndex = oldIndex + relPos;
+    if (oldIndex != -1 && newIndex >= 0 && newIndex < siblings.length) {
+      highlightTile(siblings[newIndex]);
+    }
+  }
+}
+
+function changeToParent() {
+  if (highlightedN && highlightedN.parentTile) {
+    highlightTile(highlightedN.parentTile);
+  }
+}
+
+function changeToChild() {
+  if (highlightedN && highlightedN.childTiles[0]) {
+    highlightTile(highlightedN.childTiles[0]);
+  }
 }
