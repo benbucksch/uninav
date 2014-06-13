@@ -22,10 +22,14 @@ function onLoad() {
   var animalN = addTile(rootN, "Animal", "img/animal.jpg");
   addTile(rootN, "Nature", "img/nature.jpg");
   addTile(rootN, "Family", "img/family.jpg");
-  addTile(transportN, "Car", "img/car.jpg");
+  var carN = addTile(transportN, "Car", "img/car.jpg");
   addTile(transportN, "Airplane", "img/airplane.jpg");
   addTile(transportN, "Train", "img/train.jpg");
-  addTile(transportN, "Ship", "img/ship.jpg");
+  addTile(transportN, "Ship", "img/pirates.jpg");
+  addTile(carN, "Mercedes 300 SL", "img/car.jpg");
+  addTile(carN, "Tesla", "img/tesla.jpg");
+  addTile(carN, "Aston Martin", "img/astonmartin.jpg");
+  addTile(carN, "Corvette 1958", "img/corvette1958.jpg");
 
   showChildren(rootN);
   highlightTile(animalN);
