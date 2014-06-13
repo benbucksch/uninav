@@ -6,14 +6,14 @@
 var renderer;
 var camera;
 var scene;
-var highlightedN; // the current tile, which is highlighted
-var highlightN; // the border around the current tile
+var rootN;
+var highlightedN; // the current tile, which is highlighted and all its ancestors
 
 
 function onLoad() {
   createScene();
   createHighlightTile();
-  var rootN = addTile(null, "Root", "");
+  rootN = addTile(null, "Root", "");
   rootN.position.y = 1.5;
   addTile(rootN, "Politics", "img/politics.jpg");
   addTile(rootN, "History", "img/history.jpg");
@@ -169,6 +169,33 @@ function onKeyboard(event) {
 }
 window.addEventListener("keydown", onKeyboard, false);
 
+function onMouseClick(event) {
+  var canvasE = event.target;
+  var curE = canvasE;
+  var offsetX = 0, offsetY = 0;
+  do {
+      offsetX += curE.offsetLeft - curE.scrollLeft;
+      offsetY += curE.offsetTop - curE.scrollTop;
+  } while (curE = curE.offsetParent)
+  var mouseX = event.clientX - offsetX;
+  var mouseY = event.clientY - offsetY;
+  var mouseVec = new THREE.Vector3();
+  mouseVec.x = 2 * (mouseX / canvasE.clientWidth) - 1;
+  mouseVec.y = 1 - 2 * (mouseY / canvasE.clientHeight);
+
+  var allTiles = allChildren();
+
+  var projector = new THREE.Projector();
+  var raycaster = projector.pickingRay(mouseVec.clone(), camera);
+  var intersections = raycaster.intersectObjects(allChildren());
+  if (intersections.length == 0) {
+    return;
+  }
+  var nearestTile = intersections[0].object;
+  highlightTile(nearestTile);
+}
+window.addEventListener("click", onMouseClick, false);
+
 /**
  * Changes highlighted tile to another in the same hierarchy level
  * @param relPos {Integer} e.g. 1 for next, -1 for previous etc.
@@ -197,6 +224,31 @@ function changeToChild() {
   if (highlightedN && highlightedN.childTiles[0]) {
     highlightTile(highlightedN.childTiles[0]);
   }
+}
+
+/**
+ * @param ancestor {Tile}
+ * @param callback {Function(child {Tile})} Called for each ancestor
+ */
+function forEachAncestor(ancestor, callback) {
+  for (var cur = child; cur.parentTile; cur = cur.parentTile) {
+    callback(cur);
+  }
+}
+
+/**
+ * @param tile {Tile}
+ *     if null, return all tiles
+ * @returns {Array of Tile} all children of |tile|, not including |tile|
+ */
+function allChildren(tile) {
+  tile = tile || rootN;
+  var result = [];
+  tile.childTiles.forEach(function(child) {
+    result.push(child);
+    result = result.concat(allChildren(child));
+  });
+  return result;
 }
 
 /**
