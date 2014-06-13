@@ -130,9 +130,11 @@ function highlightTile(tile) {
   tile.parent.add(highlightN);
 
   if (oldN) {
-    if ( !isAncestor(oldN, highlightedN)) {
-      hideChildren(oldN);
-    }
+    forEachAncestor(oldN, function(oldAncestorN) {
+      if ( !isAncestor(oldAncestorN, highlightedN)) {
+        hideChildren(oldAncestorN);
+      }
+    });
   }
   showChildren(highlightedN);
 }
@@ -194,7 +196,7 @@ function onMouseClick(event) {
   var nearestTile = intersections[0].object;
   highlightTile(nearestTile);
 }
-window.addEventListener("click", onMouseClick, false);
+window.addEventListener("mousemove", onMouseClick, false);
 
 /**
  * Changes highlighted tile to another in the same hierarchy level
@@ -227,16 +229,6 @@ function changeToChild() {
 }
 
 /**
- * @param ancestor {Tile}
- * @param callback {Function(child {Tile})} Called for each ancestor
- */
-function forEachAncestor(ancestor, callback) {
-  for (var cur = child; cur.parentTile; cur = cur.parentTile) {
-    callback(cur);
-  }
-}
-
-/**
  * @param tile {Tile}
  *     if null, return all tiles
  * @returns {Array of Tile} all children of |tile|, not including |tile|
@@ -249,6 +241,16 @@ function allChildren(tile) {
     result = result.concat(allChildren(child));
   });
   return result;
+}
+
+/**
+ * @param ancestor {Tile}
+ * @param callback {Function(child {Tile})} Called for each ancestor
+ */
+function forEachAncestor(ancestor, callback) {
+  for (var cur = ancestor; cur.parentTile; cur = cur.parentTile) {
+    callback(cur);
+  }
 }
 
 /**
