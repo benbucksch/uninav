@@ -117,7 +117,6 @@ function createHighlightTile() {
     color : 0xFFFF00, // yellow
   });
   var node = new THREE.Mesh(cube, material);
-  //node.rotation.x = -0.9;
   scene.add(node);
   highlightN = node;
 }
@@ -176,6 +175,8 @@ function onKeyboard(event) {
 window.addEventListener("keydown", onKeyboard, false);
 
 function onMouseClick(event) {
+  // http://soledadpenades.com/articles/three-js-tutorials/object-picking/
+  // http://stackoverflow.com/questions/55677/how-do-i-get-the-coordinates-of-a-mouse-click-on-a-canvas-element
   var canvasE = event.target;
   var curE = canvasE;
   var offsetX = 0, offsetY = 0;
@@ -185,11 +186,10 @@ function onMouseClick(event) {
   } while (curE = curE.offsetParent)
   var mouseX = event.clientX - offsetX;
   var mouseY = event.clientY - offsetY;
+
   var mouseVec = new THREE.Vector3();
   mouseVec.x = 2 * (mouseX / canvasE.clientWidth) - 1;
   mouseVec.y = 1 - 2 * (mouseY / canvasE.clientHeight);
-
-  var allTiles = allChildren();
 
   var projector = new THREE.Projector();
   var raycaster = projector.pickingRay(mouseVec.clone(), camera);
