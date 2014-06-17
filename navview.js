@@ -45,9 +45,9 @@ function createScene() {
   camera = new THREE.PerspectiveCamera(30,
     parentE.clientWidth / parentE.clientHeight, 0.1, 1000);
   //camera = new THREE.OrthographicCamera(-6, 6, 2, -2, 0.1, 1000);
-  camera.position.z = 3;
-  camera.position.y = -4;
-  camera.rotation.x = 0.8;
+  camera.position.z = 4;
+  camera.position.y = 2.25;
+  camera.rotation.x = -0.6;
   if (window.WebGLRenderingContext) {
     renderer = new THREE.WebGLRenderer();
   } else {
