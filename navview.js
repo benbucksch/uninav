@@ -12,7 +12,7 @@ var highlightedN; // the current tile, which is highlighted and all its ancestor
 
 function onLoad() {
   createScene();
-  createHighlightTile();
+
   rootN = addTile(null, "Root", "");
   rootN.position.y = 1.5;
   addTile(rootN, "Politics", "img/politics.jpg");
@@ -111,30 +111,57 @@ function addTile(parentTile, title, imageURL, hoverCallback, clickCallback) {
   return node;
 }
 
-function createHighlightTile() {
-  var cube = new THREE.PlaneGeometry(1.1, 1.2);
-  var material = new THREE.MeshBasicMaterial({
+/**
+ * Creates a node that highlights another node.
+ *
+ * @returns {THREE.Mesh} a node that highlights
+ *    the given tile. It's already added to the scene.
+ */
+function createHighlightFor(tile) {
+  var pos = tile.position;
+  var tileSize = 1;
+  var borderSize = 0.05;
+  var x1 = pos.x - tileSize/2 - borderSize;
+  var x2 = pos.x + tileSize/2 + borderSize;
+  var y1 = pos.y - tileSize/2 - borderSize;
+  var y2 = pos.y + tileSize/2 + borderSize;
+  /*var x1 = pos.x - borderSize;
+  var x2 = pos.x + tileSize + borderSize;
+  var y1 = pos.y - borderSize;
+  var y2 = pos.y + tileSize + borderSize;*/
+  var z = pos.z;
+  var line = new THREE.Geometry();
+  line.vertices.push(new THREE.Vector3(x1, y1, z));
+  line.vertices.push(new THREE.Vector3(x1, y2, z));
+  line.vertices.push(new THREE.Vector3(x2, y2, z));
+  line.vertices.push(new THREE.Vector3(x2, y1, z));
+  line.vertices.push(new THREE.Vector3(x1, y1, z));
+  line.computeLineDistances();
+  var material = new THREE.LineBasicMaterial({
     color : 0xFFFF00, // yellow
   });
-  var node = new THREE.Mesh(cube, material);
-  scene.add(node);
-  highlightN = node;
+  var node = new THREE.Line(line, material);
+  tile.parent.add(node);
+  tile.highlightN = node;
+}
+
+function removeHighlightFor(tile) {
+  tile.parent.remove(tile.highlightN);
 }
 
 function highlightTile(tile) {
+  if (tile == highlightedN) {
+    return;
+  }
   var oldN = highlightedN;
   highlightedN = tile;
 
-  highlightN.position.x = tile.position.x;
-  highlightN.position.y = tile.position.y + 0.1;
-  highlightN.position.z = tile.position.z - 0.1;
-
-  highlightN.parent.remove(highlightN);
-  tile.parent.add(highlightN);
+  createHighlightFor(tile);
 
   if (oldN) {
     forEachAncestor(oldN, function(oldAncestorN) {
       if ( !isAncestor(oldAncestorN, highlightedN)) {
+        removeHighlightFor(oldN);
         hideChildren(oldAncestorN);
       }
     });
