@@ -40,7 +40,7 @@ function onLoad() {
 window.addEventListener("load", onLoad, false);
 
 function createScene() {
-  var parentE = document.getElementById("navview");
+  var parentE = document.getElementById("uninav");
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(30,
     parentE.clientWidth / parentE.clientHeight, 0.1, 1000);
