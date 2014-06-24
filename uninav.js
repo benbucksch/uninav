@@ -13,7 +13,7 @@ var highlightedN; // the current tile, which is highlighted and all its ancestor
 function onLoad() {
   createScene();
 
-  rootN = addTile(null, "Root", "");
+  rootN = addTile(null, "", "");
   rootN.position.y = 1.5;
   addTile(rootN, "Politics", "img/politics.jpg");
   addTile(rootN, "History", "img/history.jpg");
@@ -107,6 +107,10 @@ function addTile(parentTile, title, imageURL, hoverCallback, clickCallback) {
   } else {
     scene.add(node);
   }
+
+  var label = make2DText(title);
+  label.position.set(0, -0.55, 0);
+  node.add(label);
 
   return node;
 }
@@ -228,6 +232,35 @@ function onMouseClick(event) {
   highlightTile(nearestTile);
 }
 window.addEventListener("mousemove", onMouseClick, false);
+
+/**
+ * Creates a 3D node with 2D text.
+ * It uses <canvas> to render text to an image,
+ * then puts that image as texture on a new 3D object.
+ *
+ * @returns {THREE.Mesh} A 3D node with no depth
+ */
+function make2DText(text)
+{
+  var canvas = document.createElement("canvas");
+  var ctx = canvas.getContext("2d");
+  ctx.font = "20pt Arial";
+  ctx.fillStyle = "white";
+  //var width = ctx.measureText(text, 0, 0).width;
+  ctx.fillText(text, 0, 100);
+
+  var texture = new THREE.Texture(canvas);
+  texture.needsUpdate = true;
+  var material = new THREE.MeshBasicMaterial({
+    map: texture,
+    side: THREE.FrontSide,
+  });
+  material.transparent = true;
+  var plane = new THREE.PlaneGeometry(1, 1);
+  var node = new THREE.Mesh(plane, material);
+  return node;
+}
+
 
 /**
  * Changes highlighted tile to another in the same hierarchy level
