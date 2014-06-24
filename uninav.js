@@ -14,7 +14,7 @@ function onLoad() {
   createScene();
 
   rootN = addTile(null, "", "");
-  rootN.position.y = 1.5;
+  rootN.position.y = 1.6;
   addTile(rootN, "Politics", "img/politics.jpg");
   addTile(rootN, "History", "img/history.jpg");
   addTile(rootN, "Business", "img/business.jpg");
@@ -95,7 +95,7 @@ function addTile(parentTile, title, imageURL, hoverCallback, clickCallback) {
       parentTile.childGroup = group = new THREE.Object3D();
       group.centerAround = 0;
       group.position.x = 0; // centered below
-      group.position.y = -1.2;
+      group.position.y = -1.3;
       group.position.z = 0;
       // parentTile.add(group); -- done in showChildren()
     }
@@ -109,7 +109,7 @@ function addTile(parentTile, title, imageURL, hoverCallback, clickCallback) {
   }
 
   var label = make2DText(title);
-  label.position.set(0, -0.55, 0);
+  label.position.set(0, -0.6, 0);
   node.add(label);
 
   return node;
@@ -244,7 +244,7 @@ function make2DText(text)
 {
   var canvas = document.createElement("canvas");
   var ctx = canvas.getContext("2d");
-  ctx.font = "20pt Arial";
+  ctx.font = "30pt Arial";
   ctx.fillStyle = "white";
   //var width = ctx.measureText(text, 0, 0).width;
   ctx.fillText(text, 0, 100);
@@ -256,8 +256,9 @@ function make2DText(text)
     side: THREE.FrontSide,
   });
   material.transparent = true;
-  var plane = new THREE.PlaneGeometry(1, 1);
+  var plane = new THREE.PlaneGeometry(1, 0.6);
   var node = new THREE.Mesh(plane, material);
+  node.rotation.copy(camera.rotation);
   return node;
 }
 
