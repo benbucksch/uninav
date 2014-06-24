@@ -49,7 +49,7 @@ function createScene() {
   camera.position.y = 2.25;
   camera.rotation.x = -0.6;
   if (window.WebGLRenderingContext) {
-    renderer = new THREE.WebGLRenderer();
+    renderer = new THREE.WebGLRenderer({ antialiasing: true });
   } else {
     renderer = new THREE.CanvasRenderer();
   }
