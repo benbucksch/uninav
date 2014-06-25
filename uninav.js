@@ -7,7 +7,8 @@ var renderer;
 var camera;
 var scene;
 var rootN;
-var highlightedN; // the current tile, which is highlighted and all its ancestors
+var highlightedN; // the current tile, which is highlighted and all its ancestors. The user had hovered over this.
+var selectedN; // the tile which topic is shown in the main pane. The user had clicked on it.
 
 
 function onLoad() {
@@ -94,13 +95,13 @@ function cameraLookAt(tile) {
  *     You need this as |parentTile| for child tiles.
  */
 function addTile(parentTile, title, imageURL, hoverCallback, clickCallback) {
-  var tile = new THREE.PlaneGeometry(1, 1);
+  var plane = new THREE.PlaneGeometry(1, 1);
   var texture = new THREE.ImageUtils.loadTexture(imageURL);
   var material = new THREE.MeshBasicMaterial({
     map : texture,
     side : THREE.FrontSide,
   });
-  var node = new THREE.Mesh(tile, material);
+  var node = new THREE.Mesh(plane, material);
 
   node.title = title;
   node.imageURL = imageURL;
@@ -130,6 +131,7 @@ function addTile(parentTile, title, imageURL, hoverCallback, clickCallback) {
 
   var label = make2DText(title);
   label.position.set(0, -0.6, 0);
+  node.label = label;
   node.add(label);
 
   return node;
@@ -203,6 +205,52 @@ function hideChildren(parentTile) {
   }
 }
 
+/**
+ * Action: orient tile so that it faces directly into camera,
+ * orthogonally, so that the image is displayed like in 2D.
+ * When: user clicked on tile
+ */
+function tiltTile(tile) {
+  tile.oldRotation = tile.rotation.clone();
+  //tile.rotation.copy(camera.rotation);
+  var tiltTween = new TWEEN.Tween(tile.rotation)
+            .to({ x : camera.rotation.x }, 1000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .start();
+
+  // HACK: Move dependent nodes, too. Correct: Re-organize scene graph
+  tile.label.oldRotation = tile.label.rotation.clone();
+  var textTween = new TWEEN.Tween(tile.label.rotation)
+            .to({ x : 0 }, 1000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .start();
+  if (tile.highlightN) {
+    var highlightTween = new TWEEN.Tween(tile.highlightN.rotation)
+            .to({ x : camera.rotation.x }, 1000)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .start();
+  }
+}
+
+/**
+ * Action: Undo tileTile()
+ * When: user clicked on another tile
+ */
+function untiltTile(tile) {
+  if ( !tile || !tile.oldRotation) {
+    return;
+  }
+  //tile.rotation.copy(tile.oldRotation);
+  var tiltTween = new TWEEN.Tween(tile.rotation)
+            .to({ x : tile.oldRotation.x }, 250)
+            .start();
+  tile.oldRotation = null;
+  var textTween = new TWEEN.Tween(tile.label.rotation)
+            .to({ x : tile.label.oldRotation.x }, 250)
+            .start();
+  tile.label.rotation = null;
+}
+
 function render(time) {
   requestAnimationFrame(render);
   TWEEN.update(time);
@@ -235,6 +283,11 @@ function onMouseClick(event) {
   var tile = pos2DTo3DObject(event);
   if (tile) {
     openTopic(tile);
+
+    var oldN = selectedN;
+    selectedN = tile;
+    tiltTile(selectedN);
+    untiltTile(oldN);
   }
 }
 
