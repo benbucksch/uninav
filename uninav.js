@@ -78,7 +78,7 @@ function cameraLookAt(tile) {
               .to({ y: tilePosition.y + 2.5 }, 1000)
               .easing(TWEEN.Easing.Quadratic.InOut)
               .start();
-  ddebug(tile.title + "\ntile pos x,y,z = " + tilePosition.x + "," + tilePosition.y + "," + tilePosition.z + "\ncamera pos x,y,z = " + camera.position.x + "," + camera.position.y + "," + camera.position.z);
+  //ddebug(tile.title + "\ntile pos x,y,z = " + tilePosition.x + "," + tilePosition.y + "," + tilePosition.z + "\ncamera pos x,y,z = " + camera.position.x + "," + camera.position.y + "," + camera.position.z);
 }
 
 /**
@@ -149,10 +149,6 @@ function createHighlightFor(tile) {
   var x2 = pos.x + tileSize/2 + borderSize;
   var y1 = pos.y - tileSize/2 - borderSize;
   var y2 = pos.y + tileSize/2 + borderSize;
-  /*var x1 = pos.x - borderSize;
-  var x2 = pos.x + tileSize + borderSize;
-  var y1 = pos.y - borderSize;
-  var y2 = pos.y + tileSize + borderSize;*/
   var z = pos.z;
   var line = new THREE.Geometry();
   line.vertices.push(new THREE.Vector3(x1, y1, z));
@@ -188,7 +184,6 @@ function highlightTile(tile) {
       if ( !isAncestor(oldAncestorN, highlightedN)) {
         removeHighlightFor(oldAncestorN);
         hideChildren(oldAncestorN);
-        //cameraLookAt(highlightedN);
       }
     });
   }
