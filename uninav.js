@@ -144,14 +144,13 @@ function addTile(parentTile, title, imageURL, hoverCallback, clickCallback) {
  *    the given tile. It's already added to the scene.
  */
 function createHighlightFor(tile) {
-  var pos = tile.position;
   var tileSize = 1;
   var borderSize = 0.05;
-  var x1 = pos.x - tileSize/2 - borderSize;
-  var x2 = pos.x + tileSize/2 + borderSize;
-  var y1 = pos.y - tileSize/2 - borderSize;
-  var y2 = pos.y + tileSize/2 + borderSize;
-  var z = pos.z;
+  var x1 = - tileSize/2 - borderSize;
+  var x2 = tileSize/2 + borderSize;
+  var y1 = - tileSize/2 - borderSize;
+  var y2 = tileSize/2 + borderSize;
+  var z = 0;
   var line = new THREE.Geometry();
   line.vertices.push(new THREE.Vector3(x1, y1, z));
   line.vertices.push(new THREE.Vector3(x1, y2, z));
@@ -163,12 +162,12 @@ function createHighlightFor(tile) {
     color : 0xFFFF00, // yellow
   });
   var node = new THREE.Line(line, material);
-  tile.parent.add(node);
+  tile.add(node);
   tile.highlightN = node;
 }
 
 function removeHighlightFor(tile) {
-  tile.parent.remove(tile.highlightN);
+  tile.remove(tile.highlightN);
 }
 
 function highlightTile(tile) {
@@ -224,12 +223,6 @@ function tiltTile(tile) {
             .to({ x : 0 }, 1000)
             .easing(TWEEN.Easing.Quadratic.InOut)
             .start();
-  if (tile.highlightN) {
-    var highlightTween = new TWEEN.Tween(tile.highlightN.rotation)
-            .to({ x : camera.rotation.x }, 1000)
-            .easing(TWEEN.Easing.Quadratic.InOut)
-            .start();
-  }
 }
 
 /**
