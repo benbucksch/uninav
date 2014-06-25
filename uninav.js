@@ -238,6 +238,7 @@ function untiltTile(tile) {
             .to({ x : tile.oldRotation.x }, 250)
             .start();
   tile.oldRotation = null;
+  //tile.label.rotation.copy(tile.label.oldRotation);
   var textTween = new TWEEN.Tween(tile.label.rotation)
             .to({ x : tile.label.oldRotation.x }, 250)
             .start();
@@ -267,14 +268,14 @@ window.addEventListener("keydown", onKeyboard, false);
 
 function onMouseMove(event) {
   var tile = pos2DTo3DObject(event);
-  if (tile) {
+  if (tile && tile != highlightedN) {
     highlightTile(tile);
   }
 }
 
 function onMouseClick(event) {
   var tile = pos2DTo3DObject(event);
-  if (tile) {
+  if (tile && tile != selectedN) {
     openTopic(tile);
 
     var oldN = selectedN;
@@ -349,10 +350,20 @@ function make2DText(text)
     map: texture,
     side: THREE.FrontSide,
   });
-  material.transparent = true;
+  material.transparent = false;
   var plane = new THREE.PlaneGeometry(1, 0.6);
   var node = new THREE.Mesh(plane, material);
   node.rotation.copy(camera.rotation);
+
+  /* Black background
+  var bgmaterial = new THREE.MeshBasicMaterial({
+    color: 0x000000,
+  });
+  var bgplane = new THREE.PlaneGeometry(1, 0.6);
+  var bgnode = new THREE.Mesh(bgplane, bgmaterial);
+  node.add(bgnode);
+  */
+
   return node;
 }
 
