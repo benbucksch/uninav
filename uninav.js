@@ -34,6 +34,8 @@ function onLoad() {
   showChildren(rootN);
   highlightTile(animalN);
 
+  renderer.domElement.addEventListener("mousemove", onMouseMove, false);
+
   render();
 }
 
@@ -205,22 +207,23 @@ function onKeyboard(event) {
 }
 window.addEventListener("keydown", onKeyboard, false);
 
-function onMouseClick(event) {
+function onMouseMove(event) {
+  var tile = pos2DTo3DObject(event);
+  if (tile) {
+    highlightTile(tile);
+  }
+}
+
+/**
+ * @param event {DOMEvent} mouse move/click
+ */
+function pos2DTo3DObject(event) {
   // http://soledadpenades.com/articles/three-js-tutorials/object-picking/
   // http://stackoverflow.com/questions/55677/how-do-i-get-the-coordinates-of-a-mouse-click-on-a-canvas-element
-  var canvasE = event.target;
-  var curE = canvasE;
-  var offsetX = 0, offsetY = 0;
-  do {
-      offsetX += curE.offsetLeft - curE.scrollLeft;
-      offsetY += curE.offsetTop - curE.scrollTop;
-  } while (curE = curE.offsetParent)
-  var mouseX = event.clientX - offsetX;
-  var mouseY = event.clientY - offsetY;
-
+  var canvasPos = elementPos(event.target);
   var mouseVec = new THREE.Vector3();
-  mouseVec.x = 2 * (mouseX / canvasE.clientWidth) - 1;
-  mouseVec.y = 1 - 2 * (mouseY / canvasE.clientHeight);
+  mouseVec.x = 2 * ((event.clientX - canvasPos.x) / canvasPos.width) - 1;
+  mouseVec.y = 1 - 2 * ((event.clientY - canvasPos.y) / canvasPos.height);
 
   var projector = new THREE.Projector();
   var raycaster = projector.pickingRay(mouseVec.clone(), camera);
@@ -228,10 +231,31 @@ function onMouseClick(event) {
   if (intersections.length == 0) {
     return;
   }
-  var nearestTile = intersections[0].object;
-  highlightTile(nearestTile);
+  return intersections[0].object;
 }
-window.addEventListener("mousemove", onMouseClick, false);
+
+/**
+ * @returns {
+ *   x {Integer} Pixels from left of page
+ *   y {Integer} Pixels from top of page
+ *   width {Integer} width of element (not yet implemented)
+ *   height {Integer} height of element (not yet implemented)
+ * }
+ */
+function elementPos(element) {
+  var curE = element;
+  var offsetX = 0, offsetY = 0;
+  do {
+      offsetX += curE.offsetLeft - curE.scrollLeft;
+      offsetY += curE.offsetTop - curE.scrollTop;
+  } while (curE = curE.offsetParent)
+  return {
+    x : offsetX,
+    y : offsetY,
+    width : element.clientWidth,
+    height : element.clientHeight
+  };
+}
 
 /**
  * Creates a 3D node with 2D text.
