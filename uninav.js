@@ -14,7 +14,6 @@ function onLoad() {
   createScene();
 
   rootN = addTile(null, "", "");
-  rootN.position.y = 1.6;
   addTile(rootN, "Politics", "img/politics.jpg");
   addTile(rootN, "History", "img/history.jpg");
   addTile(rootN, "Business", "img/business.jpg");
@@ -37,6 +36,8 @@ function onLoad() {
   renderer.domElement.addEventListener("mousemove", onMouseMove, false);
 
   render();
+
+  cameraLookAt(animalN);
 }
 
 window.addEventListener("load", onLoad, false);
@@ -59,8 +60,23 @@ function createScene() {
   parentE.appendChild(renderer.domElement);
 
   renderer.setClearColor(0x000000, 1); // black
+  ddebug("camera pos x,y,z = " + camera.position.x + "," + camera.position.y + "," + camera.position.z);
 
   return scene;
+}
+
+
+function cameraLookAt(tile) {
+  var tilePosition = new THREE.Vector3();
+  //tile.matrixWorldNeedsUpdate = true;
+  tile.updateMatrixWorld();
+  tilePosition.setFromMatrixPosition(tile.matrixWorld);
+
+  //camera.position.y = tilePosition.y + 2;
+  animateValue(function(val) {
+    camera.position.y = val;
+  }, camera.position.y, tilePosition.y + 2, 300);
+  ddebug(tile.title + "\ntile pos x,y,z = " + tilePosition.x + "," + tilePosition.y + "," + tilePosition.z + "\ncamera pos x,y,z = " + camera.position.x + "," + camera.position.y + "," + camera.position.z);
 }
 
 /**
@@ -169,10 +185,16 @@ function highlightTile(tile) {
       if ( !isAncestor(oldAncestorN, highlightedN)) {
         removeHighlightFor(oldAncestorN);
         hideChildren(oldAncestorN);
+        //cameraLookAt(highlightedN);
       }
     });
   }
+
   showChildren(highlightedN);
+
+  if (highlightedN.childGroup) {
+    cameraLookAt(highlightedN);
+  }
 }
 
 function showChildren(parentTile) {
@@ -286,7 +308,6 @@ function make2DText(text)
   return node;
 }
 
-
 /**
  * Changes highlighted tile to another in the same hierarchy level
  * @param relPos {Integer} e.g. 1 for next, -1 for previous etc.
@@ -356,6 +377,38 @@ function isAncestor(ancestor, child) {
   return false;
 }
 
+
+/**
+ * Smoothly sets a value in small steps over time.
+ * |setter| will be called multiple times over the
+ * |durationMS|, for values between |from| and |to|.
+ * Once to is reached, execution stops.
+ *
+ * @param setter {Function(val)}  Function
+ *   e.g. function(val) {
+ */
+function animateValue(setter, from, to, durationMS)
+{
+  if (to == from) {
+    setter(to);
+    return;
+  }
+  const stepMS = 30;
+  var stepVal = (to - from) / (durationMS / stepMS)
+  var val = from;
+  var interval = setInterval(function() {
+    ddebug("Setting val " + val);
+    if (stepVal > 0 && val + stepVal >= to ||
+        stepVal < 0 && val + stepVal <= to) {
+      val = to
+      clearInterval(interval);
+    } else {
+      val += stepVal;
+    }
+    setter(val);
+  }, stepMS);
+}
+
 /**
  * @param test {Boolean}
  * @param errorMsg {String}
@@ -364,5 +417,11 @@ function assert(test, errorMsg) {
   errorMsg = errorMsg || "assertion failed";
   if ( !test) {
     alert(errorMsg);
+  }
+}
+
+function ddebug(msg) {
+  if (console) {
+    console.debug(msg);
   }
 }
