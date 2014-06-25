@@ -34,6 +34,7 @@ function onLoad() {
   highlightTile(animalN);
 
   renderer.domElement.addEventListener("mousemove", onMouseMove, false);
+  renderer.domElement.addEventListener("click", onMouseClick, false);
 
   render();
 
@@ -235,6 +236,13 @@ function onMouseMove(event) {
   }
 }
 
+function onMouseClick(event) {
+  var tile = pos2DTo3DObject(event);
+  if (tile) {
+    openTopic(tile);
+  }
+}
+
 /**
  * @param event {DOMEvent} mouse move/click
  */
@@ -374,6 +382,14 @@ function isAncestor(ancestor, child) {
     }
   }
   return false;
+}
+
+/**
+ * When: User clicked on a tile
+ * Action: Open the DU topic in the content pane
+ */
+function openTopic(tile) {
+  document.getElementById("title").textContent = tile.title;
 }
 
 /**
