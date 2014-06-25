@@ -72,10 +72,11 @@ function cameraLookAt(tile) {
   tile.updateMatrixWorld();
   tilePosition.setFromMatrixPosition(tile.matrixWorld);
 
-  //camera.position.y = tilePosition.y + 2;
-  animateValue(function(val) {
-    camera.position.y = val;
-  }, camera.position.y, tilePosition.y + 2.5, 300);
+  //camera.position.y = tilePosition.y + 2.5;
+  var scrollTween = new TWEEN.Tween(camera.position)
+              .to({ y: tilePosition.y + 2.5 }, 1000)
+              .easing(TWEEN.Easing.Quadratic.InOut)
+              .start();
   ddebug(tile.title + "\ntile pos x,y,z = " + tilePosition.x + "," + tilePosition.y + "," + tilePosition.z + "\ncamera pos x,y,z = " + camera.position.x + "," + camera.position.y + "," + camera.position.z);
 }
 
@@ -206,8 +207,9 @@ function hideChildren(parentTile) {
   }
 }
 
-function render() {
+function render(time) {
   requestAnimationFrame(render);
+  TWEEN.update(time);
   renderer.render(scene, camera);
 }
 
@@ -372,38 +374,6 @@ function isAncestor(ancestor, child) {
     }
   }
   return false;
-}
-
-
-/**
- * Smoothly sets a value in small steps over time.
- * |setter| will be called multiple times over the
- * |durationMS|, for values between |from| and |to|.
- * Once to is reached, execution stops.
- *
- * @param setter {Function(val)}  Function
- *   e.g. function(val) {
- */
-function animateValue(setter, from, to, durationMS)
-{
-  if (to == from) {
-    setter(to);
-    return;
-  }
-  const stepMS = 30;
-  var stepVal = (to - from) / (durationMS / stepMS)
-  var val = from;
-  var interval = setInterval(function() {
-    ddebug("Setting val " + val);
-    if (stepVal > 0 && val + stepVal >= to ||
-        stepVal < 0 && val + stepVal <= to) {
-      val = to
-      clearInterval(interval);
-    } else {
-      val += stepVal;
-    }
-    setter(val);
-  }, stepMS);
 }
 
 /**
