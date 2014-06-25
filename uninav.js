@@ -75,7 +75,7 @@ function cameraLookAt(tile) {
   //camera.position.y = tilePosition.y + 2;
   animateValue(function(val) {
     camera.position.y = val;
-  }, camera.position.y, tilePosition.y + 2, 300);
+  }, camera.position.y, tilePosition.y + 2.5, 300);
   ddebug(tile.title + "\ntile pos x,y,z = " + tilePosition.x + "," + tilePosition.y + "," + tilePosition.z + "\ncamera pos x,y,z = " + camera.position.x + "," + camera.position.y + "," + camera.position.z);
 }
 
@@ -179,6 +179,7 @@ function highlightTile(tile) {
   highlightedN = tile;
 
   createHighlightFor(tile);
+  cameraLookAt(highlightedN);
 
   if (oldN) {
     forEachAncestor(oldN, function(oldAncestorN) {
@@ -191,10 +192,6 @@ function highlightTile(tile) {
   }
 
   showChildren(highlightedN);
-
-  if (highlightedN.childGroup) {
-    cameraLookAt(highlightedN);
-  }
 }
 
 function showChildren(parentTile) {
