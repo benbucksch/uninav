@@ -165,7 +165,7 @@ function highlightTile(tile) {
   if (oldN) {
     forEachAncestor(oldN, function(oldAncestorN) {
       if ( !isAncestor(oldAncestorN, highlightedN)) {
-        removeHighlightFor(oldN);
+        removeHighlightFor(oldAncestorN);
         hideChildren(oldAncestorN);
       }
     });
