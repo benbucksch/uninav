@@ -1,5 +1,27 @@
 
 /**
+ * @param test {Boolean}
+ * @param errorMsg {String}
+ */
+function assert(test, errorMsg) {
+  errorMsg = errorMsg || "assertion failed";
+  if ( !test) {
+    alert(errorMsg);
+  }
+}
+
+function errorCritical(msg) {
+  alert(msg);
+}
+
+function ddebug(msg) {
+  if (console) {
+    console.debug(msg);
+  }
+}
+
+
+/**
  * @param url {String}   http[s]:// or file:///
  * @dataType {String-enum}  Expected type of file contents
  *    "text", "json", "xml" or "html"

@@ -494,24 +494,3 @@ function loadTaxonomyJSON(url, resultCallback, errorCallback) {
 function openTopic(tile) {
   document.getElementById("title").textContent = tile.title;
 }
-
-/**
- * @param test {Boolean}
- * @param errorMsg {String}
- */
-function assert(test, errorMsg) {
-  errorMsg = errorMsg || "assertion failed";
-  if ( !test) {
-    alert(errorMsg);
-  }
-}
-
-function errorCritical(msg) {
-  alert(msg);
-}
-
-function ddebug(msg) {
-  if (console) {
-    console.debug(msg);
-  }
-}
