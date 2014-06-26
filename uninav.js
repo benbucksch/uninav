@@ -13,33 +13,20 @@ var selectedN; // the tile which topic is shown in the main pane. The user had c
 
 function onLoad() {
   createScene();
-
-  rootN = addTile(null, "", "");
-  addTile(rootN, "Politics", "img/politics.jpg");
-  addTile(rootN, "History", "img/history.jpg");
-  addTile(rootN, "Business", "img/business.jpg");
-  var transportN = addTile(rootN, "Transport", "img/car.jpg");
-  var animalN = addTile(rootN, "Animal", "img/animal.jpg");
-  addTile(rootN, "Nature", "img/nature.jpg");
-  addTile(rootN, "Family", "img/family.jpg");
-  var carN = addTile(transportN, "Car", "img/car.jpg");
-  addTile(transportN, "Airplane", "img/airplane.jpg");
-  addTile(transportN, "Train", "img/train.jpg");
-  addTile(transportN, "Ship", "img/pirates.jpg");
-  addTile(carN, "Mercedes 300 SL", "img/car.jpg");
-  addTile(carN, "Tesla", "img/tesla.jpg");
-  addTile(carN, "Aston Martin", "img/astonmartin.jpg");
-  addTile(carN, "Corvette 1958", "img/corvette1958.jpg");
-
-  showChildren(rootN);
-  highlightTile(animalN);
-
-  renderer.domElement.addEventListener("mousemove", onMouseMove, false);
-  renderer.domElement.addEventListener("click", onMouseClick, false);
-
   render();
 
-  cameraLookAt(animalN);
+  loadAllTiles("taxonomy.json", "img/", function(aRootN) {
+    rootN = aRootN;
+    showChildren(rootN);
+    var animalN = rootN.childTiles[4];
+    highlightTile(animalN);
+    setTimeout(function() { // HACK
+      cameraLookAt(animalN);
+    }, 100);
+
+    renderer.domElement.addEventListener("mousemove", onMouseMove, false);
+    renderer.domElement.addEventListener("click", onMouseClick, false);
+  }, errorCritical);
 }
 
 window.addEventListener("load", onLoad, false);
@@ -88,13 +75,11 @@ function cameraLookAt(tile) {
  * @param title {String} user-visible name of the tile
  * @param imageURL {String} relative URL of the image, e.g.
  *     "img/window.png" or "/img/window.jpg"
- * @param clickCallback {Function} Called when the user
- *     clicks on the node
  * @returns {THREE.Mesh} The resulting tile node.
  *     It's already added to the scene.
  *     You need this as |parentTile| for child tiles.
  */
-function addTile(parentTile, title, imageURL, hoverCallback, clickCallback) {
+function addTile(parentTile, title, imageURL) {
   var plane = new THREE.PlaneGeometry(1, 1);
   var texture = new THREE.ImageUtils.loadTexture(imageURL);
   var material = new THREE.MeshBasicMaterial({
@@ -437,6 +422,72 @@ function isAncestor(ancestor, child) {
 }
 
 /**
+ * Loads taxnomy from JSON and creates all tiles
+ * @successCallback {Function(rootTile)}
+ */
+function loadAllTiles(taxonomyURL, imageRootURL, successCallback, errorCallback) {
+  var rootN = addTile(null, "", "");
+  loadTaxonomyJSON(taxonomyURL, function(rootNodes, allByID) {
+    function addAll(nodes) {
+      nodes.forEach(function(node) {
+        var parentTile = node.parent && node.parent.tile || rootN;
+        node.tile = addTile(parentTile, node.title, imageRootURL + node.img);
+        addAll(node.children);
+      });
+    }
+    addAll(rootNodes);
+    successCallback(rootN);
+  }, errorCallback);
+}
+
+/**
+ * Loads taxonomy from JSON file
+ * @param url {String} relative URL to the JSON file
+ * @param resultCallback {Function(rootNodes, allByID)} Called when server returned
+ * rootNodes {Array of Node} just the root nodes, each with |children|
+ * allByID {Array of Node} with index == ID, all nodes
+ * Node {
+ *   id {Integer}, ID of node
+ *   title {String},
+ *   img {String}, image filename, relative to special image path
+ *   parent {Node},
+ *   children {Array of Node},
+ * }
+ * @param errorCallback {Function(e)} Called when there was an error
+ *    Either resultCallback() or errorCallback() will be called.
+ */
+function loadTaxonomyJSON(url, resultCallback, errorCallback) {
+  // util.js
+  loadURL(url, "json", function(json) {
+    var allByID = [];
+    var rootNodes = [];
+    json.forEach(function(node) {
+      assert(node.id, "ID missing");
+      assert(node.title, "Title missing");
+      assert(node.img, "Image missing");
+      if (allByID[node.id])
+      assert( !allByID[node.id], "Node ID " + node.id + " appears twice. " +
+            allByID[node.id].title + " and " + node.title);
+      node.children = [];
+      allByID[node.id] = node;
+      if (node.parent) {
+        node.parent = allByID[node.parent];
+        assert(node.parent, "Node ID " + node.id + " " + node.title +
+              " has not (yet) existing parent ID " + node.parent);
+        node.parent.children.push(node);
+      } else {
+        rootNodes.push(node);
+      }
+    });
+    rootNodes.forEach(function(node) {
+      ddebug(node);
+    });
+    resultCallback(rootNodes, allByID);
+  }, errorCallback);
+}
+
+
+/**
  * When: User clicked on a tile
  * Action: Open the DU topic in the content pane
  */
@@ -453,6 +504,10 @@ function assert(test, errorMsg) {
   if ( !test) {
     alert(errorMsg);
   }
+}
+
+function errorCritical(msg) {
+  alert(msg);
 }
 
 function ddebug(msg) {
