@@ -335,7 +335,7 @@ function make2DText(text)
     map: texture,
     side: THREE.FrontSide,
   });
-  material.transparent = false;
+  material.transparent = true;
   var plane = new THREE.PlaneGeometry(1, 0.6);
   var node = new THREE.Mesh(plane, material);
   node.rotation.copy(camera.rotation);
