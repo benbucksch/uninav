@@ -492,5 +492,7 @@ function loadTaxonomyJSON(url, resultCallback, errorCallback) {
  * Action: Open the DU topic in the content pane
  */
 function openTopic(tile) {
-  document.getElementById("title").textContent = tile.title;
+  var target = window.parent;
+  target.openTopic(tile);
+  //target.postMessage(tile, "http://www.manyone.zone");
 }

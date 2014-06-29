@@ -30,9 +30,36 @@
     margin: 1em;
   }
 </style>
+<script>
+/**
+ * Start a page change to go to another DU topic.
+ *
+ * This doesn't entirely reload the current page,
+ * just changes the content. Called SPA "Single Page Architecture".
+ *
+ * Currently called directly from uninav iframe.
+ * This direction function call works, because it's the same domain.
+ * Alternative: events sent via postMessage(), see below.
+ */
+function openTopic(topic) {
+  document.getElementById("title").textContent = topic.title;
+}
+
+// listen to page change events from uninav
+/*
+window.addEventListener("message", function(event) {
+  if (event.origin != "http://www.manyone.zone") {
+    alert("msg from wrong origin " + event.origin + ":\n" + event.data);
+    return;
+  }
+  alert("msg from " + event.origin + ":\n" + event.data);
+  openTopic(event.data);
+}, false);
+*/
+</script>
 </head>
 <body>
-<iframe id="uninav" src="uninav.html"></div>
+<iframe id="uninav" src="uninav.html"></iframe>
 
 <!-- dummy page -->
 <h1 id="title">Digital Universe</h1>
