@@ -1,7 +1,5 @@
 *~
 *.diff
 *.sh
-three.js
-three.min.js
-tween.min.js
+lib/
 img/
