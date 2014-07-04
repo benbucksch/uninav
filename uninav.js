@@ -431,10 +431,10 @@ function isAncestor(ancestor, child) {
  * @successCallback {Function(rootTile)}
  */
 function loadAllTiles(taxonomyURL, successCallback, errorCallback) {
-  loadTaxonomyJSON(taxonomyURL, function(rootNodes, allByID) {
+  loadTaxonomyJSON(taxonomyURL, function(rootNode, allByID) {
     var rootTile = addTile(null, "", "");
-    rootTile.node = rootNodes[0];
-    addTilesForChildren(rootNodes[0], rootTile);
+    rootTile.node = rootNode;
+    addTilesForChildren(rootNode, rootTile);
     successCallback(rootTile);
   }, errorCallback);
 }
@@ -464,9 +464,8 @@ function addTilesForChildren(node, parentTile) {
  */
 function loadTaxonomyJSON(url, resultCallback, errorCallback) {
   // util.js
-  loadURL(url, "json", function(nodes) {
+  loadURL(url, "json", function(rootNode) {
     var allByID = [];
-    var rootNodes = [];
     function addAll(nodes) {
       nodes.forEach(function(node) {
         assert(node.id, "ID missing");
@@ -491,8 +490,8 @@ function loadTaxonomyJSON(url, resultCallback, errorCallback) {
         }
       });
     }
-    addAll(nodes);
-    resultCallback(rootNodes, allByID);
+    addAll(rootNode.children);
+    resultCallback(rootNode, allByID);
   }, errorCallback);
 }
 
