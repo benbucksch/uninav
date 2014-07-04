@@ -179,12 +179,9 @@ function highlightTile(tile) {
 }
 
 function showChildren(parentTile) {
+  addTilesForChildren(parentTile);
   if (parentTile && parentTile.childGroup) {
     parentTile.add(parentTile.childGroup);
-  }
-  if (parentTile && parentTile.node &&
-      parentTile.node.children && parentTile.node.children.length > 0) {
-    addTilesForChildren(parentTile.node, parentTile);
   }
 }
 
@@ -192,6 +189,21 @@ function hideChildren(parentTile) {
   if (parentTile && parentTile.childGroup) {
     parentTile.remove(parentTile.childGroup);
   }
+}
+
+function addTilesForChildren(parentTile) {
+  var node = parentTile.node;
+  if ( !parentTile || !node || !node.children || node.children.length <= 0) {
+    return;
+  }
+  if (parentTile.childTiles && parentTile.childTiles.length > 0) {
+    return;
+  }
+
+  node.children.forEach(function(node) {
+    node.tile = addTile(parentTile, node.title, imageRootURL + node.img);
+    node.tile.node = node;
+  });
 }
 
 /**
@@ -434,16 +446,9 @@ function loadAllTiles(taxonomyURL, successCallback, errorCallback) {
   loadTaxonomyJSON(taxonomyURL, function(rootNode, allByID) {
     var rootTile = addTile(null, "", "");
     rootTile.node = rootNode;
-    addTilesForChildren(rootNode, rootTile);
+    addTilesForChildren(rootTile);
     successCallback(rootTile);
   }, errorCallback);
-}
-
-function addTilesForChildren(node, parentTile) {
-  node.children.forEach(function(node) {
-    node.tile = addTile(parentTile, node.title, imageRootURL + node.img);
-    node.tile.node = node;
-  });
 }
 
 /**
