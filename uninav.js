@@ -475,10 +475,10 @@ function loadTaxonomyJSON(url, resultCallback, errorCallback) {
       parent.children.forEach(function(node) {
         assert(node.id, "ID missing");
         assert(node.title, "Title missing");
-        assert(node.img, "Image missing");
+        /*assert(node.img, "Image missing"); TODO fix taxonomy
         if (allByID[node.id])
           assert(false, "Node ID " + node.id + " appears twice. " +
-              allByID[node.id].title + " and " + node.title);
+              allByID[node.id].title + " and " + node.title);*/
         allByID[node.id] = node;
         node.parent = parent;
         if (node.children && node.children.length > 0) {
