@@ -9,7 +9,7 @@ var scene;
 var rootN;
 var highlightedN; // the current tile, which is highlighted and all its ancestors. The user had hovered over this.
 var selectedN; // the tile which topic is shown in the main pane. The user had clicked on it.
-const imageRootURL = "";
+const imageRootURL = "../graphics/dunet/";
 
 
 function onLoad() {
@@ -471,31 +471,24 @@ function loadTaxonomyJSON(url, resultCallback, errorCallback) {
   // util.js
   loadURL(url, "json", function(rootNode) {
     var allByID = [];
-    function addAll(nodes) {
-      nodes.forEach(function(node) {
+    function addAllChildren(parent) {
+      parent.children.forEach(function(node) {
         assert(node.id, "ID missing");
         assert(node.title, "Title missing");
         assert(node.img, "Image missing");
         if (allByID[node.id])
-        assert( !allByID[node.id], "Node ID " + node.id + " appears twice. " +
+          assert(false, "Node ID " + node.id + " appears twice. " +
               allByID[node.id].title + " and " + node.title);
         allByID[node.id] = node;
-        if (node.parent) {
-          node.parent = allByID[node.parent];
-          assert(node.parent, "Node ID " + node.id + " " + node.title +
-                " has not (yet) existing parent ID " + node.parent);
-          node.parent.children.push(node);
-        } else if (node.parent === 0) {
-          rootNodes.push(node);
-        }
+        node.parent = parent;
         if (node.children && node.children.length > 0) {
-          addAll(node.children);
+          addAllChildren(node);
         } else {
           node.children = [];
         }
       });
     }
-    addAll(rootNode.children);
+    addAllChildren(rootNode);
     resultCallback(rootNode, allByID);
   }, errorCallback);
 }
