@@ -9,13 +9,14 @@ var scene;
 var rootN;
 var highlightedN; // the current tile, which is highlighted and all its ancestors. The user had hovered over this.
 var selectedN; // the tile which topic is shown in the main pane. The user had clicked on it.
+const imageRootURL = "";
 
 
 function onLoad() {
   createScene();
   render();
 
-  loadAllTiles("taxonomy.json", "img/", function(aRootN) {
+  loadAllTiles("taxonomy.json", function(aRootN) {
     rootN = aRootN;
     showChildren(rootN);
     var animalN = rootN.childTiles[4];
@@ -180,6 +181,10 @@ function highlightTile(tile) {
 function showChildren(parentTile) {
   if (parentTile && parentTile.childGroup) {
     parentTile.add(parentTile.childGroup);
+  }
+  if (parentTile && parentTile.node &&
+      parentTile.node.children && parentTile.node.children.length > 0) {
+    addTilesForChildren(parentTile.node, parentTile);
   }
 }
 
@@ -425,19 +430,20 @@ function isAncestor(ancestor, child) {
  * Loads taxnomy from JSON and creates all tiles
  * @successCallback {Function(rootTile)}
  */
-function loadAllTiles(taxonomyURL, imageRootURL, successCallback, errorCallback) {
-  var rootN = addTile(null, "", "");
+function loadAllTiles(taxonomyURL, successCallback, errorCallback) {
   loadTaxonomyJSON(taxonomyURL, function(rootNodes, allByID) {
-    function addAll(nodes) {
-      nodes.forEach(function(node) {
-        var parentTile = node.parent && node.parent.tile || rootN;
-        node.tile = addTile(parentTile, node.title, imageRootURL + node.img);
-        addAll(node.children);
-      });
-    }
-    addAll(rootNodes);
-    successCallback(rootN);
+    var rootTile = addTile(null, "", "");
+    rootTile.node = rootNodes[0];
+    addTilesForChildren(rootNodes[0], rootTile);
+    successCallback(rootTile);
   }, errorCallback);
+}
+
+function addTilesForChildren(node, parentTile) {
+  node.children.forEach(function(node) {
+    node.tile = addTile(parentTile, node.title, imageRootURL + node.img);
+    node.tile.node = node;
+  });
 }
 
 /**
@@ -458,30 +464,34 @@ function loadAllTiles(taxonomyURL, imageRootURL, successCallback, errorCallback)
  */
 function loadTaxonomyJSON(url, resultCallback, errorCallback) {
   // util.js
-  loadURL(url, "json", function(json) {
+  loadURL(url, "json", function(nodes) {
     var allByID = [];
     var rootNodes = [];
-    json.forEach(function(node) {
-      assert(node.id, "ID missing");
-      assert(node.title, "Title missing");
-      assert(node.img, "Image missing");
-      if (allByID[node.id])
-      assert( !allByID[node.id], "Node ID " + node.id + " appears twice. " +
-            allByID[node.id].title + " and " + node.title);
-      node.children = [];
-      allByID[node.id] = node;
-      if (node.parent) {
-        node.parent = allByID[node.parent];
-        assert(node.parent, "Node ID " + node.id + " " + node.title +
-              " has not (yet) existing parent ID " + node.parent);
-        node.parent.children.push(node);
-      } else if (node.parent === 0) {
-        rootNodes.push(node);
-      }
-    });
-    rootNodes.forEach(function(node) {
-      ddebug(node);
-    });
+    function addAll(nodes) {
+      nodes.forEach(function(node) {
+        assert(node.id, "ID missing");
+        assert(node.title, "Title missing");
+        assert(node.img, "Image missing");
+        if (allByID[node.id])
+        assert( !allByID[node.id], "Node ID " + node.id + " appears twice. " +
+              allByID[node.id].title + " and " + node.title);
+        allByID[node.id] = node;
+        if (node.parent) {
+          node.parent = allByID[node.parent];
+          assert(node.parent, "Node ID " + node.id + " " + node.title +
+                " has not (yet) existing parent ID " + node.parent);
+          node.parent.children.push(node);
+        } else if (node.parent === 0) {
+          rootNodes.push(node);
+        }
+        if (node.children && node.children.length > 0) {
+          addAll(node.children);
+        } else {
+          node.children = [];
+        }
+      });
+    }
+    addAll(nodes);
     resultCallback(rootNodes, allByID);
   }, errorCallback);
 }
