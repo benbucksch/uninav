@@ -475,7 +475,7 @@ function loadTaxonomyJSON(url, resultCallback, errorCallback) {
         assert(node.parent, "Node ID " + node.id + " " + node.title +
               " has not (yet) existing parent ID " + node.parent);
         node.parent.children.push(node);
-      } else {
+      } else if (node.parent === 0) {
         rootNodes.push(node);
       }
     });

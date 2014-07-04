@@ -1,36 +1,43 @@
 [
   {
     "id" : 1,
+    "parent" : 0,
     "title" : "Politics",
     "img" : "politics.jpg"
   },
   {
     "id" : 2,
+    "parent" : 0,
     "title" : "History",
     "img" : "history.jpg"
   },
   {
     "id" : 3,
+    "parent" : 0,
     "title" : "Business",
     "img" : "business.jpg"
   },
   {
     "id" : 4,
+    "parent" : 0,
     "title" : "Transport",
     "img" : "car.jpg"
   },
   {
     "id" : 5,
+    "parent" : 0,
     "title" : "Animal",
     "img" : "animal.jpg"
   },
   {
     "id" : 6,
+    "parent" : 0,
     "title" : "Nature",
     "img" : "nature.jpg"
   },
   {
     "id" : 7,
+    "parent" : 0,
     "title" : "Family",
     "img" : "family.jpg"
   },
