@@ -157,25 +157,24 @@ function removeHighlightFor(tile) {
 }
 
 function highlightTile(tile) {
-  if (tile == highlightedN) {
+  if (tile == highlightedN || !tile) {
     return;
   }
   var oldN = highlightedN;
   highlightedN = tile;
 
-  createHighlightFor(tile);
-  cameraLookAt(highlightedN);
-
   if (oldN) {
     forEachAncestor(oldN, function(oldAncestorN) {
-      if ( !isAncestor(oldAncestorN, highlightedN)) {
+      if ( !isAncestor(oldAncestorN, tile)) {
         removeHighlightFor(oldAncestorN);
         hideChildren(oldAncestorN);
       }
     });
   }
 
-  showChildren(highlightedN);
+  createHighlightFor(tile);
+  cameraLookAt(tile);
+  showChildren(tile);
 }
 
 function showChildren(parentTile) {
@@ -427,7 +426,7 @@ function forEachAncestor(ancestor, callback) {
 /**
  * @param ancestor {Tile}
  * @param child {Tile}
- * @returns {boolean} |parent| is an ancestor of |child|
+ * @returns {boolean} |ancestor| is an ancestor of |child|
  */
 function isAncestor(ancestor, child) {
   for (var cur = child; cur.parentTile; cur = cur.parentTile) {
