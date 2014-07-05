@@ -162,6 +162,7 @@ function highlightTile(tile) {
   }
   var oldN = highlightedN;
   highlightedN = tile;
+  ddebug("hovering over " + tile.title);
 
   if (oldN) {
     forEachAncestor(oldN, function(oldAncestorN) {
@@ -187,6 +188,8 @@ function showChildren(parentTile) {
 function hideChildren(parentTile) {
   if (parentTile && parentTile.childGroup) {
     parentTile.remove(parentTile.childGroup);
+    parentTile.childGroup = null;
+    parentTile.childTiles = [];
   }
 }
 
