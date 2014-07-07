@@ -42,7 +42,11 @@ function createScene() {
   camera.position.y = 2.25;
   camera.rotation.x = -0.6;
   if (window.WebGLRenderingContext) {
-    renderer = new THREE.WebGLRenderer({ antialiasing: true });
+    try {
+      renderer = new THREE.WebGLRenderer({ antialiasing: true });
+    } catch (e) {
+      renderer = new THREE.CanvasRenderer();
+    }
   } else {
     renderer = new THREE.CanvasRenderer();
   }
