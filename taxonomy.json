@@ -7,6 +7,7 @@
    "title": "Arts & Entertainment",
    "id": "51cbfc52f702fc2ba8122367",
    "img": "file_33574.jpg",
+   "subjects" : [ "http://en.wikipedia.org/wiki/Arts" ],
    "children": [
     {
      "id": "51cbfc57f702fc2ba8123322",
@@ -1522,7 +1523,7 @@
    "children": [
     {
      "id": "51cbfc53f702fc2ba812266e",
-     "title": "Animals Portal",
+     "title": "Animals",
      "img": "file_21964.jpg",
      "children": [
       {
@@ -2184,12 +2185,12 @@
               },
               {
                "id": "51cbfc5bf702fc2ba812431b",
-               "title": "Primates Portal",
+               "title": "Primates",
                "img": "file_48148.jpg",
                "children": [
                 {
                  "id": "51cbfc5bf702fc2ba8124320",
-                 "title": " About This Portal",
+                 "title": " About This",
                  "img": "file_49024.jpg",
                  "children": []
                 },
@@ -2598,7 +2599,7 @@
     },
     {
      "id": "51cbfc53f702fc2ba8122666",
-     "title": "Plants Portal",
+     "title": "Plants",
      "img": "file_21960.jpg",
      "children": [
       {
@@ -2617,7 +2618,7 @@
     },
     {
      "id": "51cbfc53f702fc2ba812264c",
-     "title": "Tree of Life Portal",
+     "title": "Tree of Life",
      "img": "file_21940.jpg",
      "children": [
       {
@@ -2779,7 +2780,7 @@
     },
     {
      "id": "51cbfc52f702fc2ba812241a",
-     "title": "Cosmos Portal",
+     "title": "Cosmos",
      "img": "file_21113.jpg",
      "children": [
       {
@@ -3836,7 +3837,7 @@
       },
       {
        "id": "51cbfc52f702fc2ba8122413",
-       "title": " About Cosmos Portal",
+       "title": " About Cosmos",
        "img": "file_21138.jpg",
        "children": [
         {
@@ -3869,12 +3870,12 @@
     },
     {
      "id": "51cbfc58f702fc2ba8123716",
-     "title": "Oceans Portal",
+     "title": "Oceans",
      "img": "file_38303.jpg",
      "children": [
       {
        "id": "51cbfc58f702fc2ba8123785",
-       "title": " About Oceans Portal",
+       "title": " About Oceans",
        "img": "file_39025.jpg",
        "children": [
         {
@@ -7388,17 +7389,17 @@
     },
     {
      "id": "51cbfc55f702fc2ba8122c81",
-     "title": "North America Portal",
+     "title": "North America",
      "img": "file_27161.jpg",
      "children": [
       {
        "id": "51cbfc63f702fc2ba8125c46",
-       "title": "Caribbean Portal",
+       "title": "Caribbean",
        "img": "caribbean.jpg",
        "children": [
         {
          "id": "51cbfc63f702fc2ba8125b55",
-         "title": "Haiti Portal",
+         "title": "Haiti",
          "img": "coatofarms150.jpg",
          "children": [
           {
@@ -7523,19 +7524,19 @@
       },
       {
        "id": "51cbfc54f702fc2ba8122a76",
-       "title": "Canada Portal",
+       "title": "Canada",
        "img": "file_27249.jpg",
        "children": []
       },
       {
        "id": "51cbfc54f702fc2ba8122abc",
-       "title": "Mexico Portal",
+       "title": "Mexico",
        "img": "file_27252.jpg",
        "children": []
       },
       {
        "id": "51cbfc51f702fc2ba8122183",
-       "title": "United States Portal",
+       "title": "United States",
        "img": "file_27250.jpg",
        "children": [
         {
@@ -7913,7 +7914,7 @@
       },
       {
        "id": "51cbfc54f702fc2ba8122a1b",
-       "title": "Central America Portal",
+       "title": "Central America",
        "img": "file_27254.jpg",
        "children": [
         {
