@@ -40,7 +40,7 @@ window.addEventListener("load", onLoad, false);
 function createScene() {
   var parentE = document.getElementById("uninav");
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(30,
+  camera = new THREE.PerspectiveCamera(45,
     parentE.clientWidth / parentE.clientHeight, 0.1, 1000);
   //camera = new THREE.OrthographicCamera(-6, 6, 2, -2, 0.1, 1000);
   camera.position.z = 4;
@@ -111,7 +111,7 @@ function addTile(parentTile, title, imageURL) {
       parentTile.childGroup = group = new THREE.Object3D();
       group.centerAround = 0;
       group.position.x = 0; // centered below
-      group.position.y = -1.3;
+      group.position.y = -1.5;
       group.position.z = 0;
       // parentTile.add(group); -- done in showChildren()
     }
