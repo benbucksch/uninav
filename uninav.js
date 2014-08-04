@@ -11,6 +11,11 @@ var highlightedN; // the current tile, which is highlighted and all its ancestor
 var selectedN; // the tile which topic is shown in the main pane. The user had clicked on it.
 const imageRootURL = "../graphics/dunet/";
 
+/* text settings */
+var wrapLength = 10;
+var labelTextColor = "#ddeeff";
+var labelTextShadowColor = "#112233";
+var labelTextShadowBlur = 40;
 
 function onLoad() {
   createScene();
@@ -343,14 +348,58 @@ function elementPos(element) {
  *
  * @returns {THREE.Mesh} A 3D node with no depth
  */
-function make2DText(text)
-{
+function make2DText(text) {
   var canvas = document.createElement("canvas");
   var ctx = canvas.getContext("2d");
-  ctx.font = "30pt Arial";
-  ctx.fillStyle = "white";
-  //var width = ctx.measureText(text, 0, 0).width;
-  ctx.fillText(text, 0, 100);
+  ctx.font = "bold 42pt Arial";
+  // detect size of incoming text
+  // this is all really rickety and not good
+  if (text.length > wrapLength) {
+    // break text and attempt wrap at index
+    // find convenient space or force hyphen replace
+    // search for last space before desired break, if no space-> hyphen
+    var idx = text.search(" ");
+    if (idx !== -1 && idx <= wrapLength) {
+      // found space, make sure it is the closest to break
+      var oldIdx = idx;
+      do {
+        oldIdx = idx;
+        idx = text.indexOf(" ", oldIdx + 1);
+      } while (idx !== -1 && idx <= wrapLength);
+      var text01 = text.substring(0, oldIdx);
+      var text02 = text.substring(oldIdx, text.length);
+    } else {
+      // no space, use hyphen
+      var text01 = text.substring(0, idx) + "-";
+      var text02 = text.substring(idx, text.length);
+    }
+    var compensate = Math.floor((wrapLength - oldIdx) / 2);
+    var spaces = " ";
+    for (var i = 0; i < compensate; i++) {
+      spaces += spaces;
+    }
+    text01 = spaces + text01;
+    /* ctx.fillStyle = 'rgb(64,64,64)';
+    ctx.fillText(text01, 2, 102);
+    ctx.fillText(text02, 2, 142); */
+
+    //var width = ctx.measureText(text, 0, 0).width;
+    ctx.fillStyle = labelTextColor;
+    ctx.shadowColor = labelTextShadowColor;
+    ctx.shadowOffsetX = 3;
+    ctx.shadowOffsetY = 3;
+    ctx.shadowBlur = labelTextShadowBlur;
+    ctx.fillText(text01, 0, 100);
+    ctx.fillText(text02, 0, 140);
+  } else {
+    //var width = ctx.measureText(text, 0, 0).width;
+    ctx.fillStyle = labelTextColor;
+    ctx.shadowColor = labelTextShadowColor;
+    ctx.shadowOffsetX = 3;
+    ctx.shadowOffsetY = 3;
+    ctx.shadowBlur = labelTextShadowBlur;
+    ctx.fillText(text, 2, 100);
+  }
 
   var texture = new THREE.Texture(canvas);
   texture.needsUpdate = true;
