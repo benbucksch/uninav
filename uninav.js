@@ -48,7 +48,7 @@ function createScene() {
   camera.rotation.x = -0.6;
   if (window.WebGLRenderingContext) {
     try {
-      renderer = new THREE.WebGLRenderer({ antialiasing: true });
+      renderer = new THREE.WebGLRenderer({ antialiasing: true, alpha: true });
     } catch (e) {
       renderer = new THREE.CanvasRenderer();
     }
@@ -58,7 +58,7 @@ function createScene() {
   renderer.setSize(parentE.clientWidth, parentE.clientHeight);
   parentE.appendChild(renderer.domElement);
 
-  renderer.setClearColor(0x000000, 1); // black
+  renderer.setClearColor(0x000000, 0); // transparent
   ddebug("camera pos x,y,z = " + camera.position.x + "," + camera.position.y + "," + camera.position.z);
 
   return scene;
