@@ -40,7 +40,7 @@ window.addEventListener("load", onLoad, false);
 function createScene() {
   var parentE = document.getElementById("uninav");
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(45,
+  camera = new THREE.PerspectiveCamera(30,
     parentE.clientWidth / parentE.clientHeight, 0.1, 1000);
   //camera = new THREE.OrthographicCamera(-6, 6, 2, -2, 0.1, 1000);
   camera.position.z = 4;
