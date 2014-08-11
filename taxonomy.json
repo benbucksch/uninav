@@ -7,7 +7,7 @@
    "title": "Arts & Entertainment",
    "id": "51cbfc52f702fc2ba8122367",
    "img": "file_33574.jpg",
-   "subjects" : [ "http://en.wikipedia.org/wiki/Arts" ],
+   "dbpediaID" : [ "Arts" ],
    "children": [
     {
      "id": "51cbfc57f702fc2ba8123322",
