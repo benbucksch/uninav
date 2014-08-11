@@ -10,14 +10,112 @@ function assert(test, errorMsg) {
   }
 }
 
-function errorCritical(msg) {
-  alert(msg);
+function errorCritical(e) {
+  ddebug(e);
+  alert(e);
+}
+
+function errorNonCritical(e) {
+  ddebug(e);
 }
 
 function ddebug(msg) {
   if (console) {
     console.debug(msg);
   }
+}
+
+function E(id) {
+  return document.getElementById(id);
+}
+
+
+/**
+ * Create a subtype.
+ */
+function extend(child, supertype)
+{
+  child.prototype.__proto__ = supertype.prototype;
+}
+
+
+
+/**
+ * Parses a URL query string into an object.
+ *
+ * @param queryString {String} query ("?foo=bar&baz=3") part of the URL,
+ *     with or without the leading question mark
+ * @returns {Object} JS map { name1 : "value", name2: "othervalue" }
+ */
+function parseURLQueryString(queryString)
+{
+  var queryParams = {};
+  if (queryString.charAt(0) == "?" || queryString.charAt(0) == "#")
+    queryString = queryString.substr(1); // remove leading "?" or "#", if it exists
+  var queries = queryString.split("&");
+  for (var i = 0; i < queries.length; i++) {
+    try {
+      if ( !queries[i]) {
+        continue;
+      }
+      var querySplit = queries[i].split("=");
+      var value = querySplit[1].replace(/\+/g, " "); // "+" is space, before decoding
+      queryParams[querySplit[0]] = decodeURIComponent(value);
+    } catch (e) {
+      // Errors parsing the query string are not fatal, we should just continue
+      errorNonCritical(e);
+    }
+  }
+  return queryParams;
+}
+
+
+function getLang() {
+  return "en";
+}
+
+
+/**
+ * Return the contents of an object as multi-line string, for debugging.
+ * @param obj {Object} What you want to show
+ * @param name {String} What this object is. Used as prefix in output.
+ * @param maxDepth {Integer} How many levels of properties to access.
+ *    1 = just the properties directly on |obj|
+ * @param curDepth {Integer} internal, ignore
+ */
+function dumpObject(obj, name, maxDepth, curDepth)
+{
+  if (curDepth == undefined)
+    curDepth = 1;
+  if (maxDepth != undefined && curDepth > maxDepth)
+    return "";
+
+  var result = "";
+  var i = 0;
+  for (var prop in obj)
+  {
+    i++;
+    if (typeof(obj[prop]) == "xml")
+    {
+      result += name + "." + prop + "=[object]" + "\n";
+      result += dumpObject(obj[prop], name + "." + prop, maxDepth, curDepth+1);
+    }
+    else if (typeof(obj[prop]) == "object")
+    {
+      if (obj[prop] && typeof(obj[prop].length) != "undefined")
+        result += name + "." + prop + "=[probably array, length " + obj[prop].length + "]" + "\n";
+      else
+        result += name + "." + prop + "=[object]" + "\n";
+      result += dumpObject(obj[prop], name + "." + prop, maxDepth, curDepth+1);
+    }
+    else if (typeof(obj[prop]) == "function")
+      result += name + "." + prop + "=[function]" + "\n";
+    else
+      result += name + "." + prop + "=" + obj[prop] + "\n";
+  }
+  if ( ! i)
+    result += name + " is empty\n";
+  return result;
 }
 
 
@@ -29,8 +127,16 @@ function ddebug(msg) {
  *    result {String or Object or DOMDocument}
  * @param errorCallback {Function(e {Exception or Error})}
  */
-function loadURL(url, dataType, successCallback, errorCallback) {
-assert(typeof(dataType) == "string" && dataType, "need type");
+function loadURL(params, successCallback, errorCallback) {
+  var url = params.url;
+  assert(typeof(url) == "string" && url, "need type");
+  for (var name in params.urlArgs) {
+    url += (url.indexOf("?") == -1 ? "?" : "&") +
+            name + "=" + encodeURIComponent(params.urlArgs[name]);
+  }
+  var dataType = params.dataType;
+  assert(typeof(dataType) == "string" && dataType, "need type");
+
   var mimetype = null;
   //if (url.substr(0, 7) == "file://") {
     if (dataType == "text") {
@@ -47,6 +153,15 @@ assert(typeof(dataType) == "string" && dataType, "need type");
     }
     mimetype += "; charset=UTF-8";
   //}
+
+  /*if (params.lib == "jquery") {
+    $.getJSON(url, {
+      dataType : dataType,
+      success : successCallback,
+      error : errorCallback,
+    });
+    return;
+  }*/
 
   // <copied from="FetchHTTP">
   console.log("trying to open " + url);
@@ -114,6 +229,9 @@ assert(typeof(dataType) == "string" && dataType, "need type");
     } else if (dataType == "html") {
       data = new DOMParser().parseFromString(data, "text/html");
     } else if (dataType == "json") {
+      if (data.substr(0, 5) == "load(") {
+        data = data.substr(5, data.length - 6);
+      }
       data = JSON.parse(data);
     }
     successCallback(data);
@@ -126,3 +244,48 @@ assert(typeof(dataType) == "string" && dataType, "need type");
     errorCallback(e);
   }
 }
+
+function Exception(msg)
+{
+  this._message = msg;
+
+  // get stack
+  try {
+    not.found.here += 1; // force a native exception ...
+  } catch (e) {
+    this.stack = e.stack; // ... to get the current stack
+  }
+  //ddebug("ERROR (exception): " + msg + "\nStack:\n" + this.stack);
+}
+Exception.prototype =
+{
+  get message()
+  {
+    return this._message;
+  },
+  set message(msg)
+  {
+    this._message = msg;
+  },
+  toString : function()
+  {
+    return this._message;
+  }
+}
+
+function ServerException(serverMsg, code, uri)
+{
+  var msg = serverMsg;
+  if (code >= 300 && code < 600) { // HTTP error code
+    msg += " " + code;
+  }
+  msg += "\n\n<" + uri + ">";
+  Exception.call(this, msg);
+  this.rootErrorMsg = serverMsg;
+  this.code = code;
+  this.uri = uri;
+}
+ServerException.prototype =
+{
+}
+extend(ServerException, Exception);

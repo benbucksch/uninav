@@ -524,7 +524,7 @@ function loadAllTiles(taxonomyURL, successCallback, errorCallback) {
  */
 function loadTaxonomyJSON(url, resultCallback, errorCallback) {
   // util.js
-  loadURL(url, "json", function(rootNode) {
+  loadURL({ url: url, dataType: "json" }, function(rootNode) {
     var allByID = [];
     function addAllChildren(parent) {
       parent.children.forEach(function(node) {
