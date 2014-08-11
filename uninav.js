@@ -301,8 +301,8 @@ function onMouseClick(event) {
 
     var oldN = selectedN;
     selectedN = tile;
-    //tiltTile(selectedN);
-    //untiltTile(oldN);
+    tiltTile(selectedN);
+    untiltTile(oldN);
     setBackground(imageRootURL + selectedN.node.img);
   }
 }
