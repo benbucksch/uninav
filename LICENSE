@@ -1,3 +1,20 @@
+(c) 2014 Ben Bucksch
+GPL3
+<http://www.gnu.org/licenses/gpl.html>
+
+* Opening a webpage in a browser is "distribution" or "conveying"
+  of the webpage including its JavaScript, HTML, CSS etc.
+* Server-side software and client-side software (the webpage incl. JavaScript)
+  are two distinct programs.
+  I.e. the GPL of the JavaScript does not force
+  the server side functions that it calls to be under the GPL.
+* An <iframe> is the program boundary of the webpage.
+  I.e. JavaScript under GPL that loads another webpage in an
+  <iframe> does not force the latter to be under the GPL.
+
+
+----------------------------------------------------------------
+
 GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
