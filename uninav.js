@@ -239,7 +239,7 @@ function tiltTile(tile) {
 }
 
 /**
- * Action: Undo tiltTile()
+ * Action: Undo tileTile()
  * When: user clicked on another tile
  */
 function untiltTile(tile) {
@@ -256,14 +256,6 @@ function untiltTile(tile) {
             .to({ x : tile.label.oldRotation.x }, 250)
             .start();
   tile.label.rotation = null;
-}
-
-/**
- * Set the background image of the uninav.
- * When: the user clicked on a tile
- */
-function setBackground(imageURL) {
-  E("uninav").setAttribute("style", "background-image: url(" + imageURL + ")");
 }
 
 function render(time) {
@@ -301,9 +293,8 @@ function onMouseClick(event) {
 
     var oldN = selectedN;
     selectedN = tile;
-    //tiltTile(selectedN);
-    //untiltTile(oldN);
-    setBackground(imageRootURL + selectedN.node.img);
+    tiltTile(selectedN);
+    untiltTile(oldN);
   }
 }
 
