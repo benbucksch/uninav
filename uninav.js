@@ -509,14 +509,14 @@ function loadAllTiles(taxonomyURL, successCallback, errorCallback) {
 /**
  * Loads taxonomy from JSON file
  * @param url {String} relative URL to the JSON file
- * @param resultCallback {Function(rootNodes, allByID)} Called when server returned
- * rootNodes {Array of Node} just the root nodes, each with |children|
+ * @param resultCallback {Function(rootNode, allByID)} Called when server returned
+ * rootNode {Node} just the root node, with |children|
  * allByID {Array of Node} with index == ID, all nodes
  * Node {
  *   id {Integer}, ID of node
  *   title {String},
  *   img {String}, image filename, relative to special image path
- *   parent {Node},
+ *   parents {Array of Node},
  *   children {Array of Node},
  * }
  * @param errorCallback {Function(e)} Called when there was an error
@@ -524,26 +524,26 @@ function loadAllTiles(taxonomyURL, successCallback, errorCallback) {
  */
 function loadTaxonomyJSON(url, resultCallback, errorCallback) {
   // util.js
-  loadURL({ url: url, dataType: "json" }, function(rootNode) {
-    var allByID = [];
-    function addAllChildren(parent) {
-      parent.children.forEach(function(node) {
-        assert(node.id, "ID missing");
-        assert(node.title, "Title missing");
-        /*assert(node.img, "Image missing"); TODO fix taxonomy
-        if (allByID[node.id])
-          assert(false, "Node ID " + node.id + " appears twice. " +
-              allByID[node.id].title + " and " + node.title);*/
-        allByID[node.id] = node;
-        node.parent = parent;
-        if (node.children && node.children.length > 0) {
-          addAllChildren(node);
-        } else {
-          node.children = [];
-        }
-      });
-    }
-    addAllChildren(rootNode);
+  loadURL({ url: url, dataType: "json" }, function(allNodes) {
+    // array -> map
+    var allByID = {};
+    allNodes.forEach(function(node) {
+      assert(node.id, "ID missing");
+      assert(node.title, "Title missing");
+      //assert(node.img, "Image missing");
+      if (allByID[node.id]) { // TODO fix taxonomy
+        assert(false, "Node ID " + node.id + " appears twice. " +
+            allByID[node.id].title + " and " + node.title);
+      }
+      allByID[node.id] = node;
+    });
+    // resolve ID -> obj
+    allNodes.forEach(function(node) {
+      node.parents = node.parentIDs.map(function(id) { return allByID[id]; });
+      node.children = node.childrenIDs.map(function(id) { return allByID[id]; });
+    });
+    var rootNode = allByID["root"];
+    ddebug(dumpObject(rootNode, "root", 5));
     resultCallback(rootNode, allByID);
   }, errorCallback);
 }
