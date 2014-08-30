@@ -73,7 +73,8 @@ function cameraLookAt(tile) {
 
   //camera.position.y = tilePosition.y + 2.5;
   var scrollTween = new TWEEN.Tween(camera.position)
-              .to({ y: tilePosition.y + 2.5 }, 1000)
+              .to({ x: camera.position.x + (0.4 * (tilePosition.x - camera.position.x)), 
+                    y: tilePosition.y + 2.5 }, 1000)
               .easing(TWEEN.Easing.Quadratic.InOut)
               .start();
   //ddebug(tile.title + "\ntile pos x,y,z = " + tilePosition.x + "," + tilePosition.y + "," + tilePosition.z + "\ncamera pos x,y,z = " + camera.position.x + "," + camera.position.y + "," + camera.position.z);
