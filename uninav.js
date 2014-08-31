@@ -24,10 +24,11 @@ function onLoad() {
   loadAllTiles("taxonomy.json", function(aRootN) {
     rootN = aRootN;
     showChildren(rootN);
-    var animalN = rootN.childTiles[4];
-    highlightTile(animalN);
+    var startN = rootN.childTiles[0];
+    assert(startN, "Start node not found. Taxonomy file broken?");
+    highlightTile(startN);
     setTimeout(function() { // HACK
-      cameraLookAt(animalN);
+      cameraLookAt(startN);
     }, 100);
 
     renderer.domElement.addEventListener("mousemove", onMouseMove, false);
