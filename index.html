@@ -52,8 +52,7 @@
  * This direction function call works, because it's the same domain.
  * Alternative: events sent via postMessage(), see below.
  */
-function openTopic(tile) {
-  var topic = tile.node;
+function openTopic(topic) {
   document.getElementById("content").setAttribute("src", topic.targetURL);
 }
 

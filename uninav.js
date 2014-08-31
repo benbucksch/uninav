@@ -555,8 +555,8 @@ function loadTaxonomyJSON(url, resultCallback, errorCallback) {
  * When: User clicked on a tile
  * Action: Open the DU topic in the content pane
  */
-function openTopic(tile) {
+function openTopic(node) {
   var target = window.parent;
-  target.openTopic(tile);
-  //target.postMessage(tile, "http://www.manyone.zone");
+  target.openTopic(node);
+  //target.postMessage(node, "http://www.manyone.zone");
 }
