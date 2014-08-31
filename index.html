@@ -26,8 +26,13 @@
     position: relative;
     top: 0px;
   }
-  #title, #content {
-    margin: 1em;
+  #content {
+    width: 100%;
+    min-height: 500px;
+
+    padding: 0 0 0 0;
+    margin: 0 0 0 0;
+    border: none;
   }
 </style>
 <script type="text/javascript">
@@ -41,8 +46,9 @@
  * This direction function call works, because it's the same domain.
  * Alternative: events sent via postMessage(), see below.
  */
-function openTopic(topic) {
-  document.getElementById("title").textContent = topic.title;
+function openTopic(tile) {
+  var topic = tile.node;
+  document.getElementById("content").setAttribute("src", topic.targetURL);
 }
 
 // listen to page change events from uninav
@@ -61,12 +67,7 @@ window.addEventListener("message", function(event) {
 <body>
 <iframe id="uninav" src="uninav.html"></iframe>
 
-<!-- dummy page -->
-<h1 id="title">Digital Universe</h1>
-<div id="content">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-
-Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
-</div>
+<iframe id="content" src="http://manyoneoffice.org"></iframe>
 
 </body>
 </html>
