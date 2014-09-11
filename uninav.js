@@ -47,6 +47,9 @@ function createScene() {
   camera.position.z = 4;
   camera.position.y = 2.25;
   camera.rotation.x = -0.6;
+  camera.rotationBaseX = -0.6;
+  camera.rotationBaseY = 0;
+  camera.rotationBaseZ = 0;
   if (window.WebGLRenderingContext) {
     try {
       renderer = new THREE.WebGLRenderer({ antialiasing: true, alpha: true });
