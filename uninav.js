@@ -501,7 +501,7 @@ function isAncestor(ancestor, child) {
  */
 function loadAllTiles(taxonomyURL, successCallback, errorCallback) {
   loadTaxonomyJSON(taxonomyURL, function(rootNode, allByID) {
-    var rootTile = addTile(null, "", "");
+    var rootTile = addTile(null, rootNode.title, imageRootURL + rootNode.img);
     rootTile.node = rootNode;
     addTilesForChildren(rootTile);
     successCallback(rootTile);

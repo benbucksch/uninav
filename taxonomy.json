@@ -50,8 +50,8 @@
  },
  {
   "id": "root",
-  "title": " ",
-  "img": "about:blank",
+  "title": "ManyOne",
+  "img": "manyone.png",
   "parentIDs": [],
   "childrenIDs": [
    "f522367",
