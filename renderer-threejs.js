@@ -6,10 +6,6 @@
 var renderer;
 var camera;
 var scene;
-var rootN;
-var highlightedN; // the current tile, which is highlighted and all its ancestors. The user had hovered over this.
-var selectedN; // the tile which topic is shown in the main pane. The user had clicked on it.
-const imageRootURL = "../graphics/dunet/";
 
 /* text settings */
 var wrapLength = 10;
@@ -17,29 +13,7 @@ var labelTextColor = "#ddeeff";
 var labelTextShadowColor = "#112233";
 var labelTextShadowBlur = 40;
 
-function onLoad() {
-  createScene();
-  render();
-
-  loadAllTiles("taxonomy.json", function(aRootN) {
-    rootN = aRootN;
-    showChildren(rootN);
-    var startN = rootN.childTiles[0];
-    assert(startN, "Start node not found. Taxonomy file broken?");
-    highlightTile(startN);
-    setTimeout(function() { // HACK
-      cameraLookAt(startN);
-    }, 100);
-
-    renderer.domElement.addEventListener("mousemove", onMouseMove, false);
-    renderer.domElement.addEventListener("click", onMouseClick, false);
-  }, errorCritical);
-}
-
-window.addEventListener("load", onLoad, false);
-
-function createScene() {
-  var parentE = document.getElementById("uninav");
+function createScene(parentE) {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(30,
     parentE.clientWidth / parentE.clientHeight, 0.1, 1000);
@@ -77,7 +51,7 @@ function cameraLookAt(tile) {
 
   //camera.position.y = tilePosition.y + 2.5;
   var scrollTween = new TWEEN.Tween(camera.position)
-              .to({ x: camera.position.x + (0.4 * (tilePosition.x - camera.position.x)), 
+              .to({ x: camera.position.x + (0.4 * (tilePosition.x - camera.position.x)),
                     y: tilePosition.y + 2.5 }, 1000)
               .easing(TWEEN.Easing.Quadratic.InOut)
               .start();
@@ -170,58 +144,6 @@ function removeHighlightFor(tile) {
   tile.remove(tile.highlightN);
 }
 
-function highlightTile(tile) {
-  if (tile == highlightedN || !tile) {
-    return;
-  }
-  var oldN = highlightedN;
-  highlightedN = tile;
-  ddebug("hovering over " + tile.title);
-
-  if (oldN) {
-    forEachAncestor(oldN, function(oldAncestorN) {
-      if ( !isAncestor(oldAncestorN, tile)) {
-        removeHighlightFor(oldAncestorN);
-        hideChildren(oldAncestorN);
-      }
-    });
-  }
-
-  createHighlightFor(tile);
-  cameraLookAt(tile);
-  showChildren(tile);
-}
-
-function showChildren(parentTile) {
-  addTilesForChildren(parentTile);
-  if (parentTile && parentTile.childGroup) {
-    parentTile.add(parentTile.childGroup);
-  }
-}
-
-function hideChildren(parentTile) {
-  if (parentTile && parentTile.childGroup) {
-    parentTile.remove(parentTile.childGroup);
-    parentTile.childGroup = null;
-    parentTile.childTiles = [];
-  }
-}
-
-function addTilesForChildren(parentTile) {
-  var node = parentTile.node;
-  if ( !parentTile || !node || !node.children || node.children.length <= 0) {
-    return;
-  }
-  if (parentTile.childTiles && parentTile.childTiles.length > 0) {
-    return;
-  }
-
-  node.children.forEach(function(node) {
-    node.tile = addTile(parentTile, node.title, imageRootURL + node.img);
-    node.tile.node = node;
-  });
-}
-
 /**
  * Action: orient tile so that it faces directly into camera,
  * orthogonally, so that the image is displayed like in 2D.
@@ -267,40 +189,6 @@ function render(time) {
   requestAnimationFrame(render);
   TWEEN.update(time);
   renderer.render(scene, camera);
-}
-
-function onKeyboard(event) {
-  var keyCode = event.which;
-
-  if (keyCode == 38) { // Cursor up
-    changeToParent();
-  } else if (keyCode == 40) { // Cursor down
-    changeToChild();
-  } else if (keyCode == 37) { // Cursor left
-    changeToSibling(-1);
-  } else if (keyCode == 39) { // Cursor right
-    changeToSibling(1);
-  }
-}
-window.addEventListener("keydown", onKeyboard, false);
-
-function onMouseMove(event) {
-  var tile = pos2DTo3DObject(event);
-  if (tile && tile != highlightedN) {
-    highlightTile(tile);
-  }
-}
-
-function onMouseClick(event) {
-  var tile = pos2DTo3DObject(event);
-  if (tile && tile != selectedN) {
-    openTopic(tile);
-
-    var oldN = selectedN;
-    selectedN = tile;
-    tiltTile(selectedN);
-    untiltTile(oldN);
-  }
 }
 
 /**
@@ -427,140 +315,4 @@ function make2DText(text) {
   */
 
   return node;
-}
-
-/**
- * Changes highlighted tile to another in the same hierarchy level
- * @param relPos {Integer} e.g. 1 for next, -1 for previous etc.
- */
-function changeToSibling(relPos) {
-  if (highlightedN && highlightedN.parentTile) {
-    var siblings = highlightedN.parentTile.childTiles;
-    var oldIndex = siblings.indexOf(highlightedN);
-    var newIndex = oldIndex + relPos;
-    if (oldIndex != -1 && newIndex >= 0 && newIndex < siblings.length) {
-      highlightTile(siblings[newIndex]);
-    }
-  }
-}
-
-function changeToParent() {
-  if (highlightedN && highlightedN.parentTile) {
-    if ( !highlightedN.parentTile.parentTile) {
-      return; // HACK: fake root note, don't select it
-    }
-    highlightTile(highlightedN.parentTile);
-  }
-}
-
-function changeToChild() {
-  if (highlightedN && highlightedN.childTiles[0]) {
-    highlightTile(highlightedN.childTiles[0]);
-  }
-}
-
-/**
- * @param tile {Tile}
- *     if null, return all tiles
- * @returns {Array of Tile} all children of |tile|, not including |tile|
- */
-function allChildren(tile) {
-  tile = tile || rootN;
-  var result = [];
-  tile.childTiles.forEach(function(child) {
-    result.push(child);
-    result = result.concat(allChildren(child));
-  });
-  return result;
-}
-
-/**
- * @param ancestor {Tile}
- * @param callback {Function(child {Tile})} Called for each ancestor
- */
-function forEachAncestor(ancestor, callback) {
-  for (var cur = ancestor; cur.parentTile; cur = cur.parentTile) {
-    callback(cur);
-  }
-}
-
-/**
- * @param ancestor {Tile}
- * @param child {Tile}
- * @returns {boolean} |ancestor| is an ancestor of |child|
- */
-function isAncestor(ancestor, child) {
-  for (var cur = child; cur.parentTile; cur = cur.parentTile) {
-    if (cur.parentTile == ancestor) {
-      return true;
-    }
-  }
-  return false;
-}
-
-/**
- * Loads taxnomy from JSON and creates all tiles
- * @successCallback {Function(rootTile)}
- */
-function loadAllTiles(taxonomyURL, successCallback, errorCallback) {
-  loadTaxonomyJSON(taxonomyURL, function(rootNode, allByID) {
-    var rootTile = addTile(null, rootNode.title, imageRootURL + rootNode.img);
-    rootTile.node = rootNode;
-    addTilesForChildren(rootTile);
-    successCallback(rootTile);
-  }, errorCallback);
-}
-
-/**
- * Loads taxonomy from JSON file
- * @param url {String} relative URL to the JSON file
- * @param resultCallback {Function(rootNode, allByID)} Called when server returned
- * rootNode {Node} just the root node, with |children|
- * allByID {Array of Node} with index == ID, all nodes
- * Node {
- *   id {Integer}, ID of node
- *   title {String},
- *   img {String}, image filename, relative to special image path
- *   parents {Array of Node},
- *   children {Array of Node},
- * }
- * @param errorCallback {Function(e)} Called when there was an error
- *    Either resultCallback() or errorCallback() will be called.
- */
-function loadTaxonomyJSON(url, resultCallback, errorCallback) {
-  // util.js
-  loadURL({ url: url, dataType: "json" }, function(allNodes) {
-    // array -> map
-    var allByID = {};
-    allNodes.forEach(function(node) {
-      assert(node.id, "ID missing");
-      assert(node.title, "Title missing");
-      //assert(node.img, "Image missing");
-      if (allByID[node.id]) { // TODO fix taxonomy
-        assert(false, "Node ID " + node.id + " appears twice. " +
-            allByID[node.id].title + " and " + node.title);
-      }
-      allByID[node.id] = node;
-    });
-    // resolve ID -> obj
-    allNodes.forEach(function(node) {
-      node.parents = node.parentIDs.map(function(id) { return allByID[id]; });
-      node.children = node.childrenIDs.map(function(id) { return allByID[id]; });
-    });
-    var rootNode = allByID["root"];
-    ddebug(dumpObject(rootNode, "root", 5));
-    resultCallback(rootNode, allByID);
-  }, errorCallback);
-}
-
-
-/**
- * When: User clicked on a tile
- * Action: Open the DU topic in the content pane
- */
-function openTopic(tile) {
-  var node = tile.node;
-  var target = window.parent;
-  target.openTopic(node);
-  //target.postMessage(node, "http://www.manyone.zone");
 }
