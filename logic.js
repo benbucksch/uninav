@@ -3,18 +3,17 @@
  * Published as AGPLv3
  */
 
-var rootN;
+var rootObj;
 var highlightedN; // the current tile, which is highlighted and all its ancestors. The user had hovered over this.
 var selectedN; // the tile which topic is shown in the main pane. The user had clicked on it.
-const imageRootURL = "../graphics/dunet/";
 
 function onLoad() {
   createScene(document.getElementById("uninav"));
   render();
 
-  loadAllTiles("taxonomy.json", function(aRootN) {
-    rootN = aRootN;
-    showChildren(rootN);
+  showRoot(function(rootObj) {
+    rootObj = rootObj;
+    showChildren(rootObj);
     var startN = rootN.childTiles[0];
     assert(startN, "Start node not found. Taxonomy file broken?");
     highlightTile(startN);
@@ -27,6 +26,20 @@ function onLoad() {
   }, errorCritical);
 }
 window.addEventListener("load", onLoad, false);
+
+
+/**
+ * Loads and display the root node
+ * @successCallback {Function(rootObj {Object3D})}
+ */
+function showRoot(successCallback, errorCallback) {
+  loadRootNode(function(rootNode) {
+    var rootObj = new ThreeTile(rootNode, null);
+    successCallback(rootObj);
+  }, errorCallback);
+}
+
+
 
 
 function highlightTile(tile) {
@@ -51,19 +64,19 @@ function highlightTile(tile) {
   showChildren(tile);
 }
 
-function showChildren(parentTile) {
-  addTilesForChildren(parentTile);
-  if (parentTile && parentTile.childGroup) {
-    parentTile.add(parentTile.childGroup);
+function showChildren(parentObj) {
+  if ( !parentObj) {
+    return;
   }
+  addTilesForChildren(parentObj);
+  parentObj.showChildren();
 }
 
-function hideChildren(parentTile) {
-  if (parentTile && parentTile.childGroup) {
-    parentTile.remove(parentTile.childGroup);
-    parentTile.childGroup = null;
-    parentTile.childTiles = [];
+function hideChildren(parentObj) {
+  if ( !parentObj) {
+    return;
   }
+  parentObj.hideChildren();
 }
 
 function addTilesForChildren(parentTile) {
@@ -76,7 +89,7 @@ function addTilesForChildren(parentTile) {
   }
 
   node.children.forEach(function(node) {
-    node.tile = addTile(parentTile, node.title, imageRootURL + node.img);
+    node.tile = addTile(parentTile, node.title, node.iconURL);
     node.tile.node = node;
   });
 }

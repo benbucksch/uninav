@@ -3,6 +3,39 @@
  * Published as AGPLv3
  */
 
+
+/**
+ * Represents a |Topic| on the screen
+ *
+ * @param parentObj {Obj3D}  where to add this to as child
+ *     Use |null| for the root obj.
+ */
+function Obj3D(topic, parentObj) {
+  assert(topic instanceof Topic, "Need |topic| of type |Topic|");
+  assert(parentObj instanceof Obj3D, "Need |parentObj| of type |Obj3D|");
+  this.topic = topic;
+  this.parent = parentObj;
+  this.children = [];
+  if (this.parent) {
+    this.parent.children.push(this);
+  }
+}
+Obj3D.prototype = {
+  /**
+   * {Topic}
+   */
+  topic : null,
+
+  /**
+   * {Obj3D}
+   */
+  parent : null,
+  /**
+   * {Array of {Obj3D}}
+   */
+  children : null,
+}
+
 var renderer;
 var camera;
 var scene;
@@ -45,9 +78,9 @@ function createScene(parentE) {
 
 function cameraLookAt(tile) {
   var tilePosition = new THREE.Vector3();
-  //tile.matrixWorldNeedsUpdate = true;
-  tile.updateMatrixWorld();
-  tilePosition.setFromMatrixPosition(tile.matrixWorld);
+  //tile.mesh.matrixWorldNeedsUpdate = true;
+  tile.mesh.updateMatrixWorld();
+  tilePosition.setFromMatrixPosition(tile.mesh.matrixWorld);
 
   //camera.position.y = tilePosition.y + 2.5;
   var scrollTween = new TWEEN.Tween(camera.position)
@@ -58,132 +91,144 @@ function cameraLookAt(tile) {
   //ddebug(tile.title + "\ntile pos x,y,z = " + tilePosition.x + "," + tilePosition.y + "," + tilePosition.z + "\ncamera pos x,y,z = " + camera.position.x + "," + camera.position.y + "," + camera.position.z);
 }
 
+
 /**
- * @param parentTile {THREE.Mesh} another tile created by addTile.
- *     Use |null| for root nodes.
- * @param title {String} user-visible name of the tile
- * @param imageURL {String} relative URL of the image, e.g.
- *     "img/window.png" or "/img/window.jpg"
- * @returns {THREE.Mesh} The resulting tile node.
- *     It's already added to the scene.
- *     You need this as |parentTile| for child tiles.
+ * Represents a |Topic| on the screen using a tile,
+ * rendered using ThreeJS
  */
-function addTile(parentTile, title, imageURL) {
-  var plane = new THREE.PlaneGeometry(1, 1);
-  var texture = new THREE.ImageUtils.loadTexture(imageURL);
-  var material = new THREE.MeshBasicMaterial({
-    map : texture,
-    side : THREE.FrontSide,
-  });
-  var node = new THREE.Mesh(plane, material);
+function ThreeTile(topic, parentObj) {
+  Obj3D.call(this, topic, parentObj);
+  this.create();
+}
+ThreeTile.prototype = {
+  /**
+   * Group (in THREE) that contains all the child objects.
+   */
+  childGroup : null,
 
-  node.title = title;
-  node.imageURL = imageURL;
-  node.childTiles = [];
-  node.parentTile = parentTile;
+  create : function() {
+    var plane = new THREE.PlaneGeometry(1, 1);
+    var texture = new THREE.ImageUtils.loadTexture(this.topic.imageURL);
+    var material = new THREE.MeshBasicMaterial({
+      map : texture,
+      side : THREE.FrontSide,
+    });
+    this.mesh = new THREE.Mesh(plane, material);
 
-  if (parentTile) {
-    parentTile.childTiles.push(node);
+    if (this.parent) {
+      var group = this.parent.childGroup || null;
+      if ( !group) {
+        this.parent.childGroup = group = new THREE.Object3D();
+        group.centerAround = 0;
+        group.position.x = 0; // centered below
+        group.position.y = -1.5;
+        group.position.z = 0;
+        // this.parent.mesh.add(group); -- done in showChildren()
+      }
+      this.mesh.position.x = this.parent.children.length * 1.2;
+      var groupWidth = this.mesh.position.x + 1;
+      group.position.x = group.centerAround - groupWidth / 2;
 
-    var group = parentTile.childGroup || null;
-    if ( !group) {
-      parentTile.childGroup = group = new THREE.Object3D();
-      group.centerAround = 0;
-      group.position.x = 0; // centered below
-      group.position.y = -1.5;
-      group.position.z = 0;
-      // parentTile.add(group); -- done in showChildren()
+      group.add(this.mesh);
+    } else {
+      scene.add(this.mesh);
     }
-    node.position.x = parentTile.childTiles.length * 1.2;
-    var groupWidth = node.position.x + 1;
-    group.position.x = group.centerAround - groupWidth / 2;
 
-    group.add(node);
-  } else {
-    scene.add(node);
+    var label = make2DText(this.topic.title);
+    label.position.set(0, -0.6, 0);
+    this.label = label;
+    this.mesh.add(label);
+  },
+
+  showChildren : function() {
+    if (this.childGroup) {
+      this.parent.mesh.add(this.childGroup);
+    }
+  },
+
+  hideChildren : function() {
+    if (this.childGroup) {
+      this.mesh.remove(this.childGroup);
+      this.childGroup = null;
+    }
   }
 
-  var label = make2DText(title);
-  label.position.set(0, -0.6, 0);
-  node.label = label;
-  node.add(label);
 
-  return node;
+  /**
+   * Action: orient tile so that it faces directly into camera,
+   * orthogonally, so that the image is displayed like in 2D.
+   * When: user clicked on tile
+   */
+  tilt : function() {
+    this.oldRotation = this.mesh.rotation.clone();
+    //tile.rotation.copy(camera.rotation);
+    var tiltTween = new TWEEN.Tween(this.mesh.rotation)
+              .to({ x : camera.rotation.x }, 1000)
+              .easing(TWEEN.Easing.Quadratic.InOut)
+              .start();
+
+    // HACK: Move dependent objs, too. Correct: Re-organize scene graph
+    this.oldLabelRotation = this.label.rotation.clone();
+    var textTween = new TWEEN.Tween(this.label.rotation)
+              .to({ x : 0 }, 1000)
+              .easing(TWEEN.Easing.Quadratic.InOut)
+              .start();
+  },
+
+  /**
+   * Action: Undo tilt()
+   * When: user clicked on another tile
+   */
+  untilt : function() {
+    if ( !this.oldRotation) {
+      return;
+    }
+    var self = this;
+    //this.mesh.rotation.copy(this.oldRotation);
+    var tiltTween = new TWEEN.Tween(this.mesh.rotation)
+              .to({ x : self.oldRotation.x }, 250)
+              .start();
+    this.oldRotation = null;
+    //this.label.rotation.copy(this.oldLabelRotation);
+    var textTween = new TWEEN.Tween(this.label.rotation)
+              .to({ x : self.oldLabelRotation.x }, 250)
+              .start();
+    this.oldLabelRotation = null;
+  },
+
+  /**
+  * Creates an obj that highlights |this| obj.
+  */
+  highlight : function() {
+    var tileSize = 1;
+    var borderSize = 0.05;
+    var x1 = - tileSize/2 - borderSize;
+    var x2 = tileSize/2 + borderSize;
+    var y1 = - tileSize/2 - borderSize;
+    var y2 = tileSize/2 + borderSize;
+    var z = 0;
+    var line = new THREE.Geometry();
+    line.vertices.push(new THREE.Vector3(x1, y1, z));
+    line.vertices.push(new THREE.Vector3(x1, y2, z));
+    line.vertices.push(new THREE.Vector3(x2, y2, z));
+    line.vertices.push(new THREE.Vector3(x2, y1, z));
+    line.vertices.push(new THREE.Vector3(x1, y1, z));
+    line.computeLineDistances();
+    var material = new THREE.LineBasicMaterial({
+      color : 0xFFFF00, // yellow
+    });
+    var mesh = new THREE.Line(line, material);
+    this.mesh.add(mesh);
+    this.highlight = mesh;
+  },
+
+  removeHighlight : function() {
+    this.mesh.remove(this.highlight);
+    this.highlight = null;
+  },
+
 }
-
-/**
- * Creates a node that highlights another node.
- *
- * @returns {THREE.Mesh} a node that highlights
- *    the given tile. It's already added to the scene.
- */
-function createHighlightFor(tile) {
-  var tileSize = 1;
-  var borderSize = 0.05;
-  var x1 = - tileSize/2 - borderSize;
-  var x2 = tileSize/2 + borderSize;
-  var y1 = - tileSize/2 - borderSize;
-  var y2 = tileSize/2 + borderSize;
-  var z = 0;
-  var line = new THREE.Geometry();
-  line.vertices.push(new THREE.Vector3(x1, y1, z));
-  line.vertices.push(new THREE.Vector3(x1, y2, z));
-  line.vertices.push(new THREE.Vector3(x2, y2, z));
-  line.vertices.push(new THREE.Vector3(x2, y1, z));
-  line.vertices.push(new THREE.Vector3(x1, y1, z));
-  line.computeLineDistances();
-  var material = new THREE.LineBasicMaterial({
-    color : 0xFFFF00, // yellow
-  });
-  var node = new THREE.Line(line, material);
-  tile.add(node);
-  tile.highlightN = node;
-}
-
-function removeHighlightFor(tile) {
-  tile.remove(tile.highlightN);
-}
-
-/**
- * Action: orient tile so that it faces directly into camera,
- * orthogonally, so that the image is displayed like in 2D.
- * When: user clicked on tile
- */
-function tiltTile(tile) {
-  tile.oldRotation = tile.rotation.clone();
-  //tile.rotation.copy(camera.rotation);
-  var tiltTween = new TWEEN.Tween(tile.rotation)
-            .to({ x : camera.rotation.x }, 1000)
-            .easing(TWEEN.Easing.Quadratic.InOut)
-            .start();
-
-  // HACK: Move dependent nodes, too. Correct: Re-organize scene graph
-  tile.label.oldRotation = tile.label.rotation.clone();
-  var textTween = new TWEEN.Tween(tile.label.rotation)
-            .to({ x : 0 }, 1000)
-            .easing(TWEEN.Easing.Quadratic.InOut)
-            .start();
-}
-
-/**
- * Action: Undo tileTile()
- * When: user clicked on another tile
- */
-function untiltTile(tile) {
-  if ( !tile || !tile.oldRotation) {
-    return;
-  }
-  //tile.rotation.copy(tile.oldRotation);
-  var tiltTween = new TWEEN.Tween(tile.rotation)
-            .to({ x : tile.oldRotation.x }, 250)
-            .start();
-  tile.oldRotation = null;
-  //tile.label.rotation.copy(tile.label.oldRotation);
-  var textTween = new TWEEN.Tween(tile.label.rotation)
-            .to({ x : tile.label.oldRotation.x }, 250)
-            .start();
-  tile.label.rotation = null;
-}
+extend(ThreeTile, Obj3D);
 
 function render(time) {
   requestAnimationFrame(render);
@@ -235,11 +280,11 @@ function elementPos(element) {
 }
 
 /**
- * Creates a 3D node with 2D text.
+ * Creates a 3D obj with 2D text.
  * It uses <canvas> to render text to an image,
  * then puts that image as texture on a new 3D object.
  *
- * @returns {THREE.Mesh} A 3D node with no depth
+ * @returns {THREE.Mesh} A 3D obj with no depth
  */
 function make2DText(text) {
   var canvas = document.createElement("canvas");
@@ -302,17 +347,17 @@ function make2DText(text) {
   });
   material.transparent = true;
   var plane = new THREE.PlaneGeometry(1, 0.6);
-  var node = new THREE.Mesh(plane, material);
-  node.rotation.copy(camera.rotation);
+  var mesh = new THREE.Mesh(plane, material);
+  mesh.rotation.copy(camera.rotation);
 
   /* Black background
   var bgmaterial = new THREE.MeshBasicMaterial({
     color: 0x000000,
   });
   var bgplane = new THREE.PlaneGeometry(1, 0.6);
-  var bgnode = new THREE.Mesh(bgplane, bgmaterial);
-  node.add(bgnode);
+  var bgmesh = new THREE.Mesh(bgplane, bgmaterial);
+  mesh.add(bgmesh);
   */
 
-  return node;
+  return mesh;
 }
