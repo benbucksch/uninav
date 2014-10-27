@@ -76,6 +76,41 @@ function getLang() {
 
 
 /**
+ * Removes |element| from |array|.
+ * @param array {Array} to be modified. Will be modified in-place.
+ * @param element {Object} If |array| has a member that equals |element|,
+ *    the array member will be removed.
+ * @param all {boolean}
+ *     if true: remove all occurences of |element| in |array.
+ *     if false: remove only the first hit
+ * @returns {Integer} number of hits removed (0, 1 or more)
+ */
+function arrayRemove(array, element, all)
+{
+  var found = 0;
+  var pos = 0;
+  while ((pos = array.indexOf(element, pos)) != -1)
+  {
+    array.splice(pos, 1);
+    found++
+    if ( ! all)
+      return found;
+  }
+  return found;
+}
+
+/**
+ * Check whether |element| is in |array|
+ * @param array {Array}
+ * @param element {Object}
+ * @returns {boolean} true, if |array| has a member that equals |element|
+ */
+function arrayContains(array, element)
+{
+  return array.indexOf(element) != -1;
+}
+
+/**
  * Return the contents of an object as multi-line string, for debugging.
  * @param obj {Object} What you want to show
  * @param name {String} What this object is. Used as prefix in output.

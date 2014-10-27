@@ -79,6 +79,26 @@ Obj3D.prototype = {
     return child.isChildOf(this);
   },
 
+
+  showChildren : function() {
+    throw NotReached("Override");
+  },
+  hideChildren : function() {
+    throw NotReached("Override");
+  },
+  highlight : function() {
+    throw NotReached("Override");
+  },
+  removeHighlight : function() {
+    throw NotReached("Override");
+  },
+  select : function() {
+    throw NotReached("Override");
+  },
+  unselect : function() {
+    throw NotReached("Override");
+  },
+
 }
 
 
@@ -118,7 +138,7 @@ function createScene(parentE) {
   parentE.appendChild(renderer.domElement);
 
   renderer.setClearColor(0x000000, 0); // transparent
-  ddebug("camera pos x,y,z = " + camera.position.x + "," + camera.position.y + "," + camera.position.z);
+  //ddebug("camera pos x,y,z = " + camera.position.x + "," + camera.position.y + "," + camera.position.z);
 
   scene.onMouseClick = function(listener) {
     assert(typeof(listener) == "function");
@@ -223,6 +243,12 @@ ThreeTile.prototype = {
     if (this.childGroup) {
       this.mesh.remove(this.childGroup);
       this.childGroup = null;
+
+      // for pos2DTo3DObject()
+      this.children.forEach(function(child) {
+        arrayRemove(gAllMeshes, child.mesh);
+      });
+      this.children = [];
     }
   },
 
@@ -239,6 +265,13 @@ ThreeTile.prototype = {
     this.topic.children.forEach(function(childTopic) {
       var childNode = new ThreeTile(childTopic, parentTile);
     });
+  },
+
+  select : function() {
+    this.tilt();
+  },
+  unselect : function() {
+    this.untilt();
   },
 
   /**
@@ -306,15 +339,15 @@ ThreeTile.prototype = {
     });
     var mesh = new THREE.Line(line, material);
     this.mesh.add(mesh);
-    this.highlight = mesh;
+    this._highlightMesh = mesh;
   },
 
   removeHighlight : function() {
-    if ( !this.highlight) {
+    if ( !this._highlightMesh) {
       return;
     }
-    this.mesh.remove(this.highlight);
-    this.highlight = null;
+    this.mesh.remove(this._highlightMesh);
+    this._highlightMesh = null;
   },
 
 }
