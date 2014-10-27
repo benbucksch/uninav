@@ -196,7 +196,7 @@ ThreeTile.prototype = {
 
   _create : function() {
     var plane = new THREE.PlaneGeometry(1, 1);
-    var texture = new THREE.ImageUtils.loadTexture(this.topic.imageURL);
+    var texture = new THREE.ImageUtils.loadTexture(this.topic.iconURL);
     var material = new THREE.MeshBasicMaterial({
       map : texture,
       side : THREE.FrontSide,

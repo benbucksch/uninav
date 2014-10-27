@@ -3,7 +3,7 @@
  * Published as AGPLv3
  */
 
-const imageRootURL = "../graphics/dunet/";
+const kIconRootURL = "../graphics/dunet/";
 
 
 /**
@@ -31,7 +31,7 @@ Topic.prototype = {
    * image filename, relative to special image path
    * {string}
    */
-  iconFilename : null,
+  _iconFilename : null,
 
   /**
    * Child nodes
@@ -64,7 +64,7 @@ Topic.prototype = {
    * @returns {URL as string}
    */
   get iconURL() {
-    return imageRootURL + this.iconFilename;
+    return kIconRootURL + this._iconFilename;
   },
 
   get children() {
@@ -166,6 +166,7 @@ function loadTaxonomyJSON(url, resultCallback, errorCallback) {
       var topic = new Topic();
       topic.id = c.id;
       topic.title = c.title;
+      topic._iconFilename = c.img;
       topic._parentIDs = c.parentIDs;
       topic._childrenIDs = c.childrenIDs;
 
