@@ -83,16 +83,18 @@ Topic.prototype = {
   },
 
   /**
-   * @param callback {Function(child {Tile})} Called for each ancestor
+   * @param callback {Function(child {Topic})} Called for each ancestor
+   *     Note: Each topic can have several parents.
    */
-  forEachAncestor: function(callback) {
-    for (var cur = this; cur.parentTile; cur = cur.parentTile) {
-      callback(cur);
-    }
+  forEachAncestor : function(callback) {
+    return this.parents.forEach(function(parent) {
+      callback(parent);
+      return parent.forEachAncestor(callback); // recursion!
+    });
   },
 
   /**
-   * @returns {Array of Topic} all children and grand children,
+   * @returns {Array of {Topic}} all children and grand children,
    *      not including |this|
    */
   allChildren : function() {
@@ -107,15 +109,21 @@ Topic.prototype = {
   /**
    * @param ancestor {Topic}
    * @returns {boolean} |ancestor| is an ancestor of |this|
+   *     whereby ancestor = parent, grandparent, ... etc.
    */
-  function isChildOf(ancestor) {
+  isChildOf : function(child) {
     return this.parents.some(function(parent) {
       if (parent == ancestor) {
         return true;
       }
-      return parent.isChildOf(ancestor);
+      return parent.isChildOf(ancestor); // recursion!
     });
   },
+
+  isAncestorOf : function(child) {
+    return child.isChildOf(this);
+  },
+
 }
 
 /**
@@ -146,26 +154,28 @@ function loadTaxonomyJSON(url, resultCallback, errorCallback) {
       return found;
     }
     // JSON -> |Topic| objects
-    var allTopics = all.map(function(input) {
-      assert(input.id, "ID missing");
-      assert(input.title, "Title missing");
-      //assert(input.img, "Image missing");
-      if (allByID[node.id]) {
+    var allTopics = all.map(function(c) {
+      assert(c.id, "ID missing");
+      assert(c.title, "Title missing");
+      //assert(c.img, "Image missing");
+      if (allByID[c.id]) {
         // fix taxonomy!
-        assert(false, "Topic ID " + node.id + " appears twice. " +
-            allByID[node.id].title + " and " + node.title);
+        assert(false, "Topic ID " + c.id + " appears twice. " +
+            allByID[c.id].title + " and " + c.title);
       }
-      var n = new Topic();
-      n.id = input.id;
-      n.title = input.title;
-      n._parentIDs = input.parentIDs;
-      n._childrenIDs = input.childrenIDs;
-      allByID[n.id] = n;
+      var topic = new Topic();
+      topic.id = c.id;
+      topic.title = c.title;
+      topic._parentIDs = c.parentIDs;
+      topic._childrenIDs = c.childrenIDs;
+
+      allByID[topic.id] = topic;
+      return topic;
     });
     // resolve ID -> obj
-    allTopics.forEach(function(node) {
-      node._parents = node._parentIDs.map(getTopicByID);
-      node._children = node._childrenIDs.map(getTopicByID);
+    allTopics.forEach(function(topic) {
+      topic._parents = topic._parentIDs.map(getTopicByID);
+      topic._children = topic._childrenIDs.map(getTopicByID);
     });
     var rootTopic = allByID["root"];
     ddebug(dumpObject(rootTopic, "root", 5));

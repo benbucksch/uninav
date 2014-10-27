@@ -7,12 +7,14 @@
 /**
  * Represents a |Topic| on the screen
  *
+ * @param topic {Topic}
  * @param parentObj {Obj3D}  where to add this to as child
  *     Use |null| for the root obj.
  */
 function Obj3D(topic, parentObj) {
   assert(topic instanceof Topic, "Need |topic| of type |Topic|");
-  assert(parentObj instanceof Obj3D, "Need |parentObj| of type |Obj3D|");
+  assert(parentObj instanceof Obj3D || !parentObj,
+         "Need |parentObj| of type |Obj3D|, or null");
   this.topic = topic;
   this.parent = parentObj;
   this.children = [];
@@ -34,7 +36,52 @@ Obj3D.prototype = {
    * {Array of {Obj3D}}
    */
   children : null,
+
+
+  /**
+   * @param callback {Function(child {3DObject})} Called for each ancestor
+   */
+  forEachAncestor : function(callback) {
+    for (var cur = this; cur.parent; cur = cur.parent) {
+      callback(cur);
+    }
+  },
+
+  /**
+   * @returns {Array of Topic} all children and grand children,
+   *      not including |this|
+   */
+  allChildren : function() {
+    var result = [];
+    this.children.forEach(function(child) {
+      result.push(child);
+      result = result.concat(child.allChildren());
+    });
+    return result;
+  },
+
+  /**
+   * @param ancestor {Topic}
+   * @returns {boolean} |ancestor| is an ancestor of |this|
+   *     whereby ancestor = parent, grandparent, ... etc.
+   */
+  isChildOf : function(ancestor) {
+    if ( !this.parent) {
+      return false;
+    }
+    if (this.parent == ancestor) {
+      return true;
+    }
+    return this.parent.isChildOf(ancestor);
+  },
+
+  isAncestorOf : function(child) {
+    return child.isChildOf(this);
+  },
+
 }
+
+
 
 var renderer;
 var camera;
@@ -72,6 +119,22 @@ function createScene(parentE) {
   renderer.setClearColor(0x000000, 0); // transparent
   ddebug("camera pos x,y,z = " + camera.position.x + "," + camera.position.y + "," + camera.position.z);
 
+  scene.onMouseClick = function(listener) {
+    assert(typeof(listener) == "function");
+    renderer.domElement.addEventListener("click", function(event) {
+      var obj = pos2DTo3DObject(event);
+      listener(obj);
+    }, false);
+  }
+  scene.onMouseMove = function(listener) {
+    assert(typeof(listener) == "function");
+    renderer.domElement.addEventListener("mousemove", function(event) {
+      var obj = pos2DTo3DObject(event);
+      listener(obj);
+    }, false);
+  }
+
+  render();
   return scene;
 }
 
@@ -98,7 +161,8 @@ function cameraLookAt(tile) {
  */
 function ThreeTile(topic, parentObj) {
   Obj3D.call(this, topic, parentObj);
-  this.create();
+  ddebug(dumpObject(this, "tile", 2));
+  this._create();
 }
 ThreeTile.prototype = {
   /**
@@ -106,7 +170,7 @@ ThreeTile.prototype = {
    */
   childGroup : null,
 
-  create : function() {
+  _create : function() {
     var plane = new THREE.PlaneGeometry(1, 1);
     var texture = new THREE.ImageUtils.loadTexture(this.topic.imageURL);
     var material = new THREE.MeshBasicMaterial({
@@ -141,8 +205,9 @@ ThreeTile.prototype = {
   },
 
   showChildren : function() {
+    this._addChildren();
     if (this.childGroup) {
-      this.parent.mesh.add(this.childGroup);
+      this.mesh.add(this.childGroup); // TODO this.parent.mesh?
     }
   },
 
@@ -151,8 +216,22 @@ ThreeTile.prototype = {
       this.mesh.remove(this.childGroup);
       this.childGroup = null;
     }
-  }
+  },
 
+  // TODO move to |Object3D|, but need current ctor this.__proto__.call()
+  _addChildren : function() {
+    if (this.children && this.children.length > 0) {
+      return; // already added
+    }
+    if ( ! this.topic.children || ! this.topic.children.length) {
+      return; // no children
+    }
+
+    var parentTile = this;
+    this.topic.children.forEach(function(childTopic) {
+      var childNode = new ThreeTile(childTopic, parentTile);
+    });
+  },
 
   /**
    * Action: orient tile so that it faces directly into camera,
@@ -223,6 +302,9 @@ ThreeTile.prototype = {
   },
 
   removeHighlight : function() {
+    if ( !this.highlight) {
+      return;
+    }
     this.mesh.remove(this.highlight);
     this.highlight = null;
   },

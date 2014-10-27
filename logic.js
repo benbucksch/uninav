@@ -3,96 +3,60 @@
  * Published as AGPLv3
  */
 
-var rootObj;
-var highlightedN; // the current tile, which is highlighted and all its ancestors. The user had hovered over this.
-var selectedN; // the tile which topic is shown in the main pane. The user had clicked on it.
+/**
+ * The current object, which is highlighted and all its ancestors.
+ * The user had hovered over this.
+ * {Object3D}
+ */
+var gHighlightedN;
+/**
+ * The object for the topic that is shown in the main pane.
+ * The user had clicked on it.
+ * {Object3D}
+ */
+var gSelectedN;
+
 
 function onLoad() {
-  createScene(document.getElementById("uninav"));
-  render();
+  var scene = createScene(document.getElementById("uninav"));
 
-  showRoot(function(rootObj) {
-    rootObj = rootObj;
-    showChildren(rootObj);
-    var startN = rootN.childTiles[0];
+  loadRootTopic(function(rootTopic) {
+    var rootN = new ThreeTile(rootTopic, null);
+    rootN.showChildren();
+    var startN = rootN.children[0];
     assert(startN, "Start node not found. Taxonomy file broken?");
-    highlightTile(startN);
+    highlight3DObj(startN);
     setTimeout(function() { // HACK
       cameraLookAt(startN);
     }, 100);
 
-    renderer.domElement.addEventListener("mousemove", onMouseMove, false);
-    renderer.domElement.addEventListener("click", onMouseClick, false);
+    scene.onMouseMove(onMouseMove);
+    scene.onMouseClick(onMouseClick);
   }, errorCritical);
 }
 window.addEventListener("load", onLoad, false);
 
 
-/**
- * Loads and display the root node
- * @successCallback {Function(rootObj {Object3D})}
- */
-function showRoot(successCallback, errorCallback) {
-  loadRootNode(function(rootNode) {
-    var rootObj = new ThreeTile(rootNode, null);
-    successCallback(rootObj);
-  }, errorCallback);
-}
-
-
-
-
-function highlightTile(tile) {
-  if (tile == highlightedN || !tile) {
-    return;
-  }
-  var oldN = highlightedN;
-  highlightedN = tile;
-  ddebug("hovering over " + tile.title);
-
-  if (oldN) {
-    forEachAncestor(oldN, function(oldAncestorN) {
-      if ( !isAncestor(oldAncestorN, tile)) {
-        removeHighlightFor(oldAncestorN);
-        hideChildren(oldAncestorN);
-      }
-    });
-  }
-
-  createHighlightFor(tile);
-  cameraLookAt(tile);
-  showChildren(tile);
-}
-
-function showChildren(parentObj) {
-  if ( !parentObj) {
-    return;
-  }
-  addTilesForChildren(parentObj);
-  parentObj.showChildren();
-}
-
-function hideChildren(parentObj) {
-  if ( !parentObj) {
-    return;
-  }
-  parentObj.hideChildren();
-}
-
-function addTilesForChildren(parentTile) {
-  var node = parentTile.node;
-  if ( !parentTile || !node || !node.children || node.children.length <= 0) {
-    return;
-  }
-  if (parentTile.childTiles && parentTile.childTiles.length > 0) {
+function onMouseMove(n) {
+  if ( !n && n == gHighlightedN) {
     return;
   }
 
-  node.children.forEach(function(node) {
-    node.tile = addTile(parentTile, node.title, node.iconURL);
-    node.tile.node = node;
-  });
+  highlight3DObj(n);
 }
+
+function onMouseClick(n) {
+  if ( !n && n == gSelectedN) {
+    return;
+  }
+
+  openTopic(n.topic);
+
+  gSelectedN.untilt();
+  gSelectedN = n;
+  gSelectedN.tilt();
+}
+
 
 function onKeyboard(event) {
   var keyCode = event.which;
@@ -109,62 +73,69 @@ function onKeyboard(event) {
 }
 window.addEventListener("keydown", onKeyboard, false);
 
-function onMouseMove(event) {
-  var tile = pos2DTo3DObject(event);
-  if (tile && tile != highlightedN) {
-    highlightTile(tile);
-  }
-}
-
-function onMouseClick(event) {
-  var tile = pos2DTo3DObject(event);
-  if (tile && tile != selectedN) {
-    openTopic(tile);
-
-    var oldN = selectedN;
-    selectedN = tile;
-    tiltTile(selectedN);
-    untiltTile(oldN);
-  }
-}
-
 /**
- * Changes highlighted tile to another in the same hierarchy level
+ * Changes highlighted object to another in the same hierarchy level
  * @param relPos {Integer} e.g. 1 for next, -1 for previous etc.
  */
 function changeToSibling(relPos) {
-  if (highlightedN && highlightedN.parentTile) {
-    var siblings = highlightedN.parentTile.childTiles;
-    var oldIndex = siblings.indexOf(highlightedN);
+  if (gHighlightedN && gHighlightedN.parent) {
+    var siblings = gHighlightedN.parent.children;
+    var oldIndex = siblings.indexOf(gHighlightedN);
     var newIndex = oldIndex + relPos;
     if (oldIndex != -1 && newIndex >= 0 && newIndex < siblings.length) {
-      highlightTile(siblings[newIndex]);
+      highlight3DObj(siblings[newIndex]);
     }
   }
 }
 
 function changeToParent() {
-  if (highlightedN && highlightedN.parentTile) {
-    if ( !highlightedN.parentTile.parentTile) {
+  if (gHighlightedN && gHighlightedN.parent) {
+    if ( !gHighlightedN.parent.parent) {
       return; // HACK: fake root note, don't select it
     }
-    highlightTile(highlightedN.parentTile);
+    highlight3DObj(gHighlightedN.parent);
   }
 }
 
 function changeToChild() {
-  if (highlightedN && highlightedN.childTiles[0]) {
-    highlightTile(highlightedN.childTiles[0]);
+  if (gHighlightedN && gHighlightedN.children[0]) {
+    highlight3DObj(gHighlightedN.children[0]);
   }
 }
 
 
+function highlight3DObj(n) {
+  if ( !n || n == gHighlightedN) {
+    return;
+  }
+  ddebug("hovering over " + n.topic.title);
+
+  var oldN = gHighlightedN;
+  if (oldN) {
+    oldN.forEachAncestor(function(oldAncestorN) {
+      if ( !oldAncestorN.isAncestorOf(n)) {
+        oldAncestorN.removeHighlight();
+        oldAncestorN.hideChildren();
+      }
+    });
+  }
+
+  gHighlightedN = n;
+  n.highlight();
+  cameraLookAt(n);
+  n.showChildren();
+}
+
+
+
+
+
 /**
- * When: User clicked on a tile
+ * When: User clicked on a object
  * Action: Open the DU topic in the content pane
+ * @param topic {Topic}
  */
-function openTopic(tile) {
-  var node = tile.node;
+function openTopic(topic) {
   var target = window.parent;
   target.openTopic(node);
   //target.postMessage(node, "http://www.manyone.zone");
