@@ -4,6 +4,7 @@
  */
 
 const kIconRootURL = "../graphics/dunet/";
+const kTaxomonyURL = "taxonomy.json";
 
 
 /**
@@ -131,7 +132,7 @@ Topic.prototype = {
  *     rootTopic {Topic} The root node, with |children|
  */
 function loadRootTopic(resultCallback, errorCallback) {
-  loadTaxonomyJSON("taxonomy.json", resultCallback, errorCallback)
+  loadTaxonomyJSON(kTaxomonyURL, resultCallback, errorCallback)
 }
 
 /**
