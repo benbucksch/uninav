@@ -111,7 +111,7 @@ Topic.prototype = {
    * @returns {boolean} |ancestor| is an ancestor of |this|
    *     whereby ancestor = parent, grandparent, ... etc.
    */
-  isChildOf : function(child) {
+  isChildOf : function(ancestor) {
     return this.parents.some(function(parent) {
       if (parent == ancestor) {
         return true;

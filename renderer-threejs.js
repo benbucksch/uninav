@@ -86,6 +86,7 @@ Obj3D.prototype = {
 var renderer;
 var camera;
 var scene;
+var gAllMeshes = []; // for pos2DTo3DObject() only
 
 /* text settings */
 var wrapLength = 10;
@@ -96,7 +97,7 @@ var labelTextShadowBlur = 40;
 function createScene(parentE) {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(30,
-    parentE.clientWidth / parentE.clientHeight, 0.1, 1000);
+      parentE.clientWidth / parentE.clientHeight, 0.1, 1000);
   //camera = new THREE.OrthographicCamera(-6, 6, 2, -2, 0.1, 1000);
   camera.position.z = 4;
   camera.position.y = 2.25;
@@ -122,17 +123,21 @@ function createScene(parentE) {
   scene.onMouseClick = function(listener) {
     assert(typeof(listener) == "function");
     renderer.domElement.addEventListener("click", function(event) {
-      var obj = pos2DTo3DObject(event);
-      listener(obj);
+      try {
+        var obj3D = pos2DTo3DObject(event);
+        listener(obj3D);
+      } catch (e) { errorCritical(e); }
     }, false);
-  }
+  };
   scene.onMouseMove = function(listener) {
     assert(typeof(listener) == "function");
     renderer.domElement.addEventListener("mousemove", function(event) {
-      var obj = pos2DTo3DObject(event);
-      listener(obj);
+      try {
+        var obj3D = pos2DTo3DObject(event);
+        listener(obj3D);
+      } catch (e) { errorCritical(e); }
     }, false);
-  }
+  };
 
   render();
   return scene;
@@ -161,7 +166,6 @@ function cameraLookAt(tile) {
  */
 function ThreeTile(topic, parentObj) {
   Obj3D.call(this, topic, parentObj);
-  ddebug(dumpObject(this, "tile", 2));
   this._create();
 }
 ThreeTile.prototype = {
@@ -202,6 +206,10 @@ ThreeTile.prototype = {
     label.position.set(0, -0.6, 0);
     this.label = label;
     this.mesh.add(label);
+
+    // for pos2DTo3DObject() only
+    this.mesh.obj3D = this;
+    gAllMeshes.push(this.mesh);
   },
 
   showChildren : function() {
@@ -331,11 +339,12 @@ function pos2DTo3DObject(event) {
 
   var projector = new THREE.Projector();
   var raycaster = projector.pickingRay(mouseVec.clone(), camera);
-  var intersections = raycaster.intersectObjects(allChildren());
+  var intersections = raycaster.intersectObjects(gAllMeshes);
   if (intersections.length == 0) {
     return;
   }
-  return intersections[0].object;
+  var meshClicked = intersections[0].object;
+  return meshClicked.obj3D;
 }
 
 /**
