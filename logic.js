@@ -6,13 +6,13 @@
 /**
  * The current object, which is highlighted and all its ancestors.
  * The user had hovered over this.
- * {Object3D}
+ * {Obj3D}
  */
 var gHighlightedN;
 /**
  * The object for the topic that is shown in the main pane.
  * The user had clicked on it.
- * {Object3D}
+ * {Obj3D}
  */
 var gSelectedN;
 
@@ -38,7 +38,7 @@ window.addEventListener("load", onLoad, false);
 
 
 function onMouseMove(n) {
-  if ( !n && n == gHighlightedN) {
+  if ( !n || n == gHighlightedN) {
     return;
   }
 
@@ -46,15 +46,17 @@ function onMouseMove(n) {
 }
 
 function onMouseClick(n) {
-  if ( !n && n == gSelectedN) {
+  if ( !n || n == gSelectedN) {
     return;
   }
 
   openTopic(n.topic);
 
-  gSelectedN.untilt();
+  if (gSelectedN) {
+    gSelectedN.unselect(); // oldN
+  }
   gSelectedN = n;
-  gSelectedN.tilt();
+  gSelectedN.select();
 }
 
 
@@ -108,6 +110,7 @@ function highlight3DObj(n) {
   if ( !n || n == gHighlightedN) {
     return;
   }
+  assert(n instanceof Obj3D);
   ddebug("hovering over " + n.topic.title);
 
   var oldN = gHighlightedN;
@@ -137,6 +140,6 @@ function highlight3DObj(n) {
  */
 function openTopic(topic) {
   var target = window.parent;
-  target.openTopic(node);
-  //target.postMessage(node, "http://www.manyone.zone");
+  target.openTopic(topic);
+  //target.postMessage(topic, "http://www.manyone.zone");
 }
