@@ -22,6 +22,7 @@ function onLoad() {
 
   loadRootTopic(function(rootTopic) {
     var rootN = new ThreeTile(rootTopic, null);
+    setRootObj(rootN);
     rootN.showChildren();
     var startN = rootN.children[0];
     assert(startN, "Start node not found. Taxonomy file broken?");
