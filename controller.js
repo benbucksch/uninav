@@ -21,7 +21,7 @@ function onLoad() {
   var scene = createScene(document.getElementById("uninav"));
 
   loadRootTopic(function(rootTopic) {
-    var rootN = new ThreeTile(rootTopic, null);
+    var rootN = new SceneObj(rootTopic, null);
     rootN.showChildren();
     var startN = rootN.children[0];
     assert(startN, "Start node not found. Taxonomy file broken?");
