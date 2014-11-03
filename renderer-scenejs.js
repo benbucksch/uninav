@@ -4,6 +4,14 @@
  *
  * It uses tiles or 3D models to represent topics.
  *
+ * There are 3 types of objects and hierarchies here:
+ * - |Topic|s from data.js
+ * - |Obj3D| and |SceneObj| here
+ * - SceneJS |Node|
+ * A |Topic| is represented by one (1) |SceneObj|, and a
+ * |SceneObj| uses a SceneJS |Node| subtree to render itself.
+ * The |SceneObj| holds references to both |Topic| and SceneJS |Node|.
+ *
  * Copyright 2014 Ben Bucksch
  * Published as AGPLv3
  */
@@ -33,76 +41,86 @@ function createScene(parentE) {
             zoomSensitivity: -5.0, // mouse wheel multiplier
             showCursor: false, // show dot on object when clicked
 
-            nodes: [{
-                type: "geometry/box"
-            }],
+            nodes: [],
         }],
     }],
   });
   gScene.getNode("camera", function(n) { gCamera = n; });
 }
 
-function cameraLookAt(node) {
-  gCamera.setLook(node);
+/**
+ * @param obj {SceneObj}
+ */
+function cameraLookAt(obj) {
+  if ( !gCamera) { return; }
+  gCamera.setLook(obj.node);
 }
 
-function SceneObj(topic, parentObj) {
-  Obj3D.call(this, topic, parentObj);
-  this._create();
+function SceneObj(topic, parent) {
+  Obj3D.call(this, topic, parent);
 }
 SceneObj.prototype = {
+  /**
+   * {SceneJS node, already added to scene}
+   */
+  node : null,
   /**
    * Group (in Scene) that contains all the child objects.
    */
   childGroup : null,
 
-  _create : function() {
-    if (this.parent) {
-      var group = this.parent.childGroup || null;
-      if ( !group) {
-        //TODO
-      }
-      // TODO
+  /**
+   * @param parentNode {SceneJS Node}
+   */
+  addNodeTo : function(parentNode) {
+    var self = this;
+    return this.node = parentNode.addNode({
+        type: "translate",
+        x: -3.0,
+        y: 1.0,
+        z: 5.0,
 
-      group.add(this.mesh);
-    } else {
-      scene.add(this.mesh);
-    }
+        nodes: [{
+            type: "texture",
+            src: self.topic.iconURL,
+            nodes: [{
+                type: "geometry/plane",
+                width: 1,
+                height: 1,
+                widthSegments: 1,
+                heightSegments: 1,
+            }],
+        }],
+    });
   },
 
   showChildren : function() {
     this._addChildren();
-    if (this.childGroup) {
-      this.mesh.add(this.childGroup); // TODO this.parent.mesh?
-    }
   },
 
   hideChildren : function() {
     if (this.childGroup) {
-      this.mesh.remove(this.childGroup);
+      this.childGroup.destory();
       this.childGroup = null;
-
-      // for pos2DTo3DObject()
-      this.children.forEach(function(child) {
-        arrayRemove(gAllMeshes, child.mesh);
-      });
-      this.children = [];
+      this.children = []; // TODO: keep them? If so, adapt _addChildren()
     }
   },
 
   // TODO move to |Object3D|, but need current ctor this.__proto__.call()
   _addChildren : function() {
-    if (this.children && this.children.length > 0) {
+    if (this.childGroup) {
       return; // already added
     }
+    /*if (this.children && this.children.length > 0) {}*/
     if ( ! this.topic.children || ! this.topic.children.length) {
       return; // no children
     }
 
-    var parentTile = this;
-    this.topic.children.forEach(function(childTopic) {
-      var childNode = new ThreeTile(childTopic, parentTile);
+    var parent = this;
+    this.children = this.topic.children.map(function(childTopic) {
+      return new SceneObj(childTopic, parent);
     });
+    this.childGroup = arrangeBelow(this, this.children);
   },
 
   select : function() {
@@ -121,6 +139,44 @@ SceneObj.prototype = {
 
 }
 extend(SceneObj, Obj3D);
+
+/**
+ * @param obj {SceneObj}
+ */
+function setRootObj(obj) {
+  node.addNodeTo(gScene);
+}
+
+/**
+ * @param parentObj {SceneObj}
+ * @param childObjs {Array of {SceneObjs}}
+ * @returns {SceneJS Node}
+ */
+function arrangeBelow(parentObj, childObjs) {
+  const centerAround = 0;
+  const itemWidth = 1;
+  const paddingWidth = 0.2;
+  var group = parentObj.node.addNode({
+    type: "translate",
+    x: centerAround - (childObjs.length * (itemWidth + paddingWidth) - paddingWidth),
+    y: -1.5,
+    z: 0,
+    nodes: [],
+  });
+  var i = 0;
+  childObjs.forEach(function(childObj) {
+    var position = {
+      type: "translate",
+      x: i++ * (itemWidth + paddingWidth),
+      y: 0,
+      z: 0,
+      nodes: [],
+    };
+    childObj.addNodeTo(position);
+    group.addNode(position);
+  });
+  return group;
+}
 
 function render(time) {
   requestAnimationFrame(render);
