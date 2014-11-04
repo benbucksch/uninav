@@ -180,7 +180,7 @@ function loadTaxonomyJSON(url, resultCallback, errorCallback) {
       topic._children = topic._childrenIDs.map(getTopicByID);
     });
     var rootTopic = allByID["root"];
-    ddebug(dumpObject(rootTopic, "root", 5));
+    //ddebug(dumpObject(rootTopic, "root", 5));
     resultCallback(rootTopic, allByID, allTopics);
   }, errorCallback);
 }

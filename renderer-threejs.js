@@ -14,7 +14,7 @@ var labelTextColor = "#ddeeff";
 var labelTextShadowColor = "#112233";
 var labelTextShadowBlur = 40;
 
-function createScene(parentE) {
+function createScene(parentE, successCallback, errorCallback) {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(30,
       parentE.clientWidth / parentE.clientHeight, 0.1, 1000);
@@ -46,7 +46,7 @@ function createScene(parentE) {
       try {
         var obj3D = pos2DTo3DObject(event);
         listener(obj3D);
-      } catch (e) { errorCritical(e); }
+      } catch (e) { errorNonCritical(e); }
     }, false);
   };
   scene.onMouseMove = function(listener) {
@@ -55,11 +55,12 @@ function createScene(parentE) {
       try {
         var obj3D = pos2DTo3DObject(event);
         listener(obj3D);
-      } catch (e) { errorCritical(e); }
+      } catch (e) { errorNonCritical(e); }
     }, false);
   };
 
   render();
+  setTimeout(successCallback, 0);
   return scene;
 }
 

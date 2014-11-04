@@ -19,15 +19,14 @@
 var gScene;
 var gCamera;
 
-function createScene(parentE) {
+function createScene(parentE, successCallback, errorCallback) {
   SceneJS.setConfigs({
     pluginPath: "./lib/scenejs-plugins/"
   });
   gScene = SceneJS.createScene({
     nodes: [{
-        type: "material",
-        id: "black",
-        color: { r: 0, g: 0, b: 0, },
+        type: "lookAt",
+        id: "camera-look",
 
         nodes: [{
             type: "cameras/pickFlyOrbit",
@@ -45,14 +44,27 @@ function createScene(parentE) {
         }],
     }],
   });
-  gScene.getNode("camera", function(n) { gCamera = n; });
+  gScene.onMouseMove = function(handler) {
+    // TODO
+  };
+  gScene.onMouseClick = function(handler) {
+    // TODO
+  };
+  gScene.getNode("camera-look", function(n) {
+    assert(n, "No camera returned");
+    gCamera = n;
+    try {
+      successCallback();
+    } catch (e) { errorCallback(e) }
+  });
+  return gScene;
 }
 
 /**
  * @param obj {SceneObj}
  */
 function cameraLookAt(obj) {
-  if ( !gCamera) { return; }
+  assert(obj, "camera not yet set");
   gCamera.setLook(obj.node);
 }
 
@@ -144,7 +156,8 @@ extend(SceneObj, Obj3D);
  * @param obj {SceneObj}
  */
 function setRootObj(obj) {
-  node.addNodeTo(gScene);
+  assert(gCamera, "camera not there yet");
+  obj.addNodeTo(gCamera);
 }
 
 /**
@@ -165,15 +178,14 @@ function arrangeBelow(parentObj, childObjs) {
   });
   var i = 0;
   childObjs.forEach(function(childObj) {
-    var position = {
+    var position = group.addNode({
       type: "translate",
       x: i++ * (itemWidth + paddingWidth),
       y: 0,
       z: 0,
       nodes: [],
-    };
+    });
     childObj.addNodeTo(position);
-    group.addNode(position);
   });
   return group;
 }

@@ -18,22 +18,22 @@ var gSelectedN;
 
 
 function onLoad() {
-  var scene = createScene(document.getElementById("uninav"));
+  try {
+    var scene = createScene(document.getElementById("uninav"), function() {
+      loadRootTopic(function(rootTopic) {
+        var rootN = new SceneObj(rootTopic, null);
+        setRootObj(rootN);
+        rootN.showChildren();
+        var startN = rootN.children[0];
+        assert(startN, "Start node not found. Taxonomy file broken?");
+        highlight3DObj(startN);
+        cameraLookAt(startN);
 
-  loadRootTopic(function(rootTopic) {
-    var rootN = new SceneObj(rootTopic, null);
-    setRootObj(rootN);
-    rootN.showChildren();
-    var startN = rootN.children[0];
-    assert(startN, "Start node not found. Taxonomy file broken?");
-    highlight3DObj(startN);
-    setTimeout(function() { // HACK
-      cameraLookAt(startN);
-    }, 100);
-
-    scene.onMouseMove(onMouseMove);
-    scene.onMouseClick(onMouseClick);
-  }, errorCritical);
+        scene.onMouseMove(onMouseMove);
+        scene.onMouseClick(onMouseClick);
+      }, errorCritical);
+    }, errorCritical);
+  } catch (e) { errorCritical(e); }
 }
 window.addEventListener("load", onLoad, false);
 
