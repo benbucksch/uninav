@@ -65,6 +65,9 @@ function createScene(parentE, successCallback, errorCallback) {
 }
 
 
+/**
+ * @param tile {ThreeTile}
+ */
 function cameraLookAt(tile) {
   var tilePosition = new THREE.Vector3();
   //tile.mesh.matrixWorldNeedsUpdate = true;
@@ -87,7 +90,6 @@ function cameraLookAt(tile) {
  */
 function ThreeTile(topic, parentObj) {
   Obj3D.call(this, topic, parentObj);
-  this._create();
 }
 ThreeTile.prototype = {
   /**
@@ -95,7 +97,13 @@ ThreeTile.prototype = {
    */
   childGroup : null,
 
+  /**
+   * @returns {THREE Mesh}
+   */
   _create : function() {
+    if (this.mesh) {
+      return this.mesh;
+    }
     var plane = new THREE.PlaneGeometry(1, 1);
     var texture = new THREE.ImageUtils.loadTexture(this.topic.iconURL);
     var material = new THREE.MeshBasicMaterial({
@@ -103,25 +111,6 @@ ThreeTile.prototype = {
       side : THREE.FrontSide,
     });
     this.mesh = new THREE.Mesh(plane, material);
-
-    if (this.parent) {
-      var group = this.parent.childGroup || null;
-      if ( !group) {
-        this.parent.childGroup = group = new THREE.Object3D();
-        group.centerAround = 0;
-        group.position.x = 0; // centered below
-        group.position.y = -1.5;
-        group.position.z = 0;
-        // this.parent.mesh.add(group); -- done in showChildren()
-      }
-      this.mesh.position.x = this.parent.children.length * 1.2;
-      var groupWidth = this.mesh.position.x + 1;
-      group.position.x = group.centerAround - groupWidth / 2;
-
-      group.add(this.mesh);
-    } else {
-      scene.add(this.mesh);
-    }
 
     var label = make2DText(this.topic.title);
     label.position.set(0, -0.6, 0);
@@ -131,13 +120,12 @@ ThreeTile.prototype = {
     // for pos2DTo3DObject() only
     this.mesh.obj3D = this;
     gAllMeshes.push(this.mesh);
+
+    return this.mesh;
   },
 
   showChildren : function() {
     this._addChildren();
-    if (this.childGroup) {
-      this.mesh.add(this.childGroup); // TODO this.parent.mesh?
-    }
   },
 
   hideChildren : function() {
@@ -149,23 +137,25 @@ ThreeTile.prototype = {
       this.children.forEach(function(child) {
         arrayRemove(gAllMeshes, child.mesh);
       });
-      this.children = [];
+      this.children = []; // TODO: keep them? If so, adapt _addChildren()
     }
   },
 
   // TODO move to |Object3D|, but need current ctor this.__proto__.call()
   _addChildren : function() {
-    if (this.children && this.children.length > 0) {
+    if (this.childGroup) {
       return; // already added
     }
+    /*if (this.children && this.children.length > 0) {}*/
     if ( ! this.topic.children || ! this.topic.children.length) {
       return; // no children
     }
 
-    var parentTile = this;
-    this.topic.children.forEach(function(childTopic) {
-      var childNode = new ThreeTile(childTopic, parentTile);
+    var parent = this;
+    this.children = this.topic.children.map(function(childTopic) {
+      return new ThreeTile(childTopic, parent);
     });
+    this.childGroup = arrangeBelow(this, this.children);
   },
 
   select : function() {
@@ -253,6 +243,38 @@ ThreeTile.prototype = {
 
 }
 extend(ThreeTile, Obj3D);
+
+/**
+ * @param tile {ThreeTile}
+ */
+function setRootObj(tile) {
+  scene.add(tile._create());
+}
+
+/**
+ * @param parentObj {ThreeTile}
+ * @param childObjs {Array of {ThreeTile}}
+ * @returns {THREE Object3D}
+ */
+function arrangeBelow(parentObj, childObjs) {
+  const centerAround = 0;
+  const itemWidth = 1;
+  const paddingWidth = 0.2;
+
+  var group = new THREE.Object3D();
+  group.position.x = centerAround - (childObjs.length * (itemWidth + paddingWidth) - paddingWidth) / 2;
+  group.position.y = -1.5;
+  group.position.z = 0;
+
+  var i = 0;
+  childObjs.forEach(function(childObj) {
+    var mesh = childObj._create();
+    mesh.position.x = i++ * (itemWidth + paddingWidth);
+    group.add(mesh);
+  });
+  parentObj.mesh.add(group); // TODO this.parent.mesh?
+  return group;
+}
 
 function render(time) {
   requestAnimationFrame(render);
