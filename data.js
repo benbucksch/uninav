@@ -6,7 +6,6 @@
 const kIconRootURL = "../graphics/dunet/";
 const kTaxomonyURL = "taxonomy.json";
 
-
 /**
  * This is an abstract element in our taxonomy or logic.
  * It will usually be represented by an UI item, but this
@@ -84,14 +83,41 @@ Topic.prototype = {
   },
 
   /**
-   * @param callback {Function(child {Topic})} Called for each ancestor
+   * @returns {Array of {Topic}} All ancestors
    *     Note: Each topic can have several parents.
+   * @param includeThis {Boolean}
    */
-  forEachAncestor : function(callback) {
+  ancestors : function(includeThis) {
+    var result = [];
+    if (includeThis) {
+      result.push(this);
+    }
     return this.parents.forEach(function(parent) {
-      callback(parent);
-      return parent.forEachAncestor(callback); // recursion!
+      result.push(parent);
+      result = result.concat(parent.ancestors()); // recursion!
+      // TODO stop loops, if not DAG
     });
+    return result;
+  },
+
+  /**
+   * @returns {Array of {Topic}} Ancestors, from bottom to top.
+   *     For multi-parented nodes, gets only the first parent,
+   *     so the result is a straight line from |this| to root.
+   * @param includeThis {Boolean}
+   */
+  primaryAncestors : function(includeThis) {
+    var result = [];
+    if (includeThis) {
+      result.push(this);
+    }
+    if (this.parents.length = 0) {
+      return result;
+    }
+    var parent = this.parents[0];
+    result.push(parent);
+    result = result.concat(parent.primaryAncestors()); // recursion!
+    return result;
   },
 
   /**
@@ -180,7 +206,7 @@ function loadTaxonomyJSON(url, resultCallback, errorCallback) {
       topic._children = topic._childrenIDs.map(getTopicByID);
     });
     var rootTopic = allByID["root"];
-    ddebug(dumpObject(rootTopic, "root", 5));
+    //ddebug(dumpObject(rootTopic, "root", 5));
     resultCallback(rootTopic, allByID, allTopics);
   }, errorCallback);
 }

@@ -116,7 +116,7 @@ function highlight3DObj(n) {
 
   var oldN = gHighlightedN;
   if (oldN) {
-    oldN.forEachAncestor(function(oldAncestorN) {
+    oldN.ancestors(true).forEach(function(oldAncestorN) {
       if ( !oldAncestorN.isAncestorOf(n)) {
         oldAncestorN.removeHighlight();
         oldAncestorN.hideChildren();
