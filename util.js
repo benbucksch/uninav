@@ -6,7 +6,7 @@
 function assert(test, errorMsg) {
   errorMsg = errorMsg || "assertion failed";
   if ( !test) {
-    alert(errorMsg);
+    throw new Exception(errorMsg);
   }
 }
 

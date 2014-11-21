@@ -90,6 +90,7 @@ function cameraLookAt(tile) {
  */
 function ThreeTile(topic, parentObj) {
   Obj3D.call(this, topic, parentObj);
+  this._create();
 }
 ThreeTile.prototype = {
   /**
@@ -124,6 +125,16 @@ ThreeTile.prototype = {
     return this.mesh;
   },
 
+  /**
+   * Add a child obj of this obj, for |Topic|
+   * @param childTopic {Topic}
+   */
+  makeChild : function(childTopic) {
+    assert(arrayContains(this.topic.children, childTopic),
+        childTopic.title + " isn't a child topic of " + this.topic.title);
+    return new ThreeTile(childTopic, this);
+  },
+
   showChildren : function() {
     this._addChildren();
   },
@@ -141,7 +152,7 @@ ThreeTile.prototype = {
     }
   },
 
-  // TODO move to |Object3D|, but need current ctor this.__proto__.call()
+  // TODO move to |Object3D|
   _addChildren : function() {
     if (this.childGroup) {
       return; // already added
@@ -153,7 +164,7 @@ ThreeTile.prototype = {
 
     var parent = this;
     this.children = this.topic.children.map(function(childTopic) {
-      return new ThreeTile(childTopic, parent);
+      return parent.makeChild(childTopic);
     });
     this.childGroup = arrangeBelow(this, this.children);
   },

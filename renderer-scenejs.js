@@ -106,6 +106,16 @@ SceneObj.prototype = {
     });
   },
 
+  /**
+   * Add a child obj of this obj, for |Topic|
+   * @param childTopic {Topic}
+   */
+  makeChild : function(childTopic) {
+    assert(arrayContains(this.topic.children, childTopic),
+        childTopic.title + " isn't a child topic of " + this.topic.title);
+    return new SceneObj(childTopic, this);
+  },
+
   showChildren : function() {
     this._addChildren();
   },
@@ -118,7 +128,7 @@ SceneObj.prototype = {
     }
   },
 
-  // TODO move to |Object3D|, but need current ctor this.__proto__.call()
+  // TODO move to |Object3D|
   _addChildren : function() {
     if (this.childGroup) {
       return; // already added
@@ -130,7 +140,7 @@ SceneObj.prototype = {
 
     var parent = this;
     this.children = this.topic.children.map(function(childTopic) {
-      return new SceneObj(childTopic, parent);
+      return parent.makeChild(childTopic);
     });
     this.childGroup = arrangeBelow(this, this.children);
   },

@@ -15,7 +15,10 @@ var gHighlightedN;
  * {Obj3D}
  */
 var gSelectedN;
-
+/**
+ * {Obj3D}
+ */
+var gRootN;
 
 function onLoad() {
   try {
@@ -31,6 +34,12 @@ function onLoad() {
 
         scene.onMouseMove(onMouseMove);
         scene.onMouseClick(onMouseClick);
+
+        // global objects
+        gRootN = rootN;
+        var du = window.parent;
+        assert(du.openTopic, "DU obj not found in UniNav");
+        du.uninav = window;
       }, errorCritical);
     }, errorCritical);
   } catch (e) { errorCritical(e); }
@@ -52,12 +61,7 @@ function onMouseClick(n) {
   }
 
   openTopic(n.topic);
-
-  if (gSelectedN) {
-    gSelectedN.unselect(); // oldN
-  }
-  gSelectedN = n;
-  gSelectedN.select();
+  select3DObj(n);
 }
 
 
@@ -106,6 +110,16 @@ function changeToChild() {
   }
 }
 
+function select3DObj(n) {
+  if ( !n || n == gSelectedN) {
+    return;
+  }
+  if (gSelectedN) {
+    gSelectedN.unselect(); // oldN
+  }
+  gSelectedN = n;
+  gSelectedN.select();
+}
 
 function highlight3DObj(n) {
   if ( !n || n == gHighlightedN) {
@@ -116,7 +130,7 @@ function highlight3DObj(n) {
 
   var oldN = gHighlightedN;
   if (oldN) {
-    oldN.forEachAncestor(function(oldAncestorN) {
+    oldN.ancestors(true).forEach(function(oldAncestorN) {
       if ( !oldAncestorN.isAncestorOf(n)) {
         oldAncestorN.removeHighlight();
         oldAncestorN.hideChildren();
@@ -130,8 +144,62 @@ function highlight3DObj(n) {
   n.showChildren();
 }
 
+/**
+ * @param topic {Topic}
+ * @returns {Obj3D} with obj.topic == |topic|
+ */
+function getObj3DforTopic(topic) {
+  var allObj3DbyTopic = {};
+  allObj3DbyTopic.root = gRootN;
+  gRootN.allChildren().forEach(function(n) {
+    allObj3DbyTopic[n.topic.id] = n;
+    // Verify hierarchy
+    assert(n == gRootN || n.parent, "Need parent");
+    assert(arrayContains(n.parent.children, n), "My parent doesn't know about me");
+  });
+  if (allObj3DbyTopic[topic.id]) {
+    return allObj3DbyTopic[topic.id];
+  }
+  // Walk top down
+  var lastN; // {Obj3D}
+  topic.primaryAncestors(true).reverse().forEach(function(ancTopic) {
+    ddebug("searching " + ancTopic.id);
+    //var node = allObj3DbyTopic[ancTopic.id]; // use nodes that are already on screen
+    var node = ancTopic.id == "root" ? gRootN : lastN.children.filter(function(n) {
+      return n.topic == ancTopic;
+    })[0];
+    if ( !node) {
+      // Create Obj3D obj for this topic
+      node = lastN.makeChild(ancTopic);
+    }
+    node.highlight();
+    node.showChildren();
+    lastN = node;
+  });
+  assert(lastN, "Missing obj");
+  assert(lastN.topic == topic, "Obj for wrong topic");
+  return lastN;
+}
 
 
+/**
+ * When: User changed the topic outside of UniNav
+ * Action: Show the Obj3D and select it,
+ *   but do not change topic of DU (that's already done)
+ * @param topic {Topic}
+ */
+function showTopic(topic) {
+  ddebug("showTopic " + topic.title);
+  var node = getObj3DforTopic(topic);
+  // NOT already highlighed by getObj3DforTopic()
+  //node.ancestors(this).reverse().forEach(function(ancNode) {
+  //  highlight3DObj(ancNode);
+  //});
+  setTimeout(function() {
+    highlight3DObj(node);
+    select3DObj(node);
+  }, 500);
+}
 
 
 /**

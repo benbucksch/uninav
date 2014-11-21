@@ -41,12 +41,18 @@ Obj3D.prototype = {
 
 
   /**
-   * @param callback {Function(child {3DObject})} Called for each ancestor
+   * @result {Array of {Object3D}} All ancestors, from bottom up.
+   * @param includeThis {Boolean}
    */
-  forEachAncestor : function(callback) {
-    for (var cur = this; cur.parent; cur = cur.parent) {
-      callback(cur);
+  ancestors : function(includeThis) {
+    var result = [];
+    if (includeThis) {
+      result.push(this);
     }
+    for (var cur = this.parent; cur; cur = cur.parent) {
+      result.push(cur);
+    }
+    return result;
   },
 
   /**
@@ -68,17 +74,27 @@ Obj3D.prototype = {
    *     whereby ancestor = parent, grandparent, ... etc.
    */
   isChildOf : function(ancestor) {
-    if ( !this.parent) {
+    return arrayContains(this.ancestors(), ancestor);
+    /*if ( !this.parent) {
       return false;
     }
     if (this.parent == ancestor) {
       return true;
     }
-    return this.parent.isChildOf(ancestor);
+    return this.parent.isChildOf(ancestor);*/
   },
 
   isAncestorOf : function(child) {
-    return child.isChildOf(this);
+    return arrayContains(child.ancestors(), this);
+    //return child.isChildOf(this);
+  },
+
+  /**
+   * Add a child obj of this obj, for |Topic|
+   * @param childTopic {Topic}
+   */
+  makeChild : function(childTopic) {
+    throw NotReached("Override");
   },
 
 
@@ -102,4 +118,3 @@ Obj3D.prototype = {
   },
 
 }
-
