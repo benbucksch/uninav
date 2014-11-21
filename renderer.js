@@ -89,6 +89,14 @@ Obj3D.prototype = {
     //return child.isChildOf(this);
   },
 
+  /**
+   * Add a child obj of this obj, for |Topic|
+   * @param childTopic {Topic}
+   */
+  makeChild : function(childTopic) {
+    throw NotReached("Override");
+  },
+
 
   showChildren : function() {
     throw NotReached("Override");

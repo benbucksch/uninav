@@ -26827,6 +26827,7 @@
  },
 {
   "parentIDs": [
+    "root"
   ],
   "childrenIDs": [
     "geoNorthAmerica",
@@ -27096,7 +27097,7 @@
   "childrenIDs": [
 
   ],
-  "title": "United States",
+  "title": "United States of America",
   "lodID": "dbpedia:United_States",
   "id": "geoUnitedStates",
   "img": "manyone.png"

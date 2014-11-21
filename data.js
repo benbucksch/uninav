@@ -5,6 +5,10 @@
 
 const kIconRootURL = "../graphics/dunet/";
 const kTaxomonyURL = "taxonomy.json";
+/**
+ * {Array of {Topic}}
+ */
+var gAllTopics = [];
 
 /**
  * This is an abstract element in our taxonomy or logic.
@@ -16,6 +20,7 @@ function Topic() {
   this._parents = [];
   this._childrenIDs = [];
   this._parentIDs = [];
+  gAllTopics.push(this);
 }
 Topic.prototype = {
   /**
@@ -83,6 +88,16 @@ Topic.prototype = {
   },
 
   /**
+   * After creating a new Topic node,
+   * add it to the taxonomy using this function.
+   * @param parent {Topic}
+   */
+  addToParent : function(parent) {
+    this._parents.push(parent);
+    parent._children.push(this);
+  },
+
+  /**
    * @returns {Array of {Topic}} All ancestors
    *     Note: Each topic can have several parents.
    * @param includeThis {Boolean}
@@ -111,13 +126,23 @@ Topic.prototype = {
     if (includeThis) {
       result.push(this);
     }
-    if (this.parents.length = 0) {
+    for (var cur = this._parents[0]; cur; cur = cur._parents[0]) {
+      result.push(cur);
+    }
+    return result;
+    /* alternate, recursive implementation
+    var result = [];
+    if (includeThis) {
+      result.push(this);
+    }
+    if (this._parents.length == 0) {
       return result;
     }
-    var parent = this.parents[0];
+    var parent = this._parents[0];
     result.push(parent);
     result = result.concat(parent.primaryAncestors()); // recursion!
     return result;
+    */
   },
 
   /**
@@ -210,4 +235,40 @@ function loadTaxonomyJSON(url, resultCallback, errorCallback) {
     //ddebug(dumpObject(rootTopic, "root", 5));
     resultCallback(rootTopic, allByID, allTopics);
   }, errorCallback);
+}
+
+/**
+ * Find a topic with |search| as |Topic.title|
+ * Direct matches win, then matches at the start,
+ * then substring matches later.
+ * @param search {String}
+ * @returns {Topic}
+ */
+function findTopicByTitle(search) {
+  var directMatch = gAllTopics.filter(function(topic) {
+    return topic.title == search;
+  })[0];
+  if (directMatch) {
+    return directMatch;
+  }
+  var containsMatch = gAllTopics.filter(function(topic) {
+    return topic.title.indexOf(search) >= 0;
+  });
+  containsMatch.sort(function(a, b) {
+    // earlier in title wins
+    // otherwise, first topic in hierarchy wins
+    return a.title.indexOf(search) - b.title.indexOf(search);
+  });
+  return containsMatch[0];
+}
+
+
+/**
+ * @param id {String} |Topic.id|
+ * @returns {Topic}
+ */
+function findTopicByID(id) {
+  return gAllTopics.filter(function(topic) {
+    return topic.id == id;
+  })[0];
 }
