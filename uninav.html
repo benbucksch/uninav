@@ -9,7 +9,7 @@
   * Copyright 2014 Ben Bucksch
   * Published as AGPLv3
   */
-  html, body, #uninav {
+  html, body {
     width: 100%;
     height: 100%;
     padding: 0 0 0 0;
@@ -18,6 +18,7 @@
     font-family: Helvetica, Arial, sans-serif;
   }
   #uninav {
+    height: 300px;
     background-image:
       linear-gradient(
         transparent,
@@ -35,7 +36,62 @@
 <script type="text/javascript" src="util.js"></script>
 <script type="text/javascript" src="uninav.js"></script>
 
+<script type="text/javascript">
+var prevAlphaRad = 0, prevBetaRad = 0, prevGammaRad = 0;
+
+window.addEventListener("deviceorientation", function(event) {
+try {
+  var alphaDeg = event.alpha; // turn = compass = around z axis
+  var betaDeg = event.beta; // tilt = front/back = around x axis
+  var gammaDeg = event.gamma; // twist = left/right = around y axis
+  var alphaRad = alphaDeg / 180 * Math.PI;
+  var betaRad = betaDeg / 180 * Math.PI;
+  var gammaRad = gammaDeg / 180 * Math.PI;
+  var diffAlphaRad = alphaRad - prevAlphaRad;
+  var diffBetaRad = betaRad - prevBetaRad;
+  var diffGammaRad = gammaRad - prevGammaRad;
+  if ( !(diffAlphaRad > 0.018 ||
+          diffBetaRad > 0.018 ||
+          diffGammaRad > 0.018)) {
+    return;
+  }
+  prevAlphaRad = alphaRad;
+  prevBetaRad = betaRad;
+  prevGammaRad = gammaRad;
+
+  E("alpha").textContent = Math.round(alphaDeg) + "° = " + alphaRad + "rad";
+  E("beta").textContent = Math.round(betaDeg) + "° = " + betaRad + "rad";
+  E("gamma").textContent = Math.round(gammaDeg) + "° = " + gammaRad + "rad";
+
+  if ( !camera) {
+    return;
+  }
+  /*
+  var newX = camera.rotationBaseX + betaRad;
+  var newY = camera.rotationBaseY - gammaRad;
+  if (Math.abs(newX - camera.rotation.x) > 0.018) {
+    camera.rotation.x = newX;
+    camera.position.x = newX;
+  }
+  if (Math.abs(newY - camera.rotation.y) > 0.018) {
+    camera.rotation.y = newY;
+  }
+  */
+  camera.rotation.x += diffBetaRad / 2;
+  camera.rotation.y += -diffGammaRad / 2;
+  camera.position.x += -diffGammaRad * 10;
+  camera.position.y += -diffBetaRad * 10;
+} catch (e) { errorCritical(e); }
+}, false);
+</script>
+
 <div id="uninav"></div>
+
+<div>
+  <div>Alpha <span id="alpha"></div>
+  <div>Beta <span id="beta"></div>
+  <div>Gamma <span id="gamma"></div>
+</div>
 
 </body>
 </html>
