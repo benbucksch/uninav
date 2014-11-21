@@ -192,6 +192,7 @@ function loadTaxonomyJSON(url, resultCallback, errorCallback) {
       }
       var topic = new Topic();
       topic.id = c.id;
+      topic.lodID = c.lodID;
       topic.title = c.title;
       topic._iconFilename = c.img;
       topic._parentIDs = c.parentIDs;
