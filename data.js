@@ -7,7 +7,9 @@
  */
 
 const kIconRootURL = "../graphics/dunet/";
+const kContentRootURL = "../content/";
 const kTaxomonyURL = "taxonomy.json";
+
 /**
  * {Array of {Topic}}
  */
@@ -40,6 +42,8 @@ Topic.prototype = {
    * {string}
    */
   _iconFilename : null,
+  _exploreURL : null,
+  _descriptionURL : null,
 
   /**
    * Child nodes
@@ -73,6 +77,36 @@ Topic.prototype = {
    */
   get iconURL() {
     return kIconRootURL + this._iconFilename;
+  },
+
+  /**
+   * The animation to load in the center pane
+   * when the topic is being loaded.
+   * @returns {URL as string}
+   */
+  get exploreURL() {
+    if ( !this._exploreURL) {
+      return undefined;
+    }
+    if (this._exploreURL.substr(0, 4) == "http") {
+      return this._exploreURL;
+    }
+    return kContentRootURL + this._exploreURL;
+  },
+
+  /**
+   * The description to load in the center pane
+   * when the topic is being loaded.
+   * @returns {URL as string}
+   */
+  get descriptionURL() {
+    if ( !this._descriptionURL) {
+      return undefined;
+    }
+    if (this._descriptionURL.substr(0, 4) == "http") {
+      return this._descriptionURL;
+    }
+    return kContentRootURL + this._descriptionURL;
   },
 
   get children() {
@@ -223,6 +257,8 @@ function loadTaxonomyJSON(url, resultCallback, errorCallback) {
       topic.lodID = c.lodID;
       topic.title = c.title;
       topic._iconFilename = c.img;
+      topic._exploreURL = c.exploreURL;
+      topic._descriptionURL = c.descriptionURL;
       topic._parentIDs = c.parentIDs;
       topic._childrenIDs = c.childrenIDs;
 

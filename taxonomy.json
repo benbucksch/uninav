@@ -3728,6 +3728,7 @@
   "id": "f522430",
   "title": "Solar System",
   "img": "file_24086.jpg",
+  "exploreURL": "solarsystem/",
   "parentIDs": [
    "f52241a",
    "f522449"
