@@ -54,7 +54,6 @@
   "img": "manyone.png",
   "parentIDs": [],
   "childrenIDs": [
-   "f57331d",
    "f522367",
    "f522368",
    "f5222a8",
@@ -142,8 +141,6 @@
    "root"
   ],
   "childrenIDs": [
-   "f57332c",
-   "f57332d",
    "f552c62",
    "f512073",
    "f5221f4",
@@ -264,6 +261,7 @@
    "f57360e"
   ],
   "childrenIDs": [
+   "f522430",
    "f522440",
    "f522445",
    "f522447",
@@ -504,6 +502,7 @@
    "f522432"
   ],
   "childrenIDs": [
+   "f522430",
    "f5735ab"
   ]
  },
@@ -592,24 +591,6 @@
   "img": "file_21162.jpg",
   "parentIDs": [
    "f522446"
-  ],
-  "childrenIDs": []
- },
- {
-  "id": "f57332c",
-  "title": "Parks & Landmarks",
-  "img": "file_33601.jpg",
-  "parentIDs": [
-   "f57331d"
-  ],
-  "childrenIDs": []
- },
- {
-  "id": "f57332d",
-  "title": "Travel & Tours",
-  "img": "file_33602.jpg",
-  "parentIDs": [
-   "f57331d"
   ],
   "childrenIDs": []
  },
@@ -1075,7 +1056,7 @@
    "f57331f"
   ],
   "childrenIDs": [
-   "f552c9b",
+   "geoWorld",
    "f552c9c"
   ]
  },
@@ -3731,15 +3712,6 @@
   "img": "file_21962.jpg",
   "parentIDs": [
    "f532666"
-  ],
-  "childrenIDs": []
- },
- {
-  "id": "f552c9b",
-  "title": "Geography",
-  "img": "file_33625.jpg",
-  "parentIDs": [
-   "f573340"
   ],
   "childrenIDs": []
  },
@@ -26945,7 +26917,8 @@
    "geoAfrica",
    "geoAsia",
    "geoAustralia",
-   "geoAntarctica"
+   "geoAntarctica",
+   "f5221f4"
   ],
   "id": "geoWorld",
   "title": "Geography",
