@@ -522,7 +522,7 @@
  },
  {
   "id": "f522447",
-  "title": " Local Supercluste...",
+  "title": "Local Supercluster",
   "img": "file_21161.jpg",
   "parentIDs": [
    "f522446"
@@ -1903,7 +1903,7 @@
  },
  {
   "id": "f5120d3",
-  "title": " Genres & Styles",
+  "title": "Genres & Styles",
   "img": "file_17820.jpg",
   "parentIDs": [
    "f5120d2"
@@ -1922,7 +1922,7 @@
  },
  {
   "id": "f5120d5",
-  "title": " Moods",
+  "title": "Moods",
   "img": "file_17822.jpg",
   "parentIDs": [
    "f5120d2"
@@ -1931,7 +1931,7 @@
  },
  {
   "id": "f5120d6",
-  "title": " Themes",
+  "title": "Themes",
   "img": "file_17823.jpg",
   "parentIDs": [
    "f5120d2"
@@ -2133,7 +2133,7 @@
  },
  {
   "id": "f593c55",
-  "title": " Abrahamic Religions",
+  "title": "Abrahamic Religions",
   "img": "file_43342.jpg",
   "parentIDs": [
    "f573349"
@@ -2147,7 +2147,7 @@
  },
  {
   "id": "f593c56",
-  "title": " East Asian Religions",
+  "title": "East Asian Religions",
   "img": "file_43346.jpg",
   "parentIDs": [
    "f573349"
@@ -2161,7 +2161,7 @@
  },
  {
   "id": "f593c54",
-  "title": " Ethnic & Tribal Religions",
+  "title": "Ethnic & Tribal Religions",
   "img": "file_43347.jpg",
   "parentIDs": [
    "f573349"
@@ -2173,7 +2173,7 @@
  },
  {
   "id": "f593c58",
-  "title": " Indian Religions",
+  "title": "Indian Religions",
   "img": "file_43345.jpg",
   "parentIDs": [
    "f573349"
@@ -2187,7 +2187,7 @@
  },
  {
   "id": "f593c5a",
-  "title": " Other Organized Religions",
+  "title": "Other Organized Religions",
   "img": "file_43348.jpg",
   "parentIDs": [
    "f573349"
@@ -2350,7 +2350,7 @@
  },
  {
   "id": "f5733ba",
-  "title": " Stellar Evolution",
+  "title": "Stellar Evolution",
   "img": "stellar-evolution.jpg",
   "parentIDs": [
    "f522445"
@@ -2359,7 +2359,7 @@
  },
  {
   "id": "f52244b",
-  "title": " Local Group of Galaxies",
+  "title": "Local Group of Galaxies",
   "img": "file_24680.jpg",
   "parentIDs": [
    "f522447"
@@ -3201,7 +3201,7 @@
  },
  {
   "id": "f573613",
-  "title": " Famous Galaxies",
+  "title": "Famous Galaxies",
   "img": "file_37102.jpg",
   "parentIDs": [
    "f52243c"
@@ -3744,7 +3744,7 @@
  },
  {
   "id": "f522430",
-  "title": " The Solar System",
+  "title": "Solar System",
   "img": "file_24086.jpg",
   "parentIDs": [
    "f52241a",
@@ -3849,7 +3849,7 @@
  },
  {
   "id": "f522413",
-  "title": " About Cosmos Portal",
+  "title": "About Cosmos Portal",
   "img": "file_21138.jpg",
   "parentIDs": [
    "f52241a"
@@ -3862,7 +3862,7 @@
  },
  {
   "id": "f583785",
-  "title": " About Oceans Portal",
+  "title": "About Oceans Portal",
   "img": "file_39025.jpg",
   "parentIDs": [
    "f583716"
@@ -3874,7 +3874,7 @@
  },
  {
   "id": "f583717",
-  "title": " Earth's Oceans",
+  "title": "Earth's Oceans",
   "img": "file_38305.jpg",
   "parentIDs": [
    "f583716"
@@ -4662,7 +4662,7 @@
  },
  {
   "id": "f656115",
-  "title": "The Company",
+  "title": "Company",
   "img": "about-company-image.jpg",
   "parentIDs": [
    "f656057"
@@ -4687,7 +4687,7 @@
  },
  {
   "id": "f656107",
-  "title": "The Offering",
+  "title": "Offering",
   "img": "financials-image.jpg",
   "parentIDs": [
    "f656057"
@@ -5524,7 +5524,7 @@
  },
  {
   "id": "f522432",
-  "title": " Milky Way",
+  "title": "Milky Way",
   "img": "file_24229.jpg",
   "parentIDs": [
    "f52244b"
@@ -5866,7 +5866,7 @@
  },
  {
   "id": "f5a4093",
-  "title": "The Science of Rhythm",
+  "title": "Science of Rhythm",
   "img": "file_45318.jpg",
   "parentIDs": [
    "f5a408f"
@@ -6313,7 +6313,7 @@
  },
  {
   "id": "f522442",
-  "title": " Sun",
+  "title": "Sun",
   "img": "file_24087.jpg",
   "parentIDs": [
    "f522430"
@@ -6432,7 +6432,7 @@
  },
  {
   "id": "f522422",
-  "title": " History & Biographies",
+  "title": "History & Biographies",
   "img": "file_24080.jpg",
   "parentIDs": [
    "f522434"
@@ -6443,7 +6443,7 @@
  },
  {
   "id": "f5732e3",
-  "title": " Astronomy Profession",
+  "title": "Astronomy Profession",
   "img": "file_33394.jpg",
   "parentIDs": [
    "f522434"
@@ -6489,7 +6489,7 @@
  },
  {
   "id": "f583948",
-  "title": " 1. Radio",
+  "title": "Radio",
   "img": "file_40642.jpg",
   "parentIDs": [
    "f52243e"
@@ -6518,7 +6518,7 @@
  },
  {
   "id": "f5c45ab",
-  "title": " 2. Microwave",
+  "title": "Microwave",
   "img": "file_50100.jpg",
   "parentIDs": [
    "f52243e"
@@ -6527,7 +6527,7 @@
  },
  {
   "id": "f5c45b8",
-  "title": " 3. Submillimeter",
+  "title": "Submillimeter",
   "img": "file_50088.jpg",
   "parentIDs": [
    "f52243e"
@@ -6552,7 +6552,7 @@
  },
  {
   "id": "f583971",
-  "title": " 5. Optical",
+  "title": "Optical",
   "img": "file_40804.jpg",
   "parentIDs": [
    "f52243e"
@@ -6591,7 +6591,7 @@
  },
  {
   "id": "f5630d4",
-  "title": " 6. Ultraviolet",
+  "title": "Ultraviolet",
   "img": "file_37063.jpg",
   "parentIDs": [
    "f52243e"
@@ -6604,7 +6604,7 @@
  },
  {
   "id": "f573490",
-  "title": " 7. X-ray",
+  "title": "X-ray",
   "img": "file_37066.jpg",
   "parentIDs": [
    "f52243e"
@@ -6617,7 +6617,7 @@
  },
  {
   "id": "f593a11",
-  "title": " 8. Gamma-ray",
+  "title": "Gamma-ray",
   "img": "file_41346.jpg",
   "parentIDs": [
    "f52243e"
@@ -6629,7 +6629,7 @@
  },
  {
   "id": "f5c45aa",
-  "title": " 9. Cosmic-ray",
+  "title": "Cosmic-ray",
   "img": "file_54389.jpg",
   "parentIDs": [
    "f52243e"
@@ -6638,7 +6638,7 @@
  },
  {
   "id": "f5c45f3",
-  "title": "10. Neutrino",
+  "title": "Neutrino",
   "img": "file_54403.jpg",
   "parentIDs": [
    "f52243e"
@@ -6647,7 +6647,7 @@
  },
  {
   "id": "f5c45f4",
-  "title": "11. Gravity",
+  "title": "Gravity",
   "img": "file_54404.jpg",
   "parentIDs": [
    "f52243e"
@@ -6661,7 +6661,7 @@
  },
  {
   "id": "f5c45ac",
-  "title": " 4. Infrared",
+  "title": "Infrared",
   "img": "file_50103.jpg",
   "parentIDs": [
    "f52243e"
@@ -7171,7 +7171,7 @@
  },
  {
   "id": "f5939ae",
-  "title": "The Blue Community P...",
+  "title": "Blue Community P...",
   "img": "file_40979.jpg",
   "parentIDs": [
    "f58372c"
@@ -7448,7 +7448,7 @@
  },
  {
   "id": "f9bf574",
-  "title": "The Age of Deleveraging",
+  "title": "Age of Deleveraging",
   "img": "3-gray.jpg",
   "parentIDs": [
    "fa1f702fc2ba8130760"
@@ -10487,7 +10487,7 @@
  },
  {
   "id": "f522449",
-  "title": " Local Neighborhoo...",
+  "title": "Local Neighborhood",
   "img": "file_24230.jpg",
   "parentIDs": [
    "f522432"
@@ -11286,7 +11286,7 @@
  },
  {
   "id": "f5c45be",
-  "title": "The University of Manchest...",
+  "title": "University of Manchester",
   "img": "file_21113.jpg",
   "parentIDs": [
    "f583948"
@@ -11295,7 +11295,7 @@
  },
  {
   "id": "f5c45c2",
-  "title": "The NRAO Very Large Array...",
+  "title": "NRAO Very Large Array O.",
   "img": "file_21113.jpg",
   "parentIDs": [
    "f583948"
@@ -11304,7 +11304,7 @@
  },
  {
   "id": "f5c45c4",
-  "title": "The NRAO Robert C. Byrd Gre...",
+  "title": "NRAO Robert C. Byrd Gre...",
   "img": "file_50104.jpg",
   "parentIDs": [
    "f583948"
@@ -11313,7 +11313,7 @@
  },
  {
   "id": "f5c45bb",
-  "title": "The LOW Frequency A...",
+  "title": "LOW Frequency A...",
   "img": "file_21113.jpg",
   "parentIDs": [
    "f583948"
@@ -11488,7 +11488,7 @@
  },
  {
   "id": "f5c45c1",
-  "title": "The Fermi Gamma-ray S...",
+  "title": "Fermi Gamma-ray S...",
   "img": "file_54097.jpg",
   "parentIDs": [
    "f593a11"
@@ -11497,7 +11497,7 @@
  },
  {
   "id": "f5c45c0",
-  "title": "The Swift Gamma Ray Burst E...",
+  "title": "Swift Gamma Ray Burst E...",
   "img": "file_21113.jpg",
   "parentIDs": [
    "f593a11"
@@ -12070,7 +12070,7 @@
  },
  {
   "id": "f583798",
-  "title": "The Mission",
+  "title": "Mission",
   "img": "file_38997.jpg",
   "parentIDs": [
    "f58372d"
@@ -12079,7 +12079,7 @@
  },
  {
   "id": "f583797",
-  "title": "The Organizers",
+  "title": "Organizers",
   "img": "file_38999.jpg",
   "parentIDs": [
    "f58372d"
@@ -12090,7 +12090,7 @@
  },
  {
   "id": "f583799",
-  "title": "The Team",
+  "title": "Team",
   "img": "file_39000.jpg",
   "parentIDs": [
    "f58372d"
@@ -13427,7 +13427,7 @@
  },
  {
   "id": "f789d08",
-  "title": "St.Louis Place Building (1507)",
+  "title": "St. Louis Place Building (1507)",
   "img": "omni-logo-4.jpg",
   "parentIDs": [
    "f645dd3"
@@ -13436,7 +13436,7 @@
  },
  {
   "id": "f789d09",
-  "title": "The Colorado Building (1508)",
+  "title": "Colorado Building (1508)",
   "img": "omni-logo-4.jpg",
   "parentIDs": [
    "f645dd3"
@@ -13985,7 +13985,7 @@
  },
  {
   "id": "f79a12e",
-  "title": "The South Financial G...",
+  "title": "South Financial G...",
   "img": "omni-logo-4.jpg",
   "parentIDs": [
    "f789cc6"
@@ -14426,7 +14426,7 @@
  },
  {
   "id": "f789e12",
-  "title": "The Atrium (3520)",
+  "title": "Atrium (3520)",
   "img": "omni-logo-4.jpg",
   "parentIDs": [
    "f676867"
@@ -14606,7 +14606,7 @@
  },
  {
   "id": "f789d6d",
-  "title": "The Regatta Apartments ...",
+  "title": "Regatta Apartments ...",
   "img": "omni-logo-4.jpg",
   "parentIDs": [
    "f67683d"
@@ -15263,7 +15263,7 @@
  },
  {
   "id": "f789df7",
-  "title": "The Gem Hotel Union Squar...",
+  "title": "Gem Hotel Union Squar...",
   "img": "omni-logo-4.jpg",
   "parentIDs": [
    "f67686c"
@@ -15722,7 +15722,7 @@
  },
  {
   "id": "f789dc3",
-  "title": "The Pavillions (2831)",
+  "title": "Pavillions (2831)",
   "img": "omni-logo-4.jpg",
   "parentIDs": [
    "f67686f"
@@ -16487,7 +16487,7 @@
  },
  {
   "id": "f79a143",
-  "title": "The Arboretum (5519)",
+  "title": "Arboretum (5519)",
   "img": "omni-logo-4.jpg",
   "parentIDs": [
    "f789cde"
@@ -16532,7 +16532,7 @@
  },
  {
   "id": "f79a144",
-  "title": "The Landings (5520)",
+  "title": "Landings (5520)",
   "img": "omni-logo-4.jpg",
   "parentIDs": [
    "f789cde"
@@ -17360,7 +17360,7 @@
  },
  {
   "id": "f79a0ad",
-  "title": "The Drake Properties ...",
+  "title": "Drake Properties ...",
   "img": "omni-logo-4.jpg",
   "parentIDs": [
    "f676839"
@@ -19430,7 +19430,7 @@
  },
  {
   "id": "f79a191",
-  "title": "The Fountains II & III (5809)",
+  "title": "Fountains II & III (5809)",
   "img": "omni-logo-4.jpg",
   "parentIDs": [
    "f789ce0"
@@ -19754,7 +19754,7 @@
  },
  {
   "id": "f79a0d2",
-  "title": "The Mooring (4425)",
+  "title": "Mooring (4425)",
   "img": "omni-logo-4.jpg",
   "parentIDs": [
    "f676833"
@@ -20840,7 +20840,7 @@
  },
  {
   "id": "f522476",
-  "title": "1. From Stargazers ...",
+  "title": "From Stargazers ...",
   "img": "file_21113.jpg",
   "parentIDs": [
    "f522475"
@@ -20856,7 +20856,7 @@
  },
  {
   "id": "f522477",
-  "title": "2. The Great Magnet, the...",
+  "title": "The Great Magnet, the...",
   "img": "file_21113.jpg",
   "parentIDs": [
    "f522475"
@@ -20865,7 +20865,7 @@
  },
  {
   "id": "f522478",
-  "title": "3. The Exploration...",
+  "title": "The Exploration...",
   "img": "file_21113.jpg",
   "parentIDs": [
    "f522475"
@@ -20874,7 +20874,7 @@
  },
  {
   "id": "f52247f",
-  "title": "4. Timeline",
+  "title": "Timeline",
   "img": "file_21113.jpg",
   "parentIDs": [
    "f522475"
@@ -20883,7 +20883,7 @@
  },
  {
   "id": "f522480",
-  "title": "5. Glossary",
+  "title": "Glossary",
   "img": "file_21113.jpg",
   "parentIDs": [
    "f522475"
@@ -20892,7 +20892,7 @@
  },
  {
   "id": "f522481",
-  "title": "6. Lesson Plans",
+  "title": "Lesson Plans",
   "img": "file_21113.jpg",
   "parentIDs": [
    "f522475"
@@ -21366,7 +21366,7 @@
  },
  {
   "id": "f99ed90",
-  "title": "1. Building Design",
+  "title": "Building Design",
   "img": "screen-shot-2011-11-22-at-1-39-45-pm.png",
   "parentIDs": [
    "f99ed8f"
@@ -21375,7 +21375,7 @@
  },
  {
   "id": "f99edb4",
-  "title": "2 Transportation",
+  "title": "Transportation",
   "img": "screen-shot-2011-11-23-at-3-01-29-pm.png",
   "parentIDs": [
    "f99ed8f"
@@ -21384,7 +21384,7 @@
  },
  {
   "id": "f99ee83",
-  "title": "3. Energy Use",
+  "title": "Energy Use",
   "img": "screen-shot-2011-12-06-at-8-04-24-am.png",
   "parentIDs": [
    "f99ed8f"
@@ -21393,7 +21393,7 @@
  },
  {
   "id": "f99ee6f",
-  "title": "4. Water Conservation",
+  "title": "Water Conservation",
   "img": "screen-shot-2011-12-04-at-10-41-58-am.png",
   "parentIDs": [
    "f99ed8f"
@@ -21402,7 +21402,7 @@
  },
  {
   "id": "f99ee8a",
-  "title": "5. Waste Management",
+  "title": "Waste Management",
   "img": "screen-shot-2011-12-07-at-8-43-07-am.png",
   "parentIDs": [
    "f99ed8f"
@@ -21411,7 +21411,7 @@
  },
  {
   "id": "f99eeae",
-  "title": "6.  Reduce Use of Plastic",
+  "title": "Reduce Use of Plastic",
   "img": "screen-shot-2011-12-09-at-2-51-21-pm.png",
   "parentIDs": [
    "f99ed8f"
@@ -21420,7 +21420,7 @@
  },
  {
   "id": "f99ede3",
-  "title": "7. Organic & Hydroponic Food",
+  "title": "Organic & Hydroponic Food",
   "img": "screen-shot-2011-11-24-at-2-32-16-pm.png",
   "parentIDs": [
    "f99ed8f"
@@ -21429,7 +21429,7 @@
  },
  {
   "id": "f99ee78",
-  "title": "8. Promote Sustainable...",
+  "title": "Promote Sustainable...",
   "img": "screen-shot-2011-12-05-at-9-20-18-am.png",
   "parentIDs": [
    "f99ed8f"
@@ -21438,7 +21438,7 @@
  },
  {
   "id": "f94e266",
-  "title": "9. Protect Coastal Hab...",
+  "title": "Protect Coastal Hab...",
   "img": "screen-shot-2011-12-08-at-4-16-01-pm.png",
   "parentIDs": [
    "f99ed8f"
@@ -21447,7 +21447,7 @@
  },
  {
   "id": "f99ef64",
-  "title": "10. Clean Marina Initiatives",
+  "title": "Clean Marina Initiatives",
   "img": "screen-shot-2011-12-15-at-8-40-13-pm.png",
   "parentIDs": [
    "f99ed8f"
@@ -21456,7 +21456,7 @@
  },
  {
   "id": "f99efae",
-  "title": "11.  Education",
+  "title": "Education",
   "img": "screen-shot-2011-12-19-at-4-27-28-pm.png",
   "parentIDs": [
    "f99ed8f"
@@ -21465,7 +21465,7 @@
  },
  {
   "id": "f99eff4",
-  "title": "12..  Planning, Policy, and...",
+  "title": "Planning, Policy, and...",
   "img": "cebu_05_highres.jpg",
   "parentIDs": [
    "f99ed8f"
@@ -22037,7 +22037,7 @@
  },
  {
   "id": "f7697e6",
-  "title": "1. Sustainability",
+  "title": "Sustainability",
   "img": "bonaire-beach.jpg",
   "parentIDs": [
    "f7697dd"
@@ -22046,7 +22046,7 @@
  },
  {
   "id": "f7697e8",
-  "title": "3. Economic Development...",
+  "title": "Economic Development...",
   "img": "st-lucia1.jpg",
   "parentIDs": [
    "f7697dd"
@@ -22055,7 +22055,7 @@
  },
  {
   "id": "f7697e7",
-  "title": "2. Disaster Reduction &...",
+  "title": "Disaster Reduction &...",
   "img": "atlantis-caribbean_full.jpg",
   "parentIDs": [
    "f7697dd"
@@ -22350,7 +22350,7 @@
  },
  {
   "id": "f5c4709",
-  "title": " Primates (all)",
+  "title": "Primates (all)",
   "img": "file_52088.jpg",
   "parentIDs": [
    "f5326a3",
@@ -22381,7 +22381,7 @@
  },
  {
   "id": "f52247d",
-  "title": "5. A Math Refresher",
+  "title": "Math Refresher",
   "img": "file_21113.jpg",
   "parentIDs": [
    "f522476"
@@ -22390,7 +22390,7 @@
  },
  {
   "id": "f52247c",
-  "title": "4. Spaceflight",
+  "title": "Spaceflight",
   "img": "file_21113.jpg",
   "parentIDs": [
    "f522476"
@@ -22399,7 +22399,7 @@
  },
  {
   "id": "f52247b",
-  "title": "3. The Sun",
+  "title": "Sun (Teaching of)",
   "img": "file_21113.jpg",
   "parentIDs": [
    "f522476"
@@ -22408,7 +22408,7 @@
  },
  {
   "id": "f52247a",
-  "title": "2. Newtonian Mechanics",
+  "title": "Newtonian Mechanics",
   "img": "file_21113.jpg",
   "parentIDs": [
    "f522476"
@@ -22417,7 +22417,7 @@
  },
  {
   "id": "f522479",
-  "title": "1. Astronomy of the Earth's...",
+  "title": "Astronomy of the Earth's...",
   "img": "file_21113.jpg",
   "parentIDs": [
    "f522476"
@@ -22426,7 +22426,7 @@
  },
  {
   "id": "f52247e",
-  "title": "6. Get A Straight Answer",
+  "title": "Get a straight answer",
   "img": "file_21113.jpg",
   "parentIDs": [
    "f522476"
@@ -23783,7 +23783,7 @@
  },
  {
   "id": "f5b4320",
-  "title": " About This Portal",
+  "title": "About This Portal",
   "img": "file_49024.jpg",
   "parentIDs": [
    "f5b431b"
@@ -23792,7 +23792,7 @@
  },
  {
   "id": "f5c470b",
-  "title": " Primates (popular)",
+  "title": "Primates (popular)",
   "img": "file_52091.jpg",
   "parentIDs": [
    "f5b431b"
@@ -24699,7 +24699,7 @@
  },
  {
   "id": "f5b447e",
-  "title": "  Sulawesi tarsiers",
+  "title": "Sulawesi tarsiers",
   "img": "file_48994.jpg",
   "parentIDs": [
    "f5b431e"
@@ -24715,7 +24715,7 @@
  },
  {
   "id": "f5c4608",
-  "title": " Philippine Tarsier (Ta...",
+  "title": "Philippine Tarsier (Ta...",
   "img": "file_51370.jpg",
   "parentIDs": [
    "f5b431e"
@@ -24759,7 +24759,7 @@
  },
  {
   "id": "f5b4326",
-  "title": " Humans & great apes (Homin...",
+  "title": "Humans & great apes (Homin...",
   "img": "file_48268.jpg",
   "parentIDs": [
    "f5b431d"
@@ -24955,7 +24955,7 @@
  },
  {
   "id": "f5b4329",
-  "title": " Humans (Homo)",
+  "title": "Humans (Homo)",
   "img": "file_48160.jpg",
   "parentIDs": [
    "f5c470b",
@@ -25044,7 +25044,7 @@
  },
  {
   "id": "f583847",
-  "title": "The Everest Peace Proje...",
+  "title": "Everest Peace Proje...",
   "img": "file_39377.gif",
   "parentIDs": [
    "f583852"
@@ -25464,7 +25464,7 @@
  },
  {
   "id": "f5e4c9b",
-  "title": " About IOI USA",
+  "title": "About IOI USA",
   "img": "file_59446.jpg",
   "parentIDs": [
    "f5e4c92"
@@ -25475,7 +25475,7 @@
  },
  {
   "id": "f5e4c9c",
-  "title": " Programs",
+  "title": "Programs",
   "img": "file_59447.jpg",
   "parentIDs": [
    "f5e4c92"
@@ -25580,7 +25580,7 @@
  },
  {
   "id": "f5b435a",
-  "title": " Hylobates gibbons",
+  "title": "Hylobates gibbons",
   "img": "file_48414.jpg",
   "parentIDs": [
    "f5b4359"
@@ -26773,7 +26773,7 @@
  },
  {
   "id": "f5b435b",
-  "title": "  Agile gibbon (Hylobates ...",
+  "title": "Agile gibbon (Hylobates ...",
   "img": "file_48995.jpg",
   "parentIDs": [
    "f5b435a"
@@ -26782,7 +26782,7 @@
  },
  {
   "id": "f5b435d",
-  "title": "  Borneo gibbon (Hylobates ...",
+  "title": "Borneo gibbon (Hylobates ...",
   "img": "file_48430.jpg",
   "parentIDs": [
    "f5b435a"
@@ -26791,7 +26791,7 @@
  },
  {
   "id": "f5b435c",
-  "title": "  White-handed gibbon (Hyl...",
+  "title": "White-handed gibbon (Hyl...",
   "img": "file_48427.jpg",
   "parentIDs": [
    "f5b435a"
@@ -26800,7 +26800,7 @@
  },
  {
   "id": "f5b447b",
-  "title": " Silvery gibbon (Hylobates ...",
+  "title": "Silvery gibbon (Hylobates ...",
   "img": "file_51115.jpg",
   "parentIDs": [
    "f5b435a"
@@ -26978,7 +26978,7 @@
     "geoNamibia",
     "geoBotswana",
     "geoLesotho",
-    "geoTheGambia",
+    "geoGambia",
     "geoGabon",
     "geoGuinea-Bissau",
     "geoMauritius",
@@ -28237,9 +28237,9 @@
   "childrenIDs": [
 
   ],
-  "title": "The Gambia",
+  "title": "Gambia",
   "lodID": "dbpedia:The_Gambia",
-  "id": "geoTheGambia",
+  "id": "geoGambia",
   "img": "manyone.png"
 },
 {
