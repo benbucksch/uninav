@@ -1,3 +1,11 @@
+/**
+ * Util functions
+ * Non-UI and UI
+ * TODO use util.js from DU
+ *
+ * (c) 2014 Ben Bucksch
+ * License: MIT
+ */
 
 /**
  * @param test {Boolean}

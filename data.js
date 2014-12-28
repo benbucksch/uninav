@@ -1,6 +1,9 @@
 /**
- * Copyright 2014 Ben Bucksch
- * Published as AGPLv3
+ * Loads taxonomy data and gives convenient access to it.
+ * This is pure data, independent from any UI or display.
+ *
+ * (c) 2014 Ben Bucksch
+ * License: GPL3, see LICENSE
  */
 
 const kIconRootURL = "../graphics/dunet/";

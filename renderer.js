@@ -1,6 +1,8 @@
 /**
- * Copyright 2014 Ben Bucksch
- * Published as AGPLv3
+ * Abstract interface for the UI objects
+ *
+ * (c) 2014 Ben Bucksch
+ * License: GPL3, see LICENSE
  */
 
 

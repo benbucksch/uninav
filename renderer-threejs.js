@@ -1,6 +1,9 @@
 /**
- * Copyright 2014 Ben Bucksch
- * Published as AGPLv3
+ * UI implementation using THREE.js
+ * For API, see renderer.js
+ *
+ * (c) 2014 Ben Bucksch
+ * License: GPL3, see LICENSE
  */
 
 var renderer;

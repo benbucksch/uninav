@@ -1,6 +1,10 @@
 /**
- * Copyright 2014 Ben Bucksch
- * Published as AGPLv3
+ * This is the central code file for UniNav
+ * - Entry point and load
+ * - Reaction to user input, on a high-level (thus Controller in MVC sense)
+ *
+ * (c) 2014 Ben Bucksch
+ * License: GPL3, see LICENSE
  */
 
 /**
