@@ -25022,7 +25022,7 @@
  },
  {
   "id": "f5b4329",
-  "title": "Humans (Homo)",
+  "title": "Homo",
   "img": "file_48160.jpg",
   "parentIDs": [
    "f5c470b",
@@ -25948,7 +25948,7 @@
  },
  {
   "id": "f5b432f",
-  "title": "Homo  sapiens (modern humans)",
+  "title": "Human (Homo sapiens)",
   "img": "file_48263.jpg",
   "parentIDs": [
    "f5b4329"
