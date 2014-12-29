@@ -18,7 +18,7 @@
  },
  {
   "id": "f542995",
-  "title": "School & University ...",
+  "title": "School & University",
   "img": "file_23754.jpg",
   "parentIDs": [
    "f5222a8"
@@ -54,21 +54,21 @@
   "img": "manyone.png",
   "parentIDs": [],
   "childrenIDs": [
-   "f522367",
-   "f522368",
    "f5222a8",
-   "f57331c",
-   "geoWorld",
-   "f57331e",
    "f57331f",
+   "f522446",
+   "geoWorld",
+   "f522368",
+   "f57331c",
+   "f57331e",
    "f573320",
-   "f573321",
-   "f522446"
+   "f522367",
+   "f573321"
   ]
  },
  {
   "id": "f522367",
-  "title": "Arts & Entertainment",
+  "title": "Entertainment",
   "img": "file_33574.jpg",
   "parentIDs": [
    "root"
@@ -86,7 +86,7 @@
  },
  {
   "id": "f522368",
-  "title": "Earth, Nature & Environment",
+  "title": "Nature",
   "img": "file_33575.jpg",
   "parentIDs": [
    "root"
@@ -109,13 +109,12 @@
   ],
   "childrenIDs": [
    "f542a04",
-   "f542995",
-   "f645ef3"
+   "f542995"
   ]
  },
  {
   "id": "f57331c",
-  "title": "Home, Family & Health",
+  "title": "Home & Family",
   "img": "file_33577.jpg",
   "parentIDs": [
    "root"
@@ -153,7 +152,7 @@
  },
  {
   "id": "f57331e",
-  "title": "Profession & Career",
+  "title": "Job",
   "img": "file_33579.jpg",
   "parentIDs": [
    "root"
@@ -216,7 +215,7 @@
  },
  {
   "id": "f573320",
-  "title": "Society & Government",
+  "title": "Society",
   "img": "file_33581.jpg",
   "parentIDs": [
    "root"
@@ -234,7 +233,7 @@
  },
  {
   "id": "f573321",
-  "title": "Sports & Recreation",
+  "title": "Sports",
   "img": "file_33582.jpg",
   "parentIDs": [
    "root"
