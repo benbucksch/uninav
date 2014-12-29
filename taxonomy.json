@@ -6192,6 +6192,7 @@
   "id": "f522428",
   "title": "Mercury",
   "img": "file_24088.jpg",
+  "exploreURL": "solarsystem/#planet=mercury",
   "parentIDs": [
    "f522430"
   ],
@@ -6199,8 +6200,9 @@
  },
  {
   "id": "f522456",
-  "title": "Neptune System",
+  "title": "Neptune",
   "img": "file_24095.jpg",
+  "exploreURL": "solarsystem/#planet=neptune",
   "parentIDs": [
    "f522430"
   ],
@@ -6219,6 +6221,7 @@
   "id": "f542b15",
   "title": "Comets",
   "img": "file_24097.jpg",
+  "exploreURL": "solarsystem/#planet=halley",
   "parentIDs": [
    "f522430"
   ],
@@ -6250,8 +6253,9 @@
  },
  {
   "id": "f522457",
-  "title": "Uranus System",
+  "title": "Uranus",
   "img": "file_24094.jpg",
+  "exploreURL": "solarsystem/#planet=uranus",
   "parentIDs": [
    "f522430"
   ],
@@ -6259,8 +6263,9 @@
  },
  {
   "id": "f522453",
-  "title": "Saturn System",
+  "title": "Saturn",
   "img": "file_24093.jpg",
+  "exploreURL": "solarsystem/#planet=saturn",
   "parentIDs": [
    "f522430"
   ],
@@ -6268,8 +6273,9 @@
  },
  {
   "id": "f522459",
-  "title": "Jupiter System",
+  "title": "Jupiter",
   "img": "file_24092.jpg",
+  "exploreURL": "solarsystem/#planet=jupiter",
   "parentIDs": [
    "f522430"
   ],
@@ -6279,6 +6285,7 @@
   "id": "f522458",
   "title": "Mars",
   "img": "file_24091.jpg",
+  "exploreURL": "solarsystem/#planet=mars",
   "parentIDs": [
    "f522430"
   ],
@@ -6301,6 +6308,7 @@
   "id": "f5223a8",
   "title": "Venus",
   "img": "file_24089.jpg",
+  "exploreURL": "solarsystem/#planet=venus",
   "parentIDs": [
    "f522430"
   ],
@@ -6310,6 +6318,7 @@
   "id": "f522442",
   "title": "Sun",
   "img": "file_24087.jpg",
+  "exploreURL": "solarsystem/#planet=sun",
   "parentIDs": [
    "f522430"
   ],
@@ -10924,8 +10933,9 @@
  },
  {
   "id": "f542b16",
-  "title": "Pluto & Charon",
+  "title": "Pluto",
   "img": "file_24101.jpg",
+  "exploreURL": "solarsystem/#planet=pluto",
   "parentIDs": [
    "f542b14"
   ],
@@ -11029,6 +11039,7 @@
   "id": "f5734c8",
   "title": "Moon",
   "img": "file_37076.jpg",
+  "exploreURL": "solarsystem/#planet=moon",
   "parentIDs": [
    "f522441"
   ],
