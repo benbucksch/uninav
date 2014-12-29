@@ -89,14 +89,14 @@
   "title": "Nature",
   "img": "file_33575.jpg",
   "parentIDs": [
-   "root"
+   "root",
+   "f6258ae"
   ],
   "childrenIDs": [
    "f5221f4",
    "f53266e",
    "f532666",
    "f53264c",
-   "f52241a",
    "f583716"
   ]
  },
@@ -3729,8 +3729,8 @@
   "img": "file_24086.jpg",
   "exploreURL": "solarsystem/",
   "parentIDs": [
-   "f52241a",
-   "f522449"
+   "f522449",
+   "f52241a"
   ],
   "childrenIDs": [
    "f522428",
@@ -11021,10 +11021,14 @@
   "id": "f6258ae",
   "title": "Earth",
   "img": "earth_from_space.jpg",
+  "exploreURL": "solarsystem/#planet=moon",
   "parentIDs": [
    "f522441"
   ],
-  "childrenIDs": []
+  "childrenIDs": [
+    "geoWorld",
+    "f522368"
+  ]
  },
  {
   "id": "f512063",
@@ -26919,7 +26923,8 @@
  },
  {
   "parentIDs": [
-   "root"
+   "root",
+   "f6258ae"
   ],
   "childrenIDs": [
    "geoNorthAmerica",
