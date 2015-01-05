@@ -1055,7 +1055,6 @@
    "f57331f"
   ],
   "childrenIDs": [
-   "geoWorld",
    "f552c9c"
   ]
  },
@@ -3727,7 +3726,7 @@
   "id": "f522430",
   "title": "Solar System",
   "img": "file_24086.jpg",
-  "exploreURL": "solarsystem/",
+  "exploreURL": "solarsystem/#",
   "parentIDs": [
    "f522449",
    "f52241a"
