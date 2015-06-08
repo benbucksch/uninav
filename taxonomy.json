@@ -59,7 +59,7 @@
    "f522446",
    "geoWorld",
    "f522368",
-   "f5b432f",
+   "human",
    "f57331c",
    "f57331e",
    "f573320",
@@ -172,7 +172,7 @@
    "f573337",
    "f573338",
    "f573339",
-   "f57333a",
+   "healthportal",
    "f573600",
    "f57333b",
    "f57333c",
@@ -1250,15 +1250,6 @@
   "id": "f573339",
   "title": "Manufacturing",
   "img": "file_33614.jpg",
-  "parentIDs": [
-   "f57331e"
-  ],
-  "childrenIDs": []
- },
- {
-  "id": "f57333a",
-  "title": "Medicine & Health",
-  "img": "file_33615.jpg",
   "parentIDs": [
    "f57331e"
   ],
@@ -10671,7 +10662,6 @@
    "f625aa5",
    "f635bec",
    "f635ce0",
-   "f635bed",
    "f635bee",
    "f645ce1"
   ]
@@ -20744,15 +20734,6 @@
   "childrenIDs": []
  },
  {
-  "id": "f635bed",
-  "title": "Health",
-  "img": "article-1243873-07e3212c000005dc-337_634x549.jpg",
-  "parentIDs": [
-   "f6052f3"
-  ],
-  "childrenIDs": []
- },
- {
   "id": "f635bee",
   "title": "Labor",
   "img": "buffalo-plowing-a-field-in.jpg",
@@ -25044,7 +25025,7 @@
    "f5b4326"
   ],
   "childrenIDs": [
-   "f5b432f",
+   "human",
    "f5b4330",
    "f5b4331",
    "f5b4333",
@@ -25962,7 +25943,7 @@
   "childrenIDs": []
  },
  {
-  "id": "f5b432f",
+  "id": "human",
   "title": "Human",
   "img": "file_48263.jpg",
   "parentIDs": [
@@ -25970,6 +25951,7 @@
    "f5b4329"
   ],
   "childrenIDs": [
+   "h1",
    "healthportal"
   ]
  },
@@ -26925,10 +26907,10 @@
   "childrenIDs": []
  },
   {
-    "img": "placeholder.png",
+    "img": "file_33615.jpg",
     "childrenIDs": ["h1", "h169", "h170", "h171", "h215", "h487", "h488", "h489", "h496", "h497", "h498", "h502", "h508", "h509", "h510", "h511", "h512", "h513", "h514", "h519", "h520", "h538", "h575"],
     "parentIDs": [
-     "f5b432f"
+     "human"
     ],
     "id": "healthportal",
     "title": "Health"
