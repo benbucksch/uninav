@@ -1,4 +1,4 @@
-uninav
+TopicNav
 ======
 
-3D navigation of topics in the Digital Universe
+3D navigation of topics in Larasol
