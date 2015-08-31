@@ -1,5 +1,5 @@
 /**
- * This is the central code file for UniNav
+ * This is the central code file for TopicNav
  * - Entry point and load
  * - Reaction to user input, on a high-level (thus Controller in MVC sense)
  *
@@ -44,7 +44,7 @@ function onLoad() {
     // global objects
     gRootN = rootN;
     var du = window.parent;
-    assert(du.openTopic, "DU obj not found in UniNav");
+    assert(du.openTopic, "DU obj not found in TopicNav");
     du.uninav = window;
   }, errorCritical);
 }
@@ -187,7 +187,7 @@ function getObj3DforTopic(topic) {
 
 
 /**
- * When: User changed the topic outside of UniNav
+ * When: User changed the topic outside of TopicNav
  * Action: Show the Obj3D and select it,
  *   but do not change topic of DU (that's already done)
  * @param topic {Topic}

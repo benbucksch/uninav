@@ -50,8 +50,8 @@
  },
  {
   "id": "root",
-  "title": "ManyOne",
-  "img": "manyone.png",
+  "title": "Larasol",
+  "img": "larasol.png",
   "parentIDs": [],
   "childrenIDs": [
    "f5222a8",
