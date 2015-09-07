@@ -1,4 +1,4 @@
 TopicNav
 ======
 
-3D navigation of topics in Larasol
+3D navigation of topics in Labrasol

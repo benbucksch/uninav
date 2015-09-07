@@ -214,5 +214,5 @@ function showTopic(topic) {
 function openTopic(topic) {
   var target = window.parent;
   target.openTopic(topic);
-  //target.postMessage(topic, "http://www.larasol.org");
+  //target.postMessage(topic, "http://www.me.org");
 }

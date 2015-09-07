@@ -50,8 +50,8 @@
  },
  {
   "id": "root",
-  "title": "Larasol",
-  "img": "larasol.png",
+  "title": "Labrasol",
+  "img": "labrasol.png",
   "parentIDs": [],
   "childrenIDs": [
    "f5222a8",
