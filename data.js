@@ -144,7 +144,7 @@ Topic.prototype = {
     if (includeThis) {
       result.push(this);
     }
-    return this.parents.forEach(function(parent) {
+    this.parents.forEach(function(parent) {
       result.push(parent);
       result = result.concat(parent.ancestors()); // recursion!
       // TODO stop loops, if not DAG
