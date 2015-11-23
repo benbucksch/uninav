@@ -33,8 +33,8 @@ function onLoad() {
     rootN.showChildren();
     var startN = rootN.children[0];
     assert(startN, "Start node not found. Taxonomy file broken?");
-    highlight3DObj(startN);
-    select3DObj(startN);
+    select3DObj(rootN);
+    //highlight3DObj(startN);
 
     scene.onMouseMove(onMouseMove);
     scene.onMouseClick(onMouseClick);

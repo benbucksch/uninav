@@ -23,9 +23,9 @@ FlatTile.prototype = {
     var el = cE("div", "topic");
     var self = this;
     var icon = cE("img", "icon", {
-      src : self.topic._iconFilename,
+      src : self.topic.iconURL,
     });
-    var label = cE("div", label);
+    var label = cE("div", "label");
     label.appendChild(cTN(this.topic.title));
     el.appendChild(icon);
     el.appendChild(label);
