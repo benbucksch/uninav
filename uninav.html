@@ -22,6 +22,51 @@
         #4db2ff,
         white);
   }
+
+  /* 2D renderer */
+  #ancestors {
+    width: 100%;
+  }
+  #current {
+    width: 100%;
+  }
+  #children {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+  }
+
+  .topic {
+    display: inline;
+    margin: 5px;
+    border: transparent solid 2px;
+  }
+  .topic.hover .icon {
+    border-color: yellow;
+  }
+  .icon {
+    width: 32px;
+    height: 32px;
+    margin: 2px;
+    vertical-align: middle;
+  }
+  #current .icon {
+    width: 64px;
+    height: 64px;
+  }
+  .label {
+    display: inline;
+    vertical-align: middle;
+    font-size: 10pt;
+    margin: 3px;
+  }
+  #ancestors .label:after {
+    content: "  >  ";
+  }
+  #current .label {
+    font-size: 20pt;
+    font-weight: bold;
+  }
 </style>
 </head>
 <body>
