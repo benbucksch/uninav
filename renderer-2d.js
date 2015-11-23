@@ -98,12 +98,8 @@ FlatTile.prototype = {
    * or because he selected the topic from the content pane.
    */
   select : function() {
-    //var ancestorsOnScreen = gScene.ancestors();
-    this.ancestors().forEach(function(ancestor) {
-      /* optimization:
-      if (arrayContains(ancestorsOnScreen, ancestor)) {
-        return;
-      }*/
+    cleanElement(gScene.ancestorsE);
+    this.ancestors().reverse().forEach(function(ancestor) {
       moveElement(ancestor._element, gScene.ancestorsE);
     });
 
