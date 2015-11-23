@@ -24,7 +24,7 @@ function createScene(parentE) {
   //camera = new THREE.OrthographicCamera(-6, 6, 2, -2, 0.1, 1000);
   camera.position.z = 4;
   camera.position.y = 2.25;
-  camera.rotation.x = -0.6;
+  camera.rotation.x = 0.6;
   camera.rotationBaseX = -0.6;
   camera.rotationBaseY = 0;
   camera.rotationBaseZ = 0;
@@ -79,7 +79,7 @@ function cameraLookAt(tile) {
   //camera.position.y = tilePosition.y + 2.5;
   var scrollTween = new TWEEN.Tween(camera.position)
               .to({ x: camera.position.x + (0.4 * (tilePosition.x - camera.position.x)),
-                    y: tilePosition.y + 2.5 }, 1000)
+                    y: tilePosition.y - 3 }, 1000)
               .easing(TWEEN.Easing.Quadratic.InOut)
               .start();
   //ddebug(tile.title + "\ntile pos x,y,z = " + tilePosition.x + "," + tilePosition.y + "," + tilePosition.z + "\ncamera pos x,y,z = " + camera.position.x + "," + camera.position.y + "," + camera.position.z);
