@@ -184,6 +184,7 @@ ThreeTile.prototype = {
    * When: user clicked on tile
    */
   tilt : function() {
+    return;
     this.oldRotation = this.mesh.rotation.clone();
     //tile.rotation.copy(camera.rotation);
     var tiltTween = new TWEEN.Tween(this.mesh.rotation)
