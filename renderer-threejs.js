@@ -148,26 +148,23 @@ ThreeTile.prototype = {
 
       // for pos2DTo3DObject()
       this.children.forEach(function(child) {
+        child.removeHighlight();
         arrayRemove(gAllMeshes, child.mesh);
       });
-      this.children = []; // TODO: keep them? If so, adapt _addChildren()
+
+      // HACK This fixes the highlight getting stuck on
+      // tiles that are removed. This hack allows to move
+      // highlight from one child branch to an "uncle".
+      this.children = [];
+      this._childrenAlreadyAdded = false;
     }
   },
 
-  // TODO move to |Object3D|
   _addChildren : function() {
+    Obj3D.prototype._addChildren.call(this);
     if (this.childGroup) {
       return; // already added
     }
-    /*if (this.children && this.children.length > 0) {}*/
-    if ( ! this.topic.children || ! this.topic.children.length) {
-      return; // no children
-    }
-
-    var parent = this;
-    this.children = this.topic.children.map(function(childTopic) {
-      return parent.makeChild(childTopic);
-    });
     this.childGroup = arrangeBelow(this, this.children);
   },
 
@@ -245,6 +242,16 @@ ThreeTile.prototype = {
     var mesh = new THREE.Line(line, material);
     this.mesh.add(mesh);
     this._highlightMesh = mesh;
+
+    cameraLookAt(this);
+
+    if ( !this._doneStartTile) {
+      this._doneStartTile = true;
+      var self = this;
+      setTimeout(function() { // HACK
+        cameraLookAt(self);
+      }, 100);
+    }
   },
 
   removeHighlight : function() {
@@ -255,15 +262,14 @@ ThreeTile.prototype = {
     this._highlightMesh = null;
   },
 
+  addAsRoot : function() {
+    scene.add(this._create());
+  },
+
 }
 extend(ThreeTile, Obj3D);
 
-/**
- * @param tile {ThreeTile}
- */
-function setRootObj(tile) {
-  scene.add(tile._create());
-}
+var TileImplemention = ThreeTile;
 
 /**
  * @param parentObj {ThreeTile}

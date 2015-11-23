@@ -28,15 +28,13 @@ function onLoad() {
   var scene = createScene(document.getElementById("uninav"));
 
   loadRootTopic(function(rootTopic, allByID, allTopics) {
-    var rootN = new ThreeTile(rootTopic, null);
-    setRootObj(rootN);
+    var rootN = new TileImplemention(rootTopic, null);
+    rootN.addAsRoot();
     rootN.showChildren();
     var startN = rootN.children[0];
     assert(startN, "Start node not found. Taxonomy file broken?");
     highlight3DObj(startN);
-    setTimeout(function() { // HACK
-      cameraLookAt(startN);
-    }, 100);
+    select3DObj(startN);
 
     scene.onMouseMove(onMouseMove);
     scene.onMouseClick(onMouseClick);
@@ -48,7 +46,7 @@ function onLoad() {
     du.uninav = window;
   }, errorCritical);
 }
-window.addEventListener("load", onLoad, false);
+window.addEventListener("DOMContentLoaded", onLoad, false);
 
 
 function onMouseMove(n) {
@@ -144,7 +142,6 @@ function highlight3DObj(n) {
 
   gHighlightedN = n;
   n.highlight();
-  cameraLookAt(n);
   n.showChildren();
 }
 

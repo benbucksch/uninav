@@ -40,7 +40,25 @@ Obj3D.prototype = {
    * {Array of {Obj3D}}
    */
   children : null,
+  /**
+   * {Boolean} this.children is populated.
+   */
+  _childrenAlreadyAdded : false,
 
+
+  _addChildren : function() {
+    if (this._childrenAlreadyAdded) {
+      return;
+    }
+    if ( ! this.topic.children || ! this.topic.children.length) {
+      return; // no children
+    }
+    var self = this;
+    this.children = this.topic.children.map(function(childTopic) {
+      return self.makeChild(childTopic);
+    });
+    this._childrenAlreadyAdded = true;
+  },
 
   /**
    * @result {Array of {Object3D}} All ancestors, from bottom up.
@@ -92,26 +110,63 @@ Obj3D.prototype = {
   },
 
   /**
-   * Add a child obj of this obj, for |Topic|
+   * Create a new Obj3D for |Topic|,
+   * as a child obj of this topic.
+   *
    * @param childTopic {Topic}
+   * @returns {Obj3D}
    */
   makeChild : function(childTopic) {
     throw NotReached("Override");
+    /* replace Obj3D with your class:
+    assert(arrayContains(this.topic.children, childTopic),
+        childTopic.title + " isn't a child topic of " + this.topic.title);
+    return new Obj3D(childTopic, this);
+    */
   },
 
+  addAsRoot : function() {
+    throw NotReached("Override");
+  },
 
+  /**
+   * Show topics underneath the current one.
+   *
+   * The implementation should call this.makeChild()
+   * as necessary.
+   */
   showChildren : function() {
     throw NotReached("Override");
   },
+  /**
+   * Hide topics underneath the current one.
+   *
+   * You might just hide them instead of deleting
+   * the UI representation.
+   */
   hideChildren : function() {
     throw NotReached("Override");
   },
+
+  /**
+   * User mouses over the topic.
+   * He didn't click on it yet.
+   *
+   * Normally, this is followed by a call to showChildren().
+   */
   highlight : function() {
     throw NotReached("Override");
   },
   removeHighlight : function() {
     throw NotReached("Override");
   },
+
+  /**
+   * This topic is currently active and shown in the
+   * content pane.
+   * Usually, because the user clicked on it,
+   * or because he selected the topic from the content pane.
+   */
   select : function() {
     throw NotReached("Override");
   },
