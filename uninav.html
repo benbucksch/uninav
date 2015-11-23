@@ -22,6 +22,53 @@
         #4db2ff,
         white);
   }
+
+  /* 2D renderer */
+  #ancestors {
+    width: 100%;
+    margin: 8px;
+  }
+  #current {
+    width: 100%;
+    margin: 15px;
+  }
+  #children {
+    width: 100%;
+    margin: 8px;
+    position: absolute;
+    bottom: 0;
+  }
+
+  .topic {
+    display: inline;
+    margin: 5px;
+    border: transparent solid 2px;
+  }
+  .topic.hover .icon {
+    border-color: yellow;
+  }
+  .icon {
+    width: 24px;
+    height: 24px;
+    margin: 2px;
+    vertical-align: middle;
+  }
+  #current .icon {
+    width: 64px;
+    height: 64px;
+    margin: 2px;
+  }
+  .label {
+    display: inline;
+    vertical-align: middle;
+    font-size: 12pt;
+    margin: 3px;
+  }
+  #current .label {
+    font-size: 30pt;
+    font-weight: bold;
+    margin: 6px;
+  }
 </style>
 </head>
 <body>
@@ -29,6 +76,9 @@
 <script type="text/javascript" src="controller.js"></script>
 <script type="text/javascript" src="data.js"></script>
 <script type="text/javascript" src="renderer.js"></script>
+<!--
+<script type="text/javascript" src="renderer-2d.js"></script>
+-->
 <script type="text/javascript" src="lib/three.min.js"></script>
 <script type="text/javascript" src="lib/tween.min.js"></script>
 <script type="text/javascript" src="renderer-threejs.js"></script>
