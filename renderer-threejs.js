@@ -311,7 +311,7 @@ function render(time) {
 }
 var gLastMove = Date.now();
 var gRunning = true;
-var kStandbyAfter = 3000; // ms
+var kStandbyAfter = 2000; // ms
 function requestRender() {
   gLastMove = Date.now();
   if ( !gRunning) {
