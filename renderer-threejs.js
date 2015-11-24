@@ -49,6 +49,7 @@ function createScene(parentE) {
       try {
         var obj3D = pos2DTo3DObject(event);
         listener(obj3D);
+        requestRender();
       } catch (e) { errorCritical(e); }
     }, false);
   };
@@ -58,6 +59,7 @@ function createScene(parentE) {
       try {
         var obj3D = pos2DTo3DObject(event);
         listener(obj3D);
+        requestRender();
       } catch (e) { errorCritical(e); }
     }, false);
   };
@@ -297,10 +299,28 @@ function arrangeBelow(parentObj, childObjs) {
 }
 
 function render(time) {
-  requestAnimationFrame(render);
   TWEEN.update(time);
   renderer.render(scene, camera);
+
+  if (gLastMove + kStandbyAfter < Date.now()) {
+    gRunning = false;
+  } else {
+    gRunning = true;
+    requestAnimationFrame(render);
+  }
 }
+var gLastMove = Date.now();
+var gRunning = true;
+var kStandbyAfter = 3000; // ms
+function requestRender() {
+  gLastMove = Date.now();
+  if ( !gRunning) {
+    requestAnimationFrame(render);
+  }
+}
+//window.addEventListener("mousemove", requestRender, false);
+// -- merged into existing listener above
+window.addEventListener("keydown", requestRender, false);
 
 /**
  * @param event {DOMEvent} mouse move/click
