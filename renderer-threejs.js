@@ -183,6 +183,7 @@ ThreeTile.prototype = {
    * When: user clicked on tile
    */
   tilt : function() {
+    /*
     this.oldRotation = this.mesh.rotation.clone();
     //tile.rotation.copy(camera.rotation);
     var tiltTween = new TWEEN.Tween(this.mesh.rotation)
@@ -196,6 +197,7 @@ ThreeTile.prototype = {
               .to({ x : 0 }, 1000)
               .easing(TWEEN.Easing.Quadratic.InOut)
               .start();
+    */
   },
 
   /**
