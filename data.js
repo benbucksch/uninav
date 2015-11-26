@@ -142,6 +142,8 @@ Topic.prototype = {
    * @returns {Array of {Topic}} All ancestors
    *     Note: Each topic can have several parents.
    * @param includeThis {Boolean}
+   *
+   * TODO multi-parented: avoid adding the same node multiple times
    */
   ancestors : function(includeThis) {
     var result = [];
@@ -189,6 +191,8 @@ Topic.prototype = {
   /**
    * @returns {Array of {Topic}} all children and grand children,
    *      not including |this|
+   *
+   * TODO multi-parented: avoid adding the same node multiple times
    */
   allChildren : function() {
     var result = [];
@@ -278,6 +282,57 @@ function loadTaxonomyJSON(url, resultCallback, errorCallback) {
     //ddebug(dumpObject(rootTopic, "root", 5));
     resultCallback(rootTopic, allByID, allTopics);
   }, errorCallback);
+}
+
+/**
+ * Creates taxonomy JSON
+ * @returns {JSON} flat list with all nodes
+ */
+function exportTaxonomyJSON(rootTopic) {
+  assert(rootTopic instanceof Topic, "Need root node");
+
+  // Map topic.id -> |Topic|
+  var allByID = {};
+  // recursive function to walk the whole hierarchy
+  var addFamily = function(topic) {
+    assert(topic.id, "ID missing");
+    assert(topic.title, "Title missing");
+    allByID[topic.id] = topic;
+    topic.children.forEach(function(child) {
+      if (allByID[child.id]) { // multi-parenting
+        return; // recursion stop buck
+      }
+      addFamily(child);
+    });
+    // Parents (above the root) shouldn't be necessary
+    /*topic.parents.forEach(function(child) {
+      if (allByID[child.id]) { // multi-parenting
+        return; // recursion stop buck
+      }
+      addFamily(child);
+    });*/
+  };
+  addFamily(rootTopic);
+
+  // Convert |Topic| objects -> JSON
+  var allJSON = [];
+  var isUsed = function(id) {
+    return !!allByID[id];
+  };
+  for (var id in allByID) {
+    var topic = allByID[id];
+    var json = {};
+    json.id = topic.id;
+    json.lodID = topic.lodID;
+    json.title = topic.title;
+    json.img = topic._iconFilename;
+    json.exploreURL = topic._exploreURL;
+    json.descriptionURL = topic._descriptionURL;
+    json.parentIDs = topic._parentIDs.filter(isUsed);
+    json.childrenIDs = topic._childrenIDs;
+    allJSON.push(json);
+  }
+  return allJSON;
 }
 
 /**
