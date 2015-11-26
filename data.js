@@ -76,7 +76,11 @@ Topic.prototype = {
    * @returns {URL as string}
    */
   get iconURL() {
-    return this._iconFilename ? kIconRootURL + this._iconFilename : null;
+    return this._iconFilename
+      ? (this._iconFilename.substr(0, 4) == "http"
+         ? this._iconFilename
+         : kIconRootURL + this._iconFilename)
+      : null;
   },
 
   /**
