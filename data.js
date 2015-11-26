@@ -6,8 +6,8 @@
  * License: GPL3, see LICENSE
  */
 
-const kIconRootURL = "../graphics/dunet/";
-const kContentRootURL = "../content/";
+const kIconRootURL = "/graphics/dunet/";
+const kContentRootURL = "/content/";
 const kTaxomonyURL = "taxonomy.json";
 
 /**

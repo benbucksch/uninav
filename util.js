@@ -162,6 +162,28 @@ function dumpObject(obj, name, maxDepth, curDepth)
 }
 
 
+
+/*
+ * Creates a download URL for file contents in a JS string,
+ * and loads it in the current window,
+ * which triggers the "Save As..." dialog in the browser.
+ * This allows to download a file that you have constructed in a JS variable.
+ * It's a HACK, though.
+ *
+ * @param contents {String}   the file contents
+ * @param mimetype {String}   the file type
+ */
+function downloadFromVariable(contents, mimetype) {
+  assert(contents && typeof(contents) == "string", "need file contents");
+  assert(mimetype && typeof(mimetype) == "string", "need mimetype");
+  assert(mimetype.indexOf("/") > 0 && mimetype.indexOf(" ") == -1, "mimetype is malformed");
+  var file = new Blob([ contents ], { type : mimetype });
+  var reader = new FileReader();
+  reader.onload = function(e) { window.location = e.target.result; };
+  reader.readAsDataURL(file);
+}
+
+
 /**
  * @param url {String}   http[s]:// or file:///
  * @dataType {String-enum}  Expected type of file contents
