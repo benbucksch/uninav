@@ -1128,7 +1128,7 @@
  {
   "id": "f6156a2",
   "title": "Pharmacology",
-  "img": "/themes/newbase/i/default/portal_def.png",
+  "img": null,
   "parentIDs": [
    "f57331f"
   ],
@@ -1174,7 +1174,7 @@
  {
   "id": "f75946a",
   "title": "Economics",
-  "img": "/themes/newbase/i/default/portal_def.png",
+  "img": null,
   "parentIDs": [
    "f57331e"
   ],
@@ -3967,7 +3967,7 @@
  {
   "id": "f75946c",
   "title": "Financial Mangement",
-  "img": "/themes/newbase/i/default/portal_def.png",
+  "img": null,
   "parentIDs": [
    "f573334"
   ],
@@ -3976,7 +3976,7 @@
  {
   "id": "f75946b",
   "title": "Investing",
-  "img": "/themes/newbase/i/default/portal_def.png",
+  "img": null,
   "parentIDs": [
    "f573334"
   ],
@@ -4967,7 +4967,7 @@
  {
   "id": "f5b439f",
   "title": "West Sahara",
-  "img": "/themes/newbase/i/default/portal_def.png",
+  "img": null,
   "parentIDs": [
    "f552c86"
   ],
@@ -5030,7 +5030,7 @@
  {
   "id": "f5b4335",
   "title": "Ivory Coast",
-  "img": "/themes/newbase/i/default/portal_def.png",
+  "img": null,
   "parentIDs": [
    "f552c88"
   ],
@@ -5075,7 +5075,7 @@
  {
   "id": "f5b43a1",
   "title": "Cameroon",
-  "img": "/themes/newbase/i/default/portal_def.png",
+  "img": null,
   "parentIDs": [
    "f552c8a"
   ],
@@ -5084,7 +5084,7 @@
  {
   "id": "f5b441c",
   "title": "Congo",
-  "img": "/themes/newbase/i/default/portal_def.png",
+  "img": null,
   "parentIDs": [
    "f552c8a"
   ],
@@ -5689,7 +5689,7 @@
  {
   "id": "f512068",
   "title": "Guatemala",
-  "img": "/themes/newbase/i/default/portal_def.png",
+  "img": null,
   "parentIDs": [
    "f542a1b"
   ],
