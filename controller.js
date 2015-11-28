@@ -30,11 +30,14 @@ function onLoad() {
   loadRootTopic(function(rootTopic, allByID, allTopics) {
     var rootN = new TileImplemention(rootTopic, null);
     rootN.addAsRoot();
-    rootN.showChildren();
-    var startN = rootN.children[0];
-    assert(startN, "Start node not found. Taxonomy file broken?");
-    highlight3DObj(startN);
-    select3DObj(startN);
+    rootN.topic.loadChildren(function() {
+      rootN.showChildren();
+      var startN = rootN.children[0];
+      var startN = rootN;
+      assert(startN, "Start node not found. Taxonomy file broken?");
+      highlight3DObj(startN);
+      select3DObj(startN);
+    }, errorCritical);
 
     scene.onMouseMove(onMouseMove);
     scene.onMouseClick(onMouseClick);
@@ -143,6 +146,12 @@ function highlight3DObj(n) {
   gHighlightedN = n;
   n.highlight();
   n.showChildren();
+
+  // Lazy loading of topics
+  // Preload grandchildren, so that the user doesn't have to wait
+  n.topic.children.forEach(function(child) {
+    child.loadChildren(function() {}, errorCritical);
+  });
 }
 
 /**
