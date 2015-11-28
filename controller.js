@@ -150,7 +150,7 @@ function highlight3DObj(n) {
   // Lazy loading of topics
   // Preload grandchildren, so that the user doesn't have to wait
   n.topic.children.forEach(function(child) {
-    child.loadChildren(function() {}, errorCritical);
+    child.loadChildren(function() {}, errorNonCritical);
   });
 }
 

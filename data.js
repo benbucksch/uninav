@@ -289,14 +289,14 @@ function LODTopic(topicID, graphID, resultCallback, errorCallback) {
     "OPTIONAL { ?topic du:explorePage ?exploreURL } " +
     "OPTIONAL { ?topic du:descriptionPage ?descriptionURL } " +
   "}";
-  query = query.replace("?topic", "<" + topicID + ">");
+  query = query.replaceAll("?topic", "<" + topicID + ">");
   var self = this;
   sparqlSelect1(query, {}, function(r) {
     // Generate title from dmoz category URL
-    var title = encodeURIComponent(topicID
+    var title = decodeURIComponent(topicID
         .replace(/\/$/, "") // strip trailing slash
         .replace(/.*\//, "")) // only last path component
-        .replace("_", " "); // _ is space
+        .replace(/_/g, " "); // _ is space
     assert(r, "Topic result missing");
     assert(title, "Title missing");
     self.id = self.lodID = topicID;
@@ -321,11 +321,12 @@ LODTopic.prototype = {
     var query = "SELECT * FROM ?graph WHERE { " +
       " ?topic dmoz:narrow ?child " +
     "} LIMIT 200";
-    query = query.replace("?topic", "<" + self.id + ">")
-        .replace("?graph", "<" + self._graphID + ">");
+    query = query.replaceAll("?topic", "<" + self.id + ">")
+        .replaceAll("?graph", "<" + self._graphID + ">");
     sparqlSelect(query, {}, function(results) {
       self._childrenIDs = results.map(function(r) {
-        return r.child.url;
+        assert(r.child, "Need child URI");
+        return r.child;
       });
       var w = new Waiter(successCallback, errorCallback);
       self._childrenIDs.forEach(function(childID) {
@@ -348,7 +349,7 @@ extend(LODTopic, Topic);
  */
 function loadRootTopic(resultCallback, errorCallback) {
   //loadTaxonomyJSON(kTaxomonyURL, resultCallback, errorCallback)
-  loadTopicFromLOD("http://dmoz.org/rdf/cat/Top/World", "http://dmoz.org", resultCallback, errorCallback)
+  loadTopicFromLOD("http://dmoz.org/rdf/cat/Top/Computers", "http://dmoz.org", resultCallback, errorCallback)
 }
 
 /**

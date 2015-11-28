@@ -161,6 +161,8 @@ var cRDFPrefixes = {
   factbook: "http://wifo5-04.informatik.uni-mannheim.de/factbook/ns#",
   owl: "http://www.w3.org/2002/07/owl#",
   skos: "http://www.w3.org/2004/02/skos/core#",
+  dmoz: "http://dmoz.org/rdf/",
+  dmozcat: "http://dmoz.org/rdf/cat/",
   du: "http://rdf.labrasol.com/",
 };
 
@@ -224,6 +226,16 @@ function sparqlSelect1(query, params, resultCallback, errorCallback) {
   sparqlSelect(query, params, myResultCallback, errorCallback);
 }
 
+/**
+ * This is str.replace(find, replace, "g"), but portable
+ */
+String.prototype.replaceAll = function(find, replace) {
+  var r = this.replace(find, replace);
+  if (r == this) {
+    return r;
+  }
+  return r.replaceAll(find, replace);
+}
 
 /**
  * Removes |element| from |array|.
