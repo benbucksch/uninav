@@ -33,6 +33,10 @@ Topic.prototype = {
    */
   id : null,
   /**
+   * {URI string or integer}
+   */
+  lodID : null,
+  /**
    * The name or label of this node.
    * {string} user-visible
    */
@@ -221,6 +225,12 @@ Topic.prototype = {
     return child.isChildOf(this);
   },
 
+  get dbpediaID() {
+    if (this.lodID && this.lodID.substr(0, 8) == "dbpedia:") {
+      return this.lodID;
+    }
+    return dbpediaIDForTitle(this.title);
+  },
 }
 
 /**
@@ -267,7 +277,7 @@ function loadTaxonomyJSON(url, resultCallback, errorCallback) {
       }
       var topic = new Topic();
       topic.id = c.id;
-      topic.lodID = c.lodID;
+      topic.lodID = c.lodID || dbpediaIDForTitle(c.title);
       topic.title = c.title;
       topic._iconFilename = c.img;
       topic._exploreURL = c.exploreURL;
@@ -353,6 +363,81 @@ function exportTaxonomyJSON(rootTopic) {
   json.childrenIDs = topic._childrenIDs;
   return json;
 }*/
+
+/**
+ * Loads taxonomy from triple store - RDF via SPARQL
+ * @param topicID {URI as string} LOD identifer (URL) of the topic to load,
+ *    e.g. "http://dmoz.org/rdf/cat/Top/Arts/People/"
+ * @param graphID {URI as string} LOD namespace, e.g. "http://dmoz.org/rdf/"
+ * @param resultCallback {Function(topic)}   When server returned
+ *     topic {Topic} corresponding to topicID
+ *     The children will not be populated, not even childrenIDs,
+ *     you need to call topic.loadChildren() for that.
+ * @param errorCallback {Function(e)} Called when there was an error
+ *     Either resultCallback() or errorCallback() will be called.
+ */
+function loadTopicFromLOD(topicID, graphID, resultCallback, errorCallback) {
+  var existing = gAllTopicsByID[topicID];
+  if (existing) {
+    runAsync(function() {
+      resultCallback(existing);
+    });
+  }
+  var query = "SELECT * FROM <" + graphID + "> WHERE { " +
+    //"OPTIONAL { ?topic dc:Title ?title } " + // dmoz has no proper one
+    "OPTIONAL { ?topic dc:Description ?description } " +
+    "OPTIONAL { ?topic foaf:img ?iconURL } " +
+    "OPTIONAL { ?topic du:explorePage ?exploreURL } " +
+    "OPTIONAL { ?topic du:descriptionPage ?descriptionURL } " +
+  "}"
+      .replace("?topic", "<" + topicID + ">");
+  du.sparqlSelect1(query, {}, function(r) {
+    // Generate title from dmoz category URL
+    var title = encodeURIComponent(topicID
+        .replace(/\/$/, "") // strip trailing slash
+        .replace(/.*\//, "")) // only last path component
+        .replace("_", " "); // _ is space
+    assert(r, "Topic result missing");
+    assert(title, "Title missing");
+    var topic = new Topic();
+    topic.id = topic.lodID = topicID;
+    topic.title = title;
+    topic._iconFilename = r.iconURL;
+    topic._exploreURL = r.exploreURL;
+    topic._description = r.description;
+    topic._descriptionURL = r.descriptionURL;
+    topic._graphID = graphID;
+    topic.loadChildren = _loadChildrenFromLOD;
+    //topic.loadParents = _loadParentsFromLOD;
+    gAllTopicsByID[topic.id] = topic;
+
+    resultCallback(topic);
+  }, errorCallback);
+}
+
+function _loadChildrenFromLOD(successCallback, errorCallback) {
+  var topic = this;
+  var query = "SELECT * FROM ?graph WHERE { " +
+    " ?topic dmoz:narrow ?child " +
+  "}"
+      .replace("?topic", "<" + topic.id + ">")
+      .replace("?graph", "<" + topic._graphID + ">");
+  du.sparqlSelect1(query, {}, function(results) {
+    topic._childrenIDs = results.map(function(r) {
+      return r.child.url;
+    });
+    var waiter = new Waiter(successCallback, errorCallback);
+    topic._childrenIDs.forEach(function(childID) {
+      var success = w.success();
+      var topic = new loadTopicFromLOD(childID, topic._graphID, function(topic) {
+        topic._children.push(topic);
+        success();
+      }, w.error());
+    });
+    success();
+  }, w.error());
+}
+
 
 
 /**
