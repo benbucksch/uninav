@@ -71,7 +71,13 @@ function _cleanupStack(s) {
     }).join("\n");
 }
 
-
+function runAsync(func, errorCallback) {
+  setTimeout(function() {
+    try {
+      func();
+    } catch (e) { errorCallback(e); }
+  }, 0);
+}
 
 /**
  * Parses a URL query string into an object.

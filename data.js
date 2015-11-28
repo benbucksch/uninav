@@ -11,9 +11,10 @@ const kContentRootURL = "/content/";
 const kTaxomonyURL = "taxonomy.json";
 
 /**
- * {Array of {Topic}}
+ * Only for topics loaded from LOD.
+ * Map topicID -> {Topic}
  */
-var gAllTopics = [];
+gAllTopicsByID = {};
 
 /**
  * This is an abstract element in our taxonomy or logic.
@@ -25,7 +26,6 @@ function Topic() {
   this._parents = [];
   this._childrenIDs = [];
   this._parentIDs = [];
-  gAllTopics.push(this);
 }
 Topic.prototype = {
   /**
@@ -260,6 +260,11 @@ function loadTaxonomyJSON(url, resultCallback, errorCallback) {
         assert(false, "Topic ID " + c.id + " appears twice. " +
             allByID[c.id].title + " and " + c.title);
       }
+      if (gAllTopicsByID[c.id]) {
+        ddebug("Warning: Topic ID " + c.id + " appears twice. " +
+            gAllTopicsByID[c.id].title + " and " + c.title +
+            " . Are you merging overlapping or identical taxonomies?");
+      }
       var topic = new Topic();
       topic.id = c.id;
       topic.lodID = c.lodID;
@@ -271,6 +276,7 @@ function loadTaxonomyJSON(url, resultCallback, errorCallback) {
       topic._childrenIDs = c.childrenIDs;
 
       allByID[topic.id] = topic;
+      gAllTopicsByID[topic.id] = topic;
       return topic;
     });
     // resolve ID -> obj
@@ -335,6 +341,20 @@ function exportTaxonomyJSON(rootTopic) {
   return allJSON;
 }
 
+/*function exportTopicJSON(topic) {
+  var json = {};
+  json.id = topic.id;
+  json.lodID = topic.lodID;
+  json.title = topic.title;
+  json.img = topic._iconFilename;
+  json.exploreURL = topic._exploreURL;
+  json.descriptionURL = topic._descriptionURL;
+  json.parentIDs = topic._parentIDs;
+  json.childrenIDs = topic._childrenIDs;
+  return json;
+}*/
+
+
 /**
  * Find a topic with |search| as |Topic.title|
  * Direct matches win, then matches at the start,
@@ -343,13 +363,15 @@ function exportTaxonomyJSON(rootTopic) {
  * @returns {Topic}
  */
 function findTopicByTitle(search) {
-  var directMatch = gAllTopics.filter(function(topic) {
-    return topic.title == search;
-  })[0];
-  if (directMatch) {
-    return directMatch;
+  var allTopics = [];
+  for (var id in gAllTopicsByID) {
+    var topic = gAllTopicsByID[id];
+    if (topic.title == search) {
+      return topic;
+    }
+    allTopics.push(topic);
   }
-  var containsMatch = gAllTopics.filter(function(topic) {
+  var containsMatch = allTopics.filter(function(topic) {
     return topic.title.indexOf(search) >= 0;
   });
   containsMatch.sort(function(a, b) {
@@ -366,7 +388,5 @@ function findTopicByTitle(search) {
  * @returns {Topic}
  */
 function findTopicByID(id) {
-  return gAllTopics.filter(function(topic) {
-    return topic.id == id;
-  })[0];
+  return gAllTopicsByID[id];
 }
