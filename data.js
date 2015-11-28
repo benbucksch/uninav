@@ -231,7 +231,8 @@ Topic.prototype = {
    */
   loadChildren : function(successCallback, errorCallback) {
     // implement in subclass
-    runAsync(successCallback);
+    //runAsync(successCallback, errorCallback); // TODO not working. Why?
+    successCallback();
   },
 
   get dbpediaID() {
