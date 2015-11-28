@@ -1,7 +1,5 @@
 /**
- * Util functions
- * Non-UI and UI
- * TODO use util.js from DU
+ * Util functions independent of UI
  *
  * (c) 2014 Ben Bucksch
  * License: MIT
@@ -18,23 +16,10 @@ function assert(test, errorMsg) {
   }
 }
 
-function errorCritical(e) {
-  ddebug(e);
-  alert(e);
-}
-
-function errorNonCritical(e) {
-  ddebug(e);
-}
-
 function ddebug(msg) {
   if (console) {
     console.debug(msg);
   }
-}
-
-function E(id) {
-  return document.getElementById(id);
 }
 
 
@@ -44,6 +29,46 @@ function E(id) {
 function extend(child, supertype)
 {
   child.prototype.__proto__ = supertype.prototype;
+}
+
+
+/**
+ * Cleans up exceptions into a common format
+ * @param e {Error or Exception or nsIException or String}
+ * @param Exception
+ */
+function convertException(e) {
+  // If we didn't get an Exception object (but e.g. a string),
+  // create one and give it a stack
+  if (typeof e != "object") {
+    e = new Exception(e);
+  }
+  if ( !e.stack) {
+    e.stack = Error().stack;
+  }
+  e.stack = _cleanupStack(e.stack);
+  return e;
+}
+
+
+/**
+ * Remove any functions from the stack that are related to
+ * showing or sending the error.
+ */
+function _cleanupStack(s) {
+  assert(typeof(s) == "string");
+  return s.split(/\n/).filter(function(element) {
+    if (element.match(/^convertException/) ||
+        element.match(/^UserError/) ||
+        element.match(/^Exception/) ||
+        element.match(/^NotReached/) ||
+        element.match(/^assert/) ||
+        element.match(/^errorCritical/) ||
+        element.match(/^errorNonCritical/) ||
+        element.match(/^errorInBackend/))
+      return false;
+    return true;
+    }).join("\n");
 }
 
 
@@ -77,9 +102,116 @@ function parseURLQueryString(queryString)
   return queryParams;
 }
 
+function createURLQueryString(url, args) {
+  for (var name in args) {
+    url += (url.indexOf("?") == -1 ? "?" : "&") +
+            name + "=" + encodeURIComponent(args[name]);
+  }
+  return url;
+}
+
 
 function getLang() {
   return "en";
+}
+
+
+function esc(str) {
+  // TODO
+  return str
+    .replace(/\&/g, "and")
+    .replace(/\"/g, "'")
+    .replace(/ /g, "_")
+    .replace(/\(/g, "%28") // TODO doesn't work, neither does \\u28
+    .replace(/\)/g, "%29");
+}
+
+function dbpediaID(title) {
+  title = title
+      .replace(/ \&.*/g, "") // HACK: With "A&B", take only A
+      .replace(/, .*/g, "") // HACK: With "A, B & C", take only A
+      .replace(/ /g, "_"); // Spaces -> _
+  title = title[0] + title.substr(1).toLowerCase(); // Double words in lowercase
+  return "dbpedia:" + title;
+}
+
+var cRDFPrefixes = {
+  rdfs: "http://www.w3.org/2000/01/rdf-schema#",
+  rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+  dc: "http://purl.org/dc/elements/1.1/",
+  foaf: "http://xmlns.com/foaf/0.1/",
+  dbpedia: "http://dbpedia.org/resource/",
+  dbpediaprop: "http://dbpedia.org/property/",
+  dbpediaowl: "http://dbpedia.org/ontology/",
+  "dbpedia-prop": "http://dbpedia.org/property/",
+  "dbpedia-owl": "http://dbpedia.org/ontology/",
+  //freebase: "http://rdf.freebase.com/ns/",
+  freebase: "http://rdf.basekb.com/ns/",
+  geo: "http://www.w3.org/2003/01/geo/wgs84_pos#",
+  geonames: "http://www.geonames.org/ontology#",
+  factbook: "http://wifo5-04.informatik.uni-mannheim.de/factbook/ns#",
+  owl: "http://www.w3.org/2002/07/owl#",
+  skos: "http://www.w3.org/2004/02/skos/core#",
+};
+
+function sparqlSelect(query, params, resultCallback, errorCallback) {
+  assert(params && typeof(params) == "object", "Need params");
+  var url;
+  if (params.url) {
+    url = params.url;
+  } else if (params.endpoint) {
+    url = "/sparql/" + params.endpoint + "/";
+  } else {
+    url = "/sparql/m1/";
+  }
+  params.prefixes = params.prefixes || cRDFPrefixes;
+  if (params.prefixes) {
+    for (var prefix in params.prefixes) {
+      if (query.indexOf(prefix + ":") != -1) {
+        query = "PREFIX " + prefix + ": <" + params.prefixes[prefix] + "> " + query;
+      }
+    }
+  }
+  ddebug("Running SPARQL query: " + query);
+  loadURL({
+    url : url,
+    urlArgs : {
+      query : query,
+      format : "application/sparql-results+json",
+      output : "json",
+      //callback : "load",
+    },
+    dataType : "json",
+  }, function(json) {
+    try {
+      if (json.results.bindings.length == 0) {
+        errorCallback(new SPARQLException(new ServerException("Nothing found", 0, url), query));
+        return;
+      }
+      // drop the .value, and make it a real Array
+      var results = [];
+      var bindings = json.results.bindings;
+      for (var i = 0, l = bindings.length; i < l; i++) {
+        var cur = bindings[i];
+        var result = {};
+        for (var name in cur) {
+          result[name] = cur[name].value;
+        }
+        results.push(result);
+      }
+      resultCallback(results);
+    } catch (e) { errorCallback(e); }
+  }, function(e) {
+    errorCallback(new SPARQLException(e, query));
+  });
+}
+
+function sparqlSelect1(query, params, resultCallback, errorCallback) {
+  var myResultCallback = function(results) {
+    resultCallback(results[0]);
+  };
+  query += " LIMIT 1";
+  sparqlSelect(query, params, myResultCallback, errorCallback);
 }
 
 
@@ -117,6 +249,7 @@ function arrayContains(array, element)
 {
   return array.indexOf(element) != -1;
 }
+
 
 /**
  * Return the contents of an object as multi-line string, for debugging.
@@ -163,6 +296,7 @@ function dumpObject(obj, name, maxDepth, curDepth)
 
 
 
+
 /*
  * Creates a download URL for file contents in a JS string,
  * and loads it in the current window,
@@ -186,8 +320,15 @@ function downloadFromVariable(contents, mimetype) {
 
 /**
  * @param url {String}   http[s]:// or file:///
- * @dataType {String-enum}  Expected type of file contents
+ * @param dataType {String-enum}  Expected type of file contents
  *    "text", "json", "xml" or "html"
+ * @param urlArgs {Map of name {String} -> value {String}}
+ *      extra URL param arguments
+ *      {name: "value", name2: "value" } -> "?name=value&name2=value2"
+ * @param headers {Map of name {String} -> value {String}}
+ *      extra HTTP headers
+ * @param username {String}   HTTP Basic auth: username
+ * @param password {String}   ditto - password
  * @param successCallback {Function(result)}
  *    result {String or Object or DOMDocument}
  * @param errorCallback {Function(e {Exception or Error})}
@@ -218,6 +359,12 @@ function loadURL(params, successCallback, errorCallback) {
     }
     mimetype += "; charset=UTF-8";
   //}
+
+  if (params.username && params.password) {
+    params.headers = params.headers || {};
+    params.headers.Authorization = "Basic " + window.btoa(
+        params.username + ":" + params.password);
+  }
 
   /*if (params.lib == "jquery") {
     $.getJSON(url, {
@@ -290,7 +437,8 @@ function loadURL(params, successCallback, errorCallback) {
       return;
     }
     if (dataType == "xml") {
-      data = req.responseXML;
+      //data = req.responseXML;
+      data = new DOMParser().parseFromString(data, "text/xml");
     } else if (dataType == "html") {
       data = new DOMParser().parseFromString(data, "text/html");
     } else if (dataType == "json") {
@@ -301,9 +449,16 @@ function loadURL(params, successCallback, errorCallback) {
     }
     successCallback(data);
   };
-  req.overrideMimeType("text/plain; charset=UTF-8");
   try {
+    req.overrideMimeType("text/plain; charset=UTF-8");
     req.open("GET", url, true); // async
+
+    for (var name in params.headers) {
+      var val = params.headers[name];
+      if ( !val) continue;
+      req.setRequestHeader(name, val);
+    }
+
     req.send();
   } catch (e) { // send() throws (!) when file:// URL and file not found
     errorCallback(e);
@@ -341,10 +496,10 @@ Exception.prototype =
 function ServerException(serverMsg, code, uri)
 {
   var msg = serverMsg;
-  if (code >= 300 && code < 600) { // HTTP error code
+  /*if (code >= 300 && code < 600) { // HTTP error code
     msg += " " + code;
   }
-  msg += "\n\n<" + uri + ">";
+  msg += "\n\n<" + uri + ">";*/
   Exception.call(this, msg);
   this.rootErrorMsg = serverMsg;
   this.code = code;
@@ -354,3 +509,86 @@ ServerException.prototype =
 {
 }
 extend(ServerException, Exception);
+
+/**
+ * @param serverEx {ServerException}
+ * @param query {String} the SPARQL query string, readable
+ */
+function SPARQLException(serverEx, query)
+{
+  var msg = serverEx.rootErrorMsg;
+  //msg += "\n\n" + query;
+  ServerException.call(this, serverEx.rootErrorMsg, serverEx.code, serverEx.uri);
+  this.query = query;
+  this._message = msg;
+}
+SPARQLException.prototype =
+{
+}
+extend(SPARQLException, ServerException);
+
+/**
+ * The search had no results
+ */
+function NoResult(e)
+{
+  var msg = "No result"; // TODO localize
+  Exception.call(this, msg);
+}
+NoResult.prototype =
+{
+}
+extend(NoResult, Exception);
+
+/**
+ * Allows to call many async functions,
+ * and wait for them *all* to complete.
+        var w = new Waiter(successCallback, errorCallback);
+        for (var lang in allLanguages) {
+          lodTitles(storage, lang, w.success(), w.error());
+          lodDescrs(storage, lang, w.success(), w.error());
+          var infoSuccess = w.success();
+          lodInfo(storage, lang, function() {
+            // Do NOT call w.success() here directly. It's too late.
+            infoSuccess();
+          }, w.error());
+        }
+ */
+function Waiter(successCallback, errorCallback) {
+  assert(typeof(successCallback) == "function", "Need successCallback");
+  assert(typeof(errorCallback) == "function", "Need errorCallback");
+  this.successCallback = successCallback;
+  this.errorCallback = errorCallback;
+  this.waiting = 0;
+  this.hadError = false;
+}
+Waiter.prototype = {
+  // config
+  kReportOnlyFirstError : true,
+  kSuccessAfterError : false,
+
+  // get callbacks
+  success : function() {
+    var self = this;
+    self.waiting++;
+    return function() {
+      if (--self.waiting == 0 &&
+          (self.successAfterError || !self.hadError)) {
+        self.successCallback();
+      }
+    };
+  },
+  error : function() {
+    var self = this;
+    return function(e) {
+      if ( !self.hadError || !self.kReportOnlyFirstError) {
+        self.hadError = true;
+        self.errorCallback(e);
+      }
+      if (--self.waiting == 0 &&
+          self.kSuccessAfterError) {
+        self.successCallback();
+      }
+    };
+  },
+}
