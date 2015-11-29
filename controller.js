@@ -32,7 +32,7 @@ function onLoad() {
     rootN.addAsRoot();
     rootN.topic.loadChildren(function() {
       rootN.showChildren();
-      var startN = rootN.children[0];
+      var startN = rootN;
       assert(startN, "Start node not found. Taxonomy file broken?");
       highlight3DObj(startN);
       select3DObj(startN);
