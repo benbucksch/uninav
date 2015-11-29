@@ -147,7 +147,7 @@ function dbpediaIDForTitle(title) {
 var cRDFPrefixes = {
   rdfs: "http://www.w3.org/2000/01/rdf-schema#",
   rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-  dc: "purl.org/dc/terms/",
+  dc: "http://purl.org/dc/terms/",
   dc10: "http://purl.org/dc/elements/1.0/",
   dc11: "http://purl.org/dc/elements/1.1/",
   foaf: "http://xmlns.com/foaf/0.1/",
@@ -588,8 +588,8 @@ function Waiter(successCallback, errorCallback) {
 }
 Waiter.prototype = {
   // config
-  kReportOnlyFirstError : true,
-  kSuccessAfterError : false,
+  reportOnlyFirstError : true,
+  successAfterError : false,
 
   // get callbacks
   success : function() {
@@ -605,12 +605,12 @@ Waiter.prototype = {
   error : function() {
     var self = this;
     return function(e) {
-      if ( !self.hadError || !self.kReportOnlyFirstError) {
+      if ( !self.hadError || !self.reportOnlyFirstError) {
         self.hadError = true;
         self.errorCallback(e);
       }
       if (--self.waiting == 0 &&
-          self.kSuccessAfterError) {
+          self.successAfterError) {
         self.successCallback();
       }
     };
