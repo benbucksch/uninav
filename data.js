@@ -298,7 +298,7 @@ function LODTopic(topicID, graphID, resultCallback, errorCallback) {
     assert(title, "Title missing");
     self.id = self.lodID = topicID;
     self.title = title;
-    self.description = r.description.trim();
+    self.description = r.description ? r.description.trim() : null;
     self._iconFilename = r.iconURL;
     self._exploreURL = r.exploreURL;
     self._descriptionURL = r.descriptionURL;
@@ -346,7 +346,7 @@ extend(LODTopic, Topic);
  */
 function loadRootTopic(resultCallback, errorCallback) {
   //loadTaxonomyJSON(kTaxomonyURL, resultCallback, errorCallback)
-  loadTopicFromLOD("http://dmoz.org/rdf/cat/Top/Computers", "http://dmoz.org", resultCallback, errorCallback)
+  loadTopicFromLOD("http://dmoz.org/rdf/cat/Top", "http://dmoz.org", resultCallback, errorCallback)
 }
 
 /**
