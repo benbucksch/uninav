@@ -144,7 +144,10 @@ function highlight3DObj(n) {
 
   gHighlightedN = n;
   n.highlight();
-  n.showChildren();
+
+  n.topic.loadChildren(function() { // hopefully already done
+      n.showChildren();
+  }, errorNonCritical);
 
   // Lazy loading of topics
   // Preload grandchildren, so that the user doesn't have to wait

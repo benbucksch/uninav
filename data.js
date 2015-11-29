@@ -231,7 +231,7 @@ Topic.prototype = {
    */
   loadChildren : function(successCallback, errorCallback) {
     // implement in subclass
-//     successCallback();
+    successCallback();
   },
 
   get dbpediaID() {
