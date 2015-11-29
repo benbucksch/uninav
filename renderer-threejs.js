@@ -12,7 +12,8 @@ var scene;
 var gAllMeshes = []; // for pos2DTo3DObject() only
 
 /* text settings */
-var wrapLength = 10;
+var wrapLength = 9;
+var wrapThreshold = 2; // avoid to have only |wrapThreshold| chars on a line
 var labelTextColor = "#ddeeff";
 var labelTextShadowColor = "#112233";
 var labelTextShadowBlur = 40;
@@ -380,32 +381,28 @@ function make2DText(text) {
   var ctx = canvas.getContext("2d");
   ctx.font = "bold 42pt Arial";
   // detect size of incoming text
-  // this is all really rickety and not good
-  if (text.length > wrapLength) {
+  // this is all really hacky
+  if (text.length > wrapLength + wrapThreshold) {
     // break text and attempt wrap at index
-    // find convenient space or force hyphen replace
-    // search for last space before desired break, if no space-> hyphen
-    var idx = text.search(" ");
-    if (idx !== -1 && idx <= wrapLength) {
-      // found space, make sure it is the closest to break
-      var oldIdx = idx;
-      do {
-        oldIdx = idx;
-        idx = text.indexOf(" ", oldIdx + 1);
-      } while (idx !== -1 && idx <= wrapLength);
-      var text01 = text.substring(0, oldIdx);
-      var text02 = text.substring(oldIdx, text.length);
-    } else {
-      // no space, use hyphen
-      var text01 = text.substring(0, idx) + "-";
+    // search for last space before desired break,
+    // or force hyphen insert
+    var idx = text.lastIndexOf(" ", wrapLength);
+    if (idx != -1) {
+      var text01 = text.substring(0, idx);
       var text02 = text.substring(idx, text.length);
+
+      // center text by adding spaces at the front
+      var compensate = Math.floor((wrapLength - idx) / 2);
+      var spaces = " ";
+      for (var i = 0; i < compensate; i++) {
+        spaces += spaces;
+      }
+      text01 = spaces + text01;
+    } else {
+      // no space, so force break and use hyphen
+      var text01 = text.substring(0, wrapLength) + "-";
+      var text02 = text.substring(wrapLength, text.length);
     }
-    var compensate = Math.floor((wrapLength - oldIdx) / 2);
-    var spaces = " ";
-    for (var i = 0; i < compensate; i++) {
-      spaces += spaces;
-    }
-    text01 = spaces + text01;
     /* ctx.fillStyle = 'rgb(64,64,64)';
     ctx.fillText(text01, 2, 102);
     ctx.fillText(text02, 2, 142); */
