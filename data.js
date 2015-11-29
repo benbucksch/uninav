@@ -231,8 +231,7 @@ Topic.prototype = {
    */
   loadChildren : function(successCallback, errorCallback) {
     // implement in subclass
-    //runAsync(successCallback, errorCallback); // TODO not working. Why?
-    successCallback();
+//     successCallback();
   },
 
   get dbpediaID() {
@@ -250,9 +249,7 @@ Topic.prototype = {
 function loadTopicFromLOD(topicID, graphID, resultCallback, errorCallback) {
   var existing = gAllTopicsByID[topicID];
   if (existing) {
-    runAsync(function() {
-      resultCallback(existing);
-    });
+    resultCallback(existing);
     return;
   }
   return new LODTopic(topicID, graphID, resultCallback, errorCallback);
@@ -278,9 +275,7 @@ function LODTopic(topicID, graphID, resultCallback, errorCallback) {
   Topic.call(this);
   var existing = gAllTopicsByID[topicID];
   if (existing) {
-    runAsync(function() {
-      resultCallback(existing);
-    });
+    resultCallback(existing);
     return;
   }
   var query = "SELECT * FROM <" + graphID + "> WHERE { " +
@@ -317,7 +312,7 @@ LODTopic.prototype = {
   loadChildren : function(successCallback, errorCallback) {
     var self = this;
     if (self._loadedChildren) {
-      runAsync(successCallback);
+      successCallback();
       return;
     }
     var query = "SELECT * FROM ?graph WHERE { " +

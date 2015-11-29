@@ -204,7 +204,7 @@ function showTopic(topic) {
   //node.ancestors(this).reverse().forEach(function(ancNode) {
   //  highlight3DObj(ancNode);
   //});
-  setTimeout(function() {
+  setTimeout(function() { // HACK
     highlight3DObj(node);
     select3DObj(node);
   }, 500);
