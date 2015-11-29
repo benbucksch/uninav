@@ -147,7 +147,9 @@ function dbpediaIDForTitle(title) {
 var cRDFPrefixes = {
   rdfs: "http://www.w3.org/2000/01/rdf-schema#",
   rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-  dc: "http://purl.org/dc/elements/1.1/",
+  dc: "purl.org/dc/terms/",
+  dc10: "http://purl.org/dc/elements/1.0/",
+  dc11: "http://purl.org/dc/elements/1.1/",
   foaf: "http://xmlns.com/foaf/0.1/",
   dbpedia: "http://dbpedia.org/resource/",
   dbpediaprop: "http://dbpedia.org/property/",

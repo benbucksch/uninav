@@ -284,8 +284,8 @@ function LODTopic(topicID, graphID, resultCallback, errorCallback) {
     return;
   }
   var query = "SELECT * FROM <" + graphID + "> WHERE { " +
-    //"OPTIONAL { ?topic dc:Title ?title } " + // dmoz has no proper one
-    "OPTIONAL { ?topic dc:Description ?description } " +
+    //"OPTIONAL { ?topic dc:title ?title } " + // dmoz has no proper one
+    "OPTIONAL { ?topic dc:description ?description } " +
     "OPTIONAL { ?topic foaf:img ?iconURL } " +
     "OPTIONAL { ?topic du:explorePage ?exploreURL } " +
     "OPTIONAL { ?topic du:descriptionPage ?descriptionURL } " +
