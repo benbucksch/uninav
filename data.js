@@ -297,14 +297,15 @@ function LODTopic(topicID, graphID, resultCallback, errorCallback) {
     var title = decodeURIComponent(topicID
         .replace(/\/$/, "") // strip trailing slash
         .replace(/.*\//, "")) // only last path component
-        .replace(/_/g, " "); // _ is space
+        .replace(/_/g, " ") // _ is space
+        .trim();
     assert(r, "Topic result missing");
     assert(title, "Title missing");
     self.id = self.lodID = topicID;
     self.title = title;
+    self.description = r.description.trim();
     self._iconFilename = r.iconURL;
     self._exploreURL = r.exploreURL;
-    self._description = r.description;
     self._descriptionURL = r.descriptionURL;
     self._graphID = graphID;
     gAllTopicsByID[self.id] = self;
