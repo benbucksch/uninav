@@ -141,6 +141,7 @@ ThreeTile.prototype = {
 
   showChildren : function() {
     this._addChildren();
+    requestRender();
   },
 
   hideChildren : function() {

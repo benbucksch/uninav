@@ -350,8 +350,8 @@ extend(LODTopic, Topic);
  *     rootTopic {Topic} The root node, with |children|
  */
 function loadRootTopic(resultCallback, errorCallback) {
-  loadTaxonomyJSON(kTaxomonyURL, resultCallback, errorCallback)
-  //loadTopicFromLOD("http://dmoz.org/rdf/cat/Top/Computers", "http://dmoz.org", resultCallback, errorCallback)
+  //loadTaxonomyJSON(kTaxomonyURL, resultCallback, errorCallback)
+  loadTopicFromLOD("http://dmoz.org/rdf/cat/Top/Computers", "http://dmoz.org", resultCallback, errorCallback)
 }
 
 /**
