@@ -132,6 +132,13 @@ Topic.prototype = {
     return this._parents;
   },
 
+  get parent() {
+    /*if (this._parents.length == 0) {
+      this._parents = this._parentIDs.map(getTopicByID);
+    }*/
+    return this._parents[0];
+  },
+
   /**
    * After creating a new Topic node,
    * add it to the taxonomy using this function.
@@ -359,6 +366,7 @@ LODTopic.prototype = {
         }
         var topic = new LODTopic(id, self._graphID, function() {}, errorCallback);
         topic._setPropertiesFromSPARQLResult(r);
+        topic._parents.push(self);
         gAllTopicsByID[topic.id] = topic;
         return topic;
       });
@@ -378,6 +386,7 @@ LODTopic.prototype = {
         var success = w.success();
         loadTopicFromLOD(childID, self._graphID, function(child) {
           self._children.push(child);
+          child._parents.push(self);
           self._loadedChildren = true;
           success();
         }, w.error());
