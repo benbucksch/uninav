@@ -244,7 +244,12 @@ Topic.prototype = {
 
 /**
  * Loads taxonomy from triple store - RDF via SPARQL
- * @see LODTopic
+ *
+ * @topicID @see |LODTopic| ctor
+ * @graphID @see |LODTopic| ctor
+ * @param resultCallback {Function(topic)}   When server returned
+ *     topic {Topic} The new Topic. Same as |this|. topic.id == topicID.
+ * @param errorCallback {Function(e)}
  */
 function loadTopicFromLOD(topicID, graphID, resultCallback, errorCallback) {
   var existing = gAllTopicsByID[topicID];
@@ -252,7 +257,11 @@ function loadTopicFromLOD(topicID, graphID, resultCallback, errorCallback) {
     resultCallback(existing);
     return;
   }
-  return new LODTopic(topicID, graphID, resultCallback, errorCallback);
+  var topic = new LODTopic(topicID, graphID);
+  topic.load(function() {
+    gAllTopicsByID[topic.id] = topic;
+    resultCallback(topic);
+  }, errorCallback);
 }
 
 /**
@@ -264,63 +273,102 @@ function loadTopicFromLOD(topicID, graphID, resultCallback, errorCallback) {
  * @param topicID {URI as string} LOD identifer (URL) of the topic to load,
  *    e.g. "http://dmoz.org/rdf/cat/Top/Arts/People/"
  * @param graphID {URI as string} LOD namespace, e.g. "http://dmoz.org/rdf/"
- * @param resultCallback {Function(topic)}   When server returned
- *     topic {Topic} The new Topic. Same as |this|. topic.id == topicID.
- * @param errorCallback {Function(e)} Called when there was an error
- *     Either resultCallback() or errorCallback() will be called.
  */
-function LODTopic(topicID, graphID, resultCallback, errorCallback) {
+function LODTopic(topicID, graphID) {
   assert(topicID, "ID missing");
   assert(graphID, "Graph missing");
   Topic.call(this);
-  var existing = gAllTopicsByID[topicID];
-  if (existing) {
-    resultCallback(existing);
-    return;
-  }
-  var query = "SELECT * FROM <" + graphID + "> WHERE { " +
-    //"OPTIONAL { ?topic dc:title ?title } " + // dmoz has no proper one
-    "OPTIONAL { ?topic dc:description ?description } " +
-    "OPTIONAL { ?topic foaf:img ?iconURL } " +
-    "OPTIONAL { ?topic du:explorePage ?exploreURL } " +
-    "OPTIONAL { ?topic du:descriptionPage ?descriptionURL } " +
-  "}";
-  query = query.replaceAll("?topic", "<" + topicID + ">");
-  var self = this;
-  sparqlSelect1(query, {}, function(r) {
-    // Generate title from dmoz category URL
-    var title = decodeURIComponent(topicID
-        .replace(/\/$/, "") // strip trailing slash
-        .replace(/.*\//, "")) // only last path component
-        .replace(/_/g, " ") // _ is space
-        .trim();
-    assert(r, "Topic result missing");
-    assert(title, "Title missing");
-    self.id = self.lodID = topicID;
-    self.title = title;
-    self.description = r.description ? r.description.trim() : null;
-    self._iconFilename = r.iconURL;
-    self._exploreURL = r.exploreURL;
-    self._descriptionURL = r.descriptionURL;
-    self._graphID = graphID;
-    gAllTopicsByID[self.id] = self;
 
-    resultCallback(self);
-  }, errorCallback);
+  this.id = this.lodID = topicID;
+  this._graphID = graphID;
+  this.categoryPath = topicID.replace(/.*Top\//, "");
+
+  // Generate title from dmoz category URL
+  var title = decodeURIComponent(topicID
+      .replace(/\/$/, "") // strip trailing slash
+      .replace(/.*\//, "")) // only last path component
+      .replace(/_/g, " ") // _ is space
+      .trim();
+  assert(title, "Title missing");
+  this.title = title;
 }
 LODTopic.prototype = {
-  loadChildren : function(successCallback, errorCallback) {
-    var self = this;
-    if (self._loadedChildren) {
+  _kTopicPropertiesSPARQL :
+      //"OPTIONAL { ?topic dc:title ?title } " + // dmoz has no proper one
+      "OPTIONAL { ?topic dc:description ?description } " +
+      "OPTIONAL { ?topic foaf:img ?iconURL } " +
+      "OPTIONAL { ?topic du:explorePage ?exploreURL } " +
+      "OPTIONAL { ?topic du:descriptionPage ?descriptionURL } ",
+  _setPropertiesFromSPARQLResult : function(r) {
+      //this.title = r.title ? r.title.trim() : null;
+      this.description = r.description ? r.description.trim() : null;
+      this._iconFilename = r.iconURL;
+      this._exploreURL = r.exploreURL;
+      this._descriptionURL = r.descriptionURL;
+
+      this._loaded = true;
+  },
+  /**
+   * Load properties from server
+   *
+   * @param resultCallback {Function(topic)}   When server returned
+   *     topic {Topic} The new Topic. Same as |this|. topic.id == topicID.
+   * @param errorCallback {Function(e)} Called when there was an error
+   *     Either resultCallback() or errorCallback() will be called.
+   */
+  load : function(successCallback, errorCallback) {
+    if (this._loaded) {
       successCallback();
       return;
     }
+    var query = "SELECT * FROM <" + this._graphID + "> WHERE { " +
+      this._kTopicPropertiesSPARQL +
+    "}";
+    query = query.replaceAll("?topic", "<" + this.id + ">");
+    var self = this;
+    sparqlSelect1(query, {}, function(r) {
+      self._setPropertiesFromSPARQLResult(r);
+      successCallback();
+    }, errorCallback);
+  },
+  /**
+   * Load subtopics from server
+   */
+  loadChildren : function(successCallback, errorCallback) {
+    if (this._loadedChildren) {
+      successCallback();
+      return;
+    }
+    var self = this;
     var query = "SELECT * FROM ?graph WHERE { " +
-      " ?topic dmoz:narrow ?child " +
-    "} LIMIT 200";
-    query = query.replaceAll("?topic", "<" + self.id + ">")
-        .replaceAll("?graph", "<" + self._graphID + ">");
+      " ?parent dmoz:narrow ?topic " +
+      // Optimize: Load child properties immediately,
+      // saving one server call per child.
+      this._kTopicPropertiesSPARQL +
+    "} LIMIT 100";
+    query = query.replaceAll("?parent", "<" + this.id + ">")
+        .replaceAll("?graph", "<" + this._graphID + ">");
     sparqlSelect(query, {}, function(results) {
+      // Create child topic nodes from the properties we fetched
+      self._children = results.map(function(r) {
+        var id = r.topic;
+        assert(id, "Need child topic URI");
+        var existing = gAllTopicsByID[id];
+        if (existing) {
+          return existing;
+        }
+        var topic = new LODTopic(id, self._graphID, function() {}, errorCallback);
+        topic._setPropertiesFromSPARQLResult(r);
+        gAllTopicsByID[topic.id] = topic;
+        return topic;
+      });
+      self._childrenIDs = self._children.map(function(child) {
+        return child.id;
+      });
+      self._loadedChildren = true;
+      successCallback();
+
+      /* Load children one by one:
       self._childrenIDs = results.map(function(r) {
         assert(r.child, "Need child URI");
         return r.child;
@@ -334,6 +382,7 @@ LODTopic.prototype = {
           success();
         }, w.error());
       });
+      */
     }, errorCallback);
   },
 }
