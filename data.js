@@ -315,6 +315,9 @@ LODTopic.prototype = {
 
       this._loaded = true;
   },
+  get graphID() {
+    return this._graphID;
+  },
   /**
    * Load properties from server
    *
@@ -393,6 +396,31 @@ LODTopic.prototype = {
       });
       */
     }, errorCallback);
+  },
+
+  /**
+   * Returns this topic as triples
+   * @param withFamily {Boolean} include children and parents
+   * @returns {Array of { s, p, o }}
+   */
+  saveTriples : function(withFamily) {
+    var triples = [];
+    var s = "<" +this.lodID + ">";
+    var t = this;
+    triples.push({ s : s, p : "dc:title", o : t.title });
+    triples.push({ s : s, p : "dc:description", o : t.description });
+    triples.push({ s : s, p : "foaf:img", o : t._iconFilename });
+    triples.push({ s : s, p : "du:explorePage", o : t._exploreURL });
+    triples.push({ s : s, p : "du:descriptionPage", o : t._descriptionURL });
+    if (withFamily) {
+      this.parents.forEach(function(parent) {
+        triples.push({ s : parent.lodID, p : "dmoz:narrow", o : s });
+      });
+      this.children.forEach(function(parent) {
+        triples.push({ s : s, p : "dmoz:narrow", o : parent.lodID });
+      });
+    }
+    return triples;
   },
 }
 extend(LODTopic, Topic);

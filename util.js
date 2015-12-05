@@ -165,7 +165,7 @@ var cRDFPrefixes = {
   skos: "http://www.w3.org/2004/02/skos/core#",
   dmoz: "http://dmoz.org/rdf/",
   dmozcat: "http://dmoz.org/rdf/cat/",
-  du: "http://rdf.labrasol.com/",
+  du: "http://rdf.labrasol.org/",
 };
 
 function sparqlSelect(query, params, resultCallback, errorCallback) {
