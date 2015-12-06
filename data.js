@@ -14,7 +14,7 @@ const kTaxomonyURL = "taxonomy.json";
  * Only for topics loaded from LOD.
  * Map topicID -> {Topic}
  */
-gAllTopicsByID = {};
+var gAllTopicsByID = {};
 
 /**
  * This is an abstract element in our taxonomy or logic.
@@ -265,7 +265,7 @@ function loadTopicFromLOD(topicID, graphID, resultCallback, errorCallback) {
     return;
   }
   var topic = new LODTopic(topicID, graphID);
-  topic.load(function() {
+  topic.loadProperties(function() {
     gAllTopicsByID[topic.id] = topic;
     resultCallback(topic);
   }, errorCallback);
@@ -326,7 +326,7 @@ LODTopic.prototype = {
    * @param errorCallback {Function(e)} Called when there was an error
    *     Either resultCallback() or errorCallback() will be called.
    */
-  load : function(successCallback, errorCallback) {
+  loadProperties : function(successCallback, errorCallback) {
     if (this._loaded) {
       successCallback();
       return;
@@ -341,6 +341,7 @@ LODTopic.prototype = {
       successCallback();
     }, errorCallback);
   },
+
   /**
    * Load subtopics from server
    */
@@ -367,7 +368,7 @@ LODTopic.prototype = {
         if (existing) {
           return existing;
         }
-        var topic = new LODTopic(id, self._graphID, function() {}, errorCallback);
+        var topic = new LODTopic(id, self._graphID);
         topic._setPropertiesFromSPARQLResult(r);
         topic._parents.push(self);
         gAllTopicsByID[topic.id] = topic;
@@ -396,6 +397,67 @@ LODTopic.prototype = {
       });
       */
     }, errorCallback);
+  },
+
+  /**
+   * Load ancestors from server.
+   * Uses only the first parent.
+   * But traverses the whole hierarchy up to root.
+   *
+   * You only need to call this, if this object wasn't loaded top-down
+   * using loadChildren().
+   */
+  loadPrimaryParent : function(successCallback, errorCallback) {
+    if (this._loadedParent) {
+      successCallback();
+      return;
+    }
+    assert(this.id);
+    assert(this._graphID);
+    var self = this;
+    var query = "SELECT * FROM ?graph WHERE { " +
+      " ?topic dmoz:narrow ?child " +
+      // Optimize: Load parent properties immediately,
+      // saving one server call
+      this._kTopicPropertiesSPARQL +
+    "}";
+    query = query.replaceAll("?child", "<" + this.id + ">")
+        .replaceAll("?graph", "<" + this._graphID + ">");
+    sparqlSelect1(query, {}, function(result) {
+      var parentID = result.topic;
+      alert(self.id + " has parent " + parentID);
+      assert(parentID, "Need parent topic URI");
+      var existing = gAllTopicsByID[parentID];
+      if (existing) {
+        // we connected up to the existing topics, so we're done loading
+        successCallback();
+        return;
+      }
+      var parent = new LODTopic(parentID, self._graphID);
+      parent._setPropertiesFromSPARQLResult(result);
+
+      self._parents.push(parent);
+      self._parentIDs.push(parent.id);
+      parent._children.push(self);
+      parent._childrenIDs.push(self.id);
+
+      gAllTopicsByID[parent.id] = parent;
+      self._loadedParent = true;
+
+      parent.loadPrimaryParent(successCallback, errorCallback); // recurse up
+      // recursion stop-gaps:
+      // a) error handler nothing found
+      // b) _loadedParent (intentionalled called before recursing)
+      // expected end: existing above
+    }, function(e) {
+      if (e.code == 0) { // Nothing found
+        // no parent = this is root
+        // but root wasn't loaded yet, so that's an error anyways
+        errorCallback(self.title + " goes to a root that wasn't loaded");
+        return;
+      }
+      errorCallback(e);
+    });
   },
 
   /**
@@ -589,9 +651,42 @@ function findTopicByTitle(search) {
 
 
 /**
+ * Finds a topic that is already loaded,
+ * and returns the |Topic| object for the topic URI
+ *
  * @param id {String} |Topic.id|
  * @returns {Topic}
  */
 function findTopicByID(id) {
   return gAllTopicsByID[id];
+}
+
+
+/**
+ * Same as findTopicByID(), but if not yet loaded,
+ * loads it from the LOD graph server, including all ancestors.
+ *
+ * @param id {String} |Topic.id|
+ * @param resultCallback {function(topic {Topic})}
+ */
+function loadTopicByID(id, resultCallback, errorCallback) {
+  var existing = gAllTopicsByID[id];
+  if (existing) {
+    resultCallback(existing);
+    return;
+  }
+
+  var graphID; // HACK - take graph from first existing topic
+  for (var randomID in gAllTopicsByID) {
+    graphID = gAllTopicsByID[randomID]._graphID;
+    if (graphID) {
+      break;
+    }
+  }
+
+  loadTopicFromLOD(id, graphID, function(topic) {
+    topic.loadPrimaryParent(function() {
+      resultCallback(topic);
+    }, errorCallback);
+  }, errorCallback);
 }
