@@ -352,7 +352,9 @@ LODTopic.prototype = {
     }
     var self = this;
     var query = "SELECT * FROM ?graph WHERE { " +
-      " ?parent dmoz:narrow ?topic " +
+      "{ ?parent dmoz:narrow ?topic } " +
+      "UNION { ?parent dmoz:narrow1 ?topic } " +
+      "UNION { ?parent dmoz:narrow2 ?topic } " +
       // Optimize: Load child properties immediately,
       // saving one server call per child.
       this._kTopicPropertiesSPARQL +
