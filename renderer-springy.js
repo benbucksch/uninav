@@ -24,7 +24,7 @@ SpringyTile.prototype = {
     var self = this;
     this.node = gScene.graph.newNode({ label : self.topic.title });
     if (this.parent) {
-      gScene.graph.newEdge(this.node, this.parent.node, { label : "Sub-Topic" });
+      gScene.graph.newEdge(this.parent.node, this.node, { label : "Sub-Topic" });
     }
     this.node.tile = this;
     this.node.topic = this.topic;
