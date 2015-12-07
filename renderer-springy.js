@@ -145,13 +145,11 @@ function createScene(sceneParentE) {
   canvasE.setAttribute("height", height + "px");
   sceneParentE.appendChild(canvasE);
 
-    scene.graph = new Springy.Graph();
-  runAsync(function() {
-    var spr = canvasE.springy({ graph : scene.graph, nodeSelected : selectedFunc });
-    setTimeout(function() {
-      spr.renderer.stop(); // TODO doesn't stop, although function is called
-    }, 4000);
-  }, errorCritical);
+  scene.graph = new Springy.Graph();
+  var spr = $(canvasE).springy({ graph : scene.graph, nodeSelected : selectedFunc });
+  setTimeout(function() {
+    spr.renderer.stop(); // TODO doesn't stop, although function is called
+  }, 4000);
 
   gScene = scene;
   return scene;
