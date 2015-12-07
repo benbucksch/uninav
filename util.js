@@ -349,6 +349,7 @@ function downloadFromVariable(contents, mimetype) {
  * @param urlArgs {Map of name {String} -> value {String}}
  *      extra URL param arguments
  *      {name: "value", name2: "value" } -> "?name=value&name2=value2"
+ * @param method {String}   HTTP method: "GET", "POST", "PUT" etc.
  * @param headers {Map of name {String} -> value {String}}
  *      extra HTTP headers
  * @param username {String}   HTTP Basic auth: username
@@ -475,7 +476,7 @@ function loadURL(params, successCallback, errorCallback) {
   };
   try {
     req.overrideMimeType("text/plain; charset=UTF-8");
-    req.open("GET", url, true); // async
+    req.open(params.method || "GET", url, true); // async
 
     for (var name in params.headers) {
       var val = params.headers[name];
