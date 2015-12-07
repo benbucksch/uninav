@@ -159,7 +159,7 @@ function highlight3DObj(n) {
  */
 function getObj3DforTopic(topic) {
   var allObj3DbyTopic = {};
-  allObj3DbyTopic.root = gRootN;
+  allObj3DbyTopic[gRootN.topic.id] = gRootN;
   gRootN.allChildren().forEach(function(n) {
     allObj3DbyTopic[n.topic.id] = n;
     // Verify hierarchy
@@ -174,7 +174,7 @@ function getObj3DforTopic(topic) {
   topic.primaryAncestors(true).reverse().forEach(function(ancTopic) {
     ddebug("searching " + ancTopic.id);
     //var node = allObj3DbyTopic[ancTopic.id]; // use nodes that are already on screen
-    var node = ancTopic.id == "root" ? gRootN : lastN.children.filter(function(n) {
+    var node = !lastN ? gRootN : lastN.children.filter(function(n) {
       return n.topic == ancTopic;
     })[0];
     if ( !node) {
