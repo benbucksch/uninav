@@ -89,6 +89,7 @@ SpringyTile.prototype = {
    * or because he selected the topic from the content pane.
    */
   select : function() {
+    this.showChildren(); // HACK, because we have no mouse over and thus no highlight, which is where the controller calls showChildren()
     return; // TODO
     // Keep only parents, remove all siblings and aunts, grand-aunts etc.
     var ancestors = this.ancestors(this);
